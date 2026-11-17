@@ -80,12 +80,12 @@ export const PreviewImage: React.FC<PreviewImageProps> = ({
           src={src}
           alt={alt}
           loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
+          decoding={eager ? 'sync' : 'async'}
           referrerPolicy="no-referrer"
           onLoad={() => setStatus('loaded')}
           onError={() => setStatus('error')}
-          className={`${imgClassName} transition-opacity duration-150 ${
-            status === 'loaded' ? 'opacity-100' : 'opacity-0'
+          className={`relative z-[1] ${imgClassName} transition-opacity duration-150 ${
+            eager || status === 'loaded' ? 'opacity-100' : 'opacity-0'
           }`}
         />
       )}

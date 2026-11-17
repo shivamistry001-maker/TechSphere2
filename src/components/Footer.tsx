@@ -143,15 +143,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             </h4>
             <ul className={`space-y-2.5 text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
               {[
-                { label: 'Home', page: 'home' as PageId },
-                { label: 'About', page: 'about' as PageId },
-                { label: 'Services', page: 'services' as PageId },
-                { label: 'Industries', page: 'industries' as PageId },
-                { label: 'Case Studies', page: 'case-studies' as PageId },
-                { label: 'Portfolio', page: 'portfolio' as PageId },
-                { label: 'Contact', page: 'contact' as PageId },
+                { key: 'home', label: 'Home', page: 'home' as PageId },
+                { key: 'about', label: 'About', page: 'about' as PageId },
+                { key: 'services', label: 'Services', page: 'services' as PageId },
+                { key: 'demo-websites', label: 'Demo Websites', page: 'demo-websites' as PageId },
+                { key: 'erp-showcase', label: 'ERP Showcase', page: 'erp-showcase' as PageId },
+                { key: 'industries', label: 'Industries', page: 'industries' as PageId },
+                { key: 'case-studies', label: 'Case Studies', page: 'case-studies' as PageId },
+                { key: 'portfolio', label: 'Portfolio', page: 'portfolio' as PageId },
+                { key: 'contact', label: 'Contact', page: 'contact' as PageId },
               ].map((item) => (
-                <li key={item.page}>
+                <li key={item.key}>
                   <button
                     type="button"
                     onClick={() => handleNav(item.page)}

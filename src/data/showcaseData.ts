@@ -10,7 +10,7 @@ import {
 } from '../types.ts';
 
 export const WEBSITE_DEMO_CATEGORIES: WebsiteDemoCategory[] = [
-  'All',
+  'All Projects',
   'Hospitality',
   'Professional Services',
   'Creative Business',
@@ -22,17 +22,17 @@ export const LIVE_WEBSITE_DEMOS: WebsiteDemoProject[] = [
     id: 'cafe-restaurant-demo',
     title: 'Cafe & Restaurant Website',
     category: 'Hospitality',
-    categoryLabel: 'Website Development / Hospitality',
+    categoryLabel: 'Hospitality',
     liveUrl: 'https://demo-self-nu-33.vercel.app/',
     previewImage: '/assets/demos/cafe-restaurant.png',
     previewAlt:
       'Live preview of The Warm Hearth Cafe & Restaurant website demonstration with hero imagery and reservation call-to-action',
     description:
-      'A modern cafe and restaurant website demonstration showcasing a professional digital presence for hospitality businesses.',
+      'A modern website demonstration for cafes, restaurants and hospitality businesses.',
     features: [
-      'Restaurant-focused website design',
+      'Restaurant website design',
       'Menu presentation',
-      'Modern user interface',
+      'Modern UI',
       'Responsive layout',
       'Professional business presentation',
     ],
@@ -41,26 +41,26 @@ export const LIVE_WEBSITE_DEMOS: WebsiteDemoProject[] = [
     id: 'ca-firm-demo',
     title: 'Chartered Accountant Firm Website',
     category: 'Professional Services',
-    categoryLabel: 'Website Development / Professional Services',
+    categoryLabel: 'Professional Services',
     liveUrl: 'https://demo2-ten-hazel.vercel.app/',
     previewImage: '/assets/demos/ca-firm.png',
     previewAlt:
       'Live preview of FinAxis Chartered Accountant Firm website demonstration featuring corporate advisory sections and consultation CTA',
     description:
-      'A professional website demonstration designed for Chartered Accountant firms and financial consultancy businesses.',
+      'A professional corporate website demonstration for Chartered Accountant firms and financial consultancy businesses.',
     features: [
-      'Professional corporate design',
-      'Service presentation',
-      'Business information sections',
+      'Corporate website design',
+      'Professional service presentation',
+      'Business information',
       'Client-focused layout',
-      'Responsive website experience',
+      'Responsive experience',
     ],
   },
   {
     id: 'photography-business-demo',
     title: 'Photography & Videography Website',
     category: 'Creative Business',
-    categoryLabel: 'Website Development / Creative Business',
+    categoryLabel: 'Creative Business',
     liveUrl: 'https://demo3-delta-three.vercel.app/',
     previewImage: '/assets/demos/photography-business.png',
     previewAlt:
@@ -68,30 +68,30 @@ export const LIVE_WEBSITE_DEMOS: WebsiteDemoProject[] = [
     description:
       'A creative portfolio website demonstration for photography and videography businesses.',
     features: [
-      'Visual portfolio presentation',
-      'Photography showcase',
-      'Modern gallery layout',
-      'Creative visual design',
-      'Responsive experience',
+      'Photography gallery',
+      'Portfolio presentation',
+      'Creative layouts',
+      'Visual storytelling',
+      'Responsive design',
     ],
   },
   {
     id: 'manufacturing-company-demo',
     title: 'Manufacturing Company Website',
     category: 'Manufacturing',
-    categoryLabel: 'Website Development / Manufacturing',
+    categoryLabel: 'Manufacturing',
     liveUrl: 'https://demo4-oxix.vercel.app/',
     previewImage: '/assets/demos/manufacturing-company.png',
     previewAlt:
       'Live preview of PrimeForge Manufacturing corporate website demonstration featuring industrial engineering highlights',
     description:
-      'A corporate website demonstration designed for manufacturing and industrial businesses.',
+      'A corporate website demonstration for manufacturing and industrial companies.',
     features: [
-      'Industrial corporate presentation',
+      'Industrial business presentation',
       'Product and service showcase',
-      'Manufacturing business information',
-      'Professional company profile',
-      'Responsive layout',
+      'Corporate information',
+      'Professional layout',
+      'Responsive design',
     ],
   },
 ];
@@ -102,15 +102,16 @@ export const ERP_DEMO_PLATFORMS: ERPDemoPlatform[] = [
     name: 'ERPNext',
     subtitle: 'Open-Source Integrated ERP',
     description:
-      'An open-source ERP platform designed to manage business operations through an integrated system.',
+      'Explore an integrated open-source ERP platform designed to manage business operations.',
     highlights: [
-      'Dashboard overview',
-      'Sales and CRM',
-      'Purchase management',
-      'Inventory management',
+      'Dashboard',
+      'CRM',
+      'Sales',
+      'Purchase',
+      'Inventory',
       'Accounting',
       'Manufacturing',
-      'Human resources',
+      'Human Resources',
     ],
     screenshots: [
       {
@@ -147,14 +148,16 @@ export const ERP_DEMO_PLATFORMS: ERPDemoPlatform[] = [
     name: 'Odoo ERP',
     subtitle: 'Modular Business Management',
     description:
-      'A modular business management platform offering integrated applications for sales, CRM, inventory, accounting, manufacturing and more.',
+      'Explore a modular ERP platform with applications for managing sales, CRM, inventory, accounting, manufacturing and business operations.',
     highlights: [
-      'Odoo dashboard interface',
-      'CRM interface',
-      'Sales management',
+      'Dashboard',
+      'CRM',
+      'Sales',
       'Inventory',
+      'Purchase',
       'Accounting',
       'Manufacturing',
+      'Projects',
     ],
     screenshots: [
       {
@@ -188,17 +191,17 @@ export const ERP_DEMO_PLATFORMS: ERPDemoPlatform[] = [
   },
   {
     id: 'zoho',
-    name: 'Zoho',
+    name: 'Zoho Business Applications',
     subtitle: 'Cloud Business Applications Suite',
     description:
-      'A business applications ecosystem for managing sales, customer relationships, finance, inventory and business operations.',
+      'Explore business applications for managing customers, sales, finance, inventory and business operations.',
     highlights: [
-      'Zoho dashboard interface',
-      'CRM interface',
-      'Sales management',
-      'Finance and accounting',
+      'Dashboard',
+      'CRM',
+      'Sales',
+      'Finance',
       'Inventory',
-      'Business analytics',
+      'Analytics',
     ],
     screenshots: [
       {

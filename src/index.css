@@ -54,7 +54,6 @@ html.dark {
   body {
     background-color: var(--ts-bg-main);
     color: var(--ts-text-primary);
-    transition: background-color 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   /* Accessibility: Prefers reduced motion */

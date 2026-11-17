@@ -14,12 +14,15 @@ import {
   ArrowRight,
   Phone,
   Mail,
+  Globe,
+  Layers,
 } from 'lucide-react';
 import { TechSphereLogo } from './TechSphereLogo.tsx';
 import { MagneticButton } from './motion/MotionPrimitives.tsx';
 import { dropdownVariants, EASE_PREMIUM } from '../utils/motion.ts';
 import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
+import { SHOWCASE_NAV_TARGETS, isShowcaseNavActive } from '../utils/showcaseLogic.ts';
 
 interface NavbarProps {
   currentPage: PageId;
@@ -83,13 +86,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     onNavigate(page);
     setMobileMenuOpen(false);
     setSolutionsDropdownOpen(false);
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   };
 
   const isDark = theme === 'dark';
 
   const navLinkClass = (active: boolean) =>
-    `relative px-2.5 xl:px-3 py-2 text-[13px] font-medium whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-lg ${
+    `relative px-2 2xl:px-3 py-2 text-[12.5px] 2xl:text-[13px] font-medium whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-lg ${
       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
     } ${
       active
@@ -143,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </motion.button>
 
             {/* Center: Single-Row Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1" aria-label="Primary Navigation">
+            <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1" aria-label="Primary Navigation">
               <button
                 type="button"
                 onClick={() => handleNavClick('home')}
@@ -171,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {currentPage === 'services' && <ActiveIndicator />}
               </button>
 
-              {/* Solutions Dropdown */}
+              {/* ERP Solutions Dropdown */}
               <div
                 ref={dropdownRef}
                 className="relative"
@@ -191,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   aria-expanded={solutionsDropdownOpen}
                   aria-haspopup="menu"
                 >
-                  <span>Solutions</span>
+                  <span>ERP Solutions</span>
                   <ChevronDown
                     className={`w-3.5 h-3.5 transition-transform duration-200 ${
                       solutionsDropdownOpen ? 'rotate-180' : ''
@@ -285,6 +287,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </AnimatePresence>
               </div>
 
+              <motion.button
+                type="button"
+                whileHover={prefersReducedMotion ? undefined : { y: -1 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                onClick={() => handleNavClick(SHOWCASE_NAV_TARGETS.demoWebsites.page)}
+                className={`inline-flex items-center gap-1.5 ${navLinkClass(
+                  isShowcaseNavActive(currentPage, SHOWCASE_NAV_TARGETS.demoWebsites.page)
+                )}`}
+              >
+                <Globe className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden="true" />
+                <span>{SHOWCASE_NAV_TARGETS.demoWebsites.label}</span>
+                {isShowcaseNavActive(currentPage, SHOWCASE_NAV_TARGETS.demoWebsites.page) && (
+                  <ActiveIndicator />
+                )}
+              </motion.button>
+
+              <motion.button
+                type="button"
+                whileHover={prefersReducedMotion ? undefined : { y: -1 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                onClick={() => handleNavClick(SHOWCASE_NAV_TARGETS.erpShowcase.page)}
+                className={`inline-flex items-center gap-1.5 ${navLinkClass(
+                  isShowcaseNavActive(currentPage, SHOWCASE_NAV_TARGETS.erpShowcase.page)
+                )}`}
+              >
+                <Layers className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden="true" />
+                <span>{SHOWCASE_NAV_TARGETS.erpShowcase.label}</span>
+                {isShowcaseNavActive(currentPage, SHOWCASE_NAV_TARGETS.erpShowcase.page) && (
+                  <ActiveIndicator />
+                )}
+              </motion.button>
+
               <button
                 type="button"
                 onClick={() => handleNavClick('industries')}
@@ -296,11 +330,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               <button
                 type="button"
-                onClick={() => handleNavClick('case-studies')}
-                className={navLinkClass(currentPage === 'case-studies')}
+                onClick={() => handleNavClick('portfolio')}
+                className={navLinkClass(currentPage === 'portfolio')}
               >
-                <span>Case Studies</span>
-                {currentPage === 'case-studies' && <ActiveIndicator />}
+                <span>Portfolio</span>
+                {currentPage === 'portfolio' && <ActiveIndicator />}
               </button>
 
               <button
@@ -372,12 +406,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 />
               </MagneticButton>
 
-              {/* Mobile Hamburger Toggle */}
+              {/* Mobile & Tablet Hamburger Toggle */}
               <motion.button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
-                className={`lg:hidden p-2.5 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`xl:hidden p-2.5 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] focus-visible:ring-white'
                     : 'bg-white/90 border-[#101B35]/10 text-[#101B35] hover:bg-[#F5FAFE] focus-visible:ring-[#38BDF8]'
@@ -392,7 +426,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </header>
 
-      {/* ANIMATED MOBILE NAVIGATION DRAWER */}
+      {/* ANIMATED MOBILE & TABLET NAVIGATION DRAWER */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -400,7 +434,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -18 }}
             transition={{ duration: 0.22, ease: EASE_PREMIUM }}
-            className={`fixed inset-0 z-40 lg:hidden overflow-y-auto pt-24 pb-8 px-6 backdrop-blur-xl ${
+            className={`fixed inset-0 z-40 xl:hidden overflow-y-auto pt-24 pb-8 px-6 backdrop-blur-xl ${
               isDark ? 'bg-[#090909]/98 text-[#F5F5F5]' : 'bg-white/98 text-[#172033]'
             }`}
           >
@@ -420,40 +454,62 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {[
-                { label: 'Home', page: 'home' as PageId },
-                { label: 'About', page: 'about' as PageId },
-                { label: 'Services', page: 'services' as PageId },
-                { label: 'Solutions Overview', page: 'erp-solutions' as PageId },
-                { label: '• ERPNext Solutions', page: 'erpnext' as PageId },
-                { label: '• Odoo ERP Solutions', page: 'odoo' as PageId },
-                { label: '• Zoho Ecosystem', page: 'zoho' as PageId },
-                { label: 'IT & Web Solutions', page: 'it-solutions' as PageId },
-                { label: 'Industries', page: 'industries' as PageId },
-                { label: 'Case Studies', page: 'case-studies' as PageId },
-                { label: 'Portfolio', page: 'portfolio' as PageId },
-                { label: 'Insights & Blog', page: 'insights' as PageId },
-                { label: 'Contact', page: 'contact' as PageId },
-              ].map((item, idx) => (
-                <motion.button
-                  key={item.page}
-                  type="button"
-                  initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.18, delay: Math.min(idx * 0.02, 0.2) }}
-                  onClick={() => handleNavClick(item.page)}
-                  className={`text-left py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
-                    currentPage === item.page
-                      ? isDark
-                        ? 'text-white bg-[#1D1D1D] border border-[#303030] font-semibold'
-                        : 'text-[#0284C7] bg-[#F5FAFE] font-semibold'
-                      : isDark
-                      ? 'text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#171717]'
-                      : 'text-[#172033]/80 hover:text-[#101B35] hover:bg-[#F5FAFE]'
-                  }`}
-                >
-                  {item.label}
-                </motion.button>
-              ))}
+                { key: 'home', label: 'Home', page: 'home' as PageId },
+                { key: 'about', label: 'About', page: 'about' as PageId },
+                { key: 'services', label: 'Services', page: 'services' as PageId },
+                { key: 'erp-solutions', label: 'ERP Solutions Overview', page: 'erp-solutions' as PageId },
+                { key: 'erpnext', label: '• ERPNext Solutions', page: 'erpnext' as PageId },
+                { key: 'odoo', label: '• Odoo ERP Solutions', page: 'odoo' as PageId },
+                { key: 'zoho', label: '• Zoho Ecosystem', page: 'zoho' as PageId },
+                { key: 'it-solutions', label: 'IT & Web Solutions', page: 'it-solutions' as PageId },
+                {
+                  key: 'demo-websites',
+                  label: SHOWCASE_NAV_TARGETS.demoWebsites.label,
+                  page: SHOWCASE_NAV_TARGETS.demoWebsites.page,
+                  icon: 'globe' as const,
+                },
+                {
+                  key: 'erp-showcase',
+                  label: SHOWCASE_NAV_TARGETS.erpShowcase.label,
+                  page: SHOWCASE_NAV_TARGETS.erpShowcase.page,
+                  icon: 'layers' as const,
+                },
+                { key: 'industries', label: 'Industries', page: 'industries' as PageId },
+                { key: 'portfolio', label: 'Portfolio', page: 'portfolio' as PageId },
+                { key: 'case-studies', label: 'Case Studies', page: 'case-studies' as PageId },
+                { key: 'insights', label: 'Insights & Blog', page: 'insights' as PageId },
+                { key: 'contact', label: 'Contact', page: 'contact' as PageId },
+              ].map((item, idx) => {
+                const isItemActive = currentPage === item.page;
+
+                return (
+                  <motion.button
+                    key={item.key}
+                    type="button"
+                    initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.18, delay: Math.min(idx * 0.02, 0.2) }}
+                    onClick={() => handleNavClick(item.page)}
+                    className={`flex items-center gap-2.5 text-left py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
+                      isItemActive
+                        ? isDark
+                          ? 'text-white bg-[#1D1D1D] border border-[#303030] font-semibold'
+                          : 'text-[#0284C7] bg-[#F5FAFE] font-semibold'
+                        : isDark
+                        ? 'text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#171717]'
+                        : 'text-[#172033]/80 hover:text-[#101B35] hover:bg-[#F5FAFE]'
+                    }`}
+                  >
+                    {item.icon === 'globe' && (
+                      <Globe className="w-4 h-4 shrink-0 opacity-80" aria-hidden="true" />
+                    )}
+                    {item.icon === 'layers' && (
+                      <Layers className="w-4 h-4 shrink-0 opacity-80" aria-hidden="true" />
+                    )}
+                    <span>{item.label}</span>
+                  </motion.button>
+                );
+              })}
 
               <div
                 className={`pt-4 mt-4 border-t flex flex-col space-y-3 ${

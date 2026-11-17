@@ -28,7 +28,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
   theme,
   sectionRef,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<WebsiteDemoCategory>('All');
+  const [selectedCategory, setSelectedCategory] = useState<WebsiteDemoCategory>('All Projects');
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop(1024);
   const isDark = theme === 'dark';
@@ -154,13 +154,24 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                   {/* Card Body */}
                   <div className="relative z-10 p-5 sm:p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <p
-                        className={`text-[11px] font-semibold tracking-wide mb-2 min-h-[2rem] flex items-start ${
-                          isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
-                        }`}
-                      >
-                        {demo.categoryLabel}
-                      </p>
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                        <p
+                          className={`text-[11px] font-semibold tracking-wide ${
+                            isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+                          }`}
+                        >
+                          {demo.categoryLabel}
+                        </p>
+                        <span
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-md border ${
+                            isDark
+                              ? 'bg-[#111111] border-[#303030] text-[#A3A3A3]'
+                              : 'bg-[#F5FAFE] border-[#101B35]/10 text-slate-600'
+                          }`}
+                        >
+                          Live Website Demonstration
+                        </span>
+                      </div>
 
                       <h3
                         className={`font-display text-lg font-bold leading-snug mb-2.5 min-h-[3.1rem] ${

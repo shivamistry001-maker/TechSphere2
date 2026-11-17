@@ -17,6 +17,7 @@ import {
   useIsDesktop,
 } from '../components/motion/MotionPrimitives.tsx';
 import { computeColumnParallax, scrollCardItemVariants } from '../utils/motion.ts';
+import { KeyPerformanceMetrics } from '../components/showcase/KeyPerformanceMetrics.tsx';
 
 interface ERPNextPageProps {
   onNavigate: (page: PageId) => void;
@@ -152,6 +153,14 @@ export const ERPNextPage: React.FC<ERPNextPageProps> = ({
           </ScrollCascadeGrid>
         </ScrollSectionContainer>
       </section>
+
+      {/* Key Performance Metrics */}
+      <KeyPerformanceMetrics
+        theme={theme}
+        defaultScope="erpnext"
+        showScopeTabs={false}
+        heading="ERPNext Key Performance Metrics"
+      />
 
       {/* Why Businesses Choose ERPNext */}
       <RevealSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -17,6 +17,7 @@ import {
   useIsDesktop,
 } from '../components/motion/MotionPrimitives.tsx';
 import { computeColumnParallax, scrollCardItemVariants } from '../utils/motion.ts';
+import { KeyPerformanceMetrics } from '../components/showcase/KeyPerformanceMetrics.tsx';
 
 interface OdooPageProps {
   onNavigate: (page: PageId) => void;
@@ -152,6 +153,14 @@ export const OdooPage: React.FC<OdooPageProps> = ({
           </ScrollCascadeGrid>
         </ScrollSectionContainer>
       </section>
+
+      {/* Key Performance Metrics */}
+      <KeyPerformanceMetrics
+        theme={theme}
+        defaultScope="odoo"
+        showScopeTabs={false}
+        heading="Odoo ERP Key Performance Metrics"
+      />
     </div>
   );
 };

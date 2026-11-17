@@ -9,6 +9,7 @@ import { PageId, ThemeMode } from '../types.ts';
 import { ERP_MODULES, ERP_PLATFORMS } from '../data/erpData.ts';
 import { ERPComparisonTool } from '../components/ERPComparisonTool.tsx';
 import { FindYourERPWizard } from '../components/FindYourERPWizard.tsx';
+import { KeyPerformanceMetrics } from '../components/showcase/KeyPerformanceMetrics.tsx';
 import {
   CardGlareOverlay,
   RevealSection,
@@ -157,6 +158,9 @@ export const ERPSolutionsPage: React.FC<ERPSolutionsPageProps> = ({
           </ScrollCascadeGrid>
         </ScrollSectionContainer>
       </section>
+
+      {/* 2b. Quantified ERP Impact & Key Performance Metrics */}
+      <KeyPerformanceMetrics theme={theme} defaultScope="all" showScopeTabs />
 
       {/* 3. Core Modules Catalog */}
       <section ref={modulesRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

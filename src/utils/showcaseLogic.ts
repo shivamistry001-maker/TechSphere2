@@ -3,13 +3,38 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { WebsiteDemoCategory, WebsiteDemoProject } from '../types.ts';
+import { PageId, ShowcaseSectionId, WebsiteDemoCategory, WebsiteDemoProject } from '../types.ts';
+
+export const SHOWCASE_NAV_TARGETS: Readonly<
+  Record<
+    'demoWebsites' | 'erpShowcase',
+    { label: string; page: PageId; path: string; sectionId?: ShowcaseSectionId }
+  >
+> = {
+  demoWebsites: {
+    label: 'Demo Websites',
+    page: 'demo-websites',
+    path: '/demo-websites',
+  },
+  erpShowcase: {
+    label: 'ERP Showcase',
+    page: 'erp-showcase',
+    path: '/erp-showcase',
+  },
+};
+
+export function isShowcaseNavActive(
+  currentPage: PageId,
+  targetPage: PageId
+): boolean {
+  return currentPage === targetPage;
+}
 
 export function filterWebsiteDemos(
   demos: WebsiteDemoProject[],
   category: WebsiteDemoCategory
 ): WebsiteDemoProject[] {
-  if (category === 'All') {
+  if (category === 'All Projects' || category === 'All') {
     return demos;
   }
   return demos.filter((demo) => demo.category === category);

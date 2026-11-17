@@ -33,10 +33,12 @@ import {
   useIsDesktop,
 } from '../motion/MotionPrimitives.tsx';
 import { PreviewImage } from './PreviewImage.tsx';
+import { ERPPlatformLogo } from './ERPPlatformLogo.tsx';
 
 interface ERPDemoShowcaseSectionProps {
   theme: ThemeMode;
   className?: string;
+  hideSectionHeading?: boolean;
 }
 
 interface LightboxState {
@@ -47,6 +49,7 @@ interface LightboxState {
 export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
   theme,
   className = '',
+  hideSectionHeading = false,
 }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -131,37 +134,39 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
       ref={sectionRef}
       id="explore-erp-solutions"
       aria-labelledby="erp-demo-showcase-heading"
-      className={`py-20 sm:py-28 scroll-mt-20 overflow-x-clip transition-colors duration-300 ${
+      className={`py-20 sm:py-28 scroll-mt-20 overflow-x-clip ${
         isDark ? 'bg-[#090909]' : 'bg-white'
       } ${className}`}
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <ScrollCascadeBlock className="max-w-3xl mb-12 space-y-3">
-          <p
-            className={`text-xs font-semibold uppercase tracking-[0.18em] ${
-              isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
-            }`}
-          >
-            ERP Software Walkthroughs
-          </p>
-          <h2
-            id="erp-demo-showcase-heading"
-            className={`font-display font-extrabold tracking-tight leading-[1.1] text-balance ${
-              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
-            }`}
-            style={{ fontSize: 'clamp(1.85rem, 3.4vw, 2.85rem)' }}
-          >
-            Explore ERP Solutions
-          </h2>
-          <p
-            className={`text-sm sm:text-base leading-relaxed ${
-              isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
-            }`}
-          >
-            Discover how modern ERP platforms can streamline business operations, improve visibility, and simplify management.
-          </p>
-        </ScrollCascadeBlock>
+        {!hideSectionHeading && (
+          <ScrollCascadeBlock className="max-w-3xl mb-12 space-y-3">
+            <p
+              className={`text-xs font-semibold uppercase tracking-[0.18em] ${
+                isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+              }`}
+            >
+              ERP Software Walkthroughs
+            </p>
+            <h2
+              id="erp-demo-showcase-heading"
+              className={`font-display font-extrabold tracking-tight leading-[1.1] text-balance ${
+                isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
+              }`}
+              style={{ fontSize: 'clamp(1.85rem, 3.4vw, 2.85rem)' }}
+            >
+              Explore ERP Solutions
+            </h2>
+            <p
+              className={`text-sm sm:text-base leading-relaxed ${
+                isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
+              }`}
+            >
+              Discover how modern ERP platforms can streamline business operations, improve visibility, and simplify management.
+            </p>
+          </ScrollCascadeBlock>
+        )}
 
         {/* Three ERP Platform Gallery Cards */}
         <ScrollCascadeGrid className="grid grid-cols-1 lg:grid-cols-3 gap-7 items-stretch">
@@ -183,7 +188,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                   data-testid={`erp-showcase-card-${platform.id}`}
                   whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`group relative h-full rounded-3xl border overflow-hidden transition-colors duration-300 flex flex-col justify-between ${
+                  className={`group relative h-full rounded-3xl border overflow-hidden flex flex-col justify-between ${
                     isDark
                       ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45 shadow-[0_16px_40px_rgba(0,0,0,0.45)]'
                       : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 shadow-[0_14px_34px_rgba(16,27,53,0.05)] hover:shadow-[0_24px_50px_rgba(16,27,53,0.09)]'
@@ -193,25 +198,28 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
 
                   {/* Interactive Gallery Header + Main Viewport */}
                   <div className="relative z-10 p-5 sm:p-6 pb-0">
-                    <div className="flex items-baseline justify-between gap-2 mb-3">
-                      <div>
-                        <p
-                          className={`text-[11px] font-semibold tracking-wide ${
-                            isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
-                          }`}
-                        >
-                          {platform.subtitle}
-                        </p>
-                        <h3
-                          className={`font-display text-2xl font-bold mt-0.5 ${
-                            isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
-                          }`}
-                        >
-                          {platform.name}
-                        </h3>
+                    <div className="flex items-start justify-between gap-3 mb-3.5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <ERPPlatformLogo platformId={platform.id} theme={theme} />
+                        <div className="min-w-0">
+                          <p
+                            className={`text-[11px] font-semibold tracking-wide truncate ${
+                              isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+                            }`}
+                          >
+                            {platform.subtitle}
+                          </p>
+                          <h3
+                            className={`font-display text-xl sm:text-2xl font-bold leading-tight mt-0.5 ${
+                              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
+                            }`}
+                          >
+                            {platform.name}
+                          </h3>
+                        </div>
                       </div>
                       <span
-                        className={`text-xs font-mono tabular-nums ${
+                        className={`text-xs font-mono tabular-nums shrink-0 mt-1 ${
                           isDark ? 'text-[#A3A3A3]' : 'text-slate-500'
                         }`}
                       >
@@ -253,7 +261,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                       </button>
 
                       {/* Gallery Prev / Next Controls */}
-                      <div className="absolute inset-x-2.5 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none">
+                      <div className="absolute inset-x-2.5 top-1/2 -translate-y-1/2 z-20 flex items-center justify-between pointer-events-none">
                         <motion.button
                           type="button"
                           whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
@@ -294,7 +302,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                         type="button"
                         onClick={() => openLightbox(platform.id, currentIdx)}
                         aria-label={`Open full preview of ${currentShot.title}`}
-                        className={`absolute bottom-2.5 right-2.5 w-7 h-7 rounded-lg border flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer ${
+                        className={`absolute bottom-2.5 right-2.5 z-20 w-7 h-7 rounded-lg border flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer ${
                           isDark
                             ? 'bg-[#090909]/80 border-[#303030] text-white hover:bg-white hover:text-[#090909]'
                             : 'bg-[#101B35]/80 border-white/15 text-white hover:bg-[#0284C7]'
@@ -522,7 +530,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Previous screenshot"
-                  className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                       : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -549,7 +557,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Next screenshot"
-                  className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                       : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -559,15 +567,42 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                 </motion.button>
               </div>
 
-              {/* Caption + Thumbnail Bar */}
+              {/* Caption + Navigation Indicators + Thumbnail Bar */}
               <div
                 className={`px-5 sm:px-6 py-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
                   isDark ? 'border-[#303030] bg-[#171717]' : 'border-slate-200 bg-white'
                 }`}
               >
-                <p className={`text-xs sm:text-sm max-w-2xl ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
-                  {activeLightboxScreenshot.caption}
-                </p>
+                <div className="space-y-2 max-w-2xl">
+                  <p className={`text-xs sm:text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
+                    {activeLightboxScreenshot.caption}
+                  </p>
+                  <div className="flex items-center gap-1.5" role="group" aria-label="Image navigation indicators">
+                    {activeLightboxPlatform.screenshots.map((shot, dotIdx) => {
+                      const active = dotIdx === lightbox.index;
+                      return (
+                        <button
+                          key={shot.id}
+                          type="button"
+                          onClick={() =>
+                            setLightbox((prev) => (prev ? { ...prev, index: dotIdx } : null))
+                          }
+                          aria-label={`View slide ${dotIdx + 1} of ${activeLightboxPlatform.screenshots.length}`}
+                          aria-current={active ? 'true' : undefined}
+                          className={`h-2 rounded-full transition-all cursor-pointer ${
+                            active
+                              ? isDark
+                                ? 'w-6 bg-white'
+                                : 'w-6 bg-[#0284C7]'
+                              : isDark
+                              ? 'w-2 bg-[#404040] hover:bg-[#737373]'
+                              : 'w-2 bg-slate-300 hover:bg-slate-400'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
 
                 <div className="flex items-center gap-2 shrink-0">
                   {activeLightboxPlatform.screenshots.map((shot, sIdx) => {

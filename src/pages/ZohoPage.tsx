@@ -17,6 +17,7 @@ import {
   useIsDesktop,
 } from '../components/motion/MotionPrimitives.tsx';
 import { computeColumnParallax, scrollCardItemVariants } from '../utils/motion.ts';
+import { KeyPerformanceMetrics } from '../components/showcase/KeyPerformanceMetrics.tsx';
 
 interface ZohoPageProps {
   onNavigate: (page: PageId) => void;
@@ -152,6 +153,14 @@ export const ZohoPage: React.FC<ZohoPageProps> = ({
           </ScrollCascadeGrid>
         </ScrollSectionContainer>
       </section>
+
+      {/* Key Performance Metrics */}
+      <KeyPerformanceMetrics
+        theme={theme}
+        defaultScope="zoho"
+        showScopeTabs={false}
+        heading="Zoho Suite Key Performance Metrics"
+      />
     </div>
   );
 };

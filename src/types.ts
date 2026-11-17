@@ -12,12 +12,16 @@ export type PageId =
   | 'odoo'
   | 'zoho'
   | 'it-solutions'
+  | 'demo-websites'
+  | 'erp-showcase'
   | 'industries'
   | 'case-studies'
   | 'portfolio'
   | 'insights'
   | 'contact'
   | 'request-consultation';
+
+export type ShowcaseSectionId = 'website-demo-projects' | 'explore-erp-solutions';
 
 export type ThemeMode = 'dark' | 'light';
 
@@ -126,6 +130,7 @@ export interface QuizState {
 }
 
 export type WebsiteDemoCategory =
+  | 'All Projects'
   | 'All'
   | 'Hospitality'
   | 'Professional Services'
@@ -161,3 +166,24 @@ export interface ERPDemoPlatform {
   highlights: string[];
   screenshots: ERPScreenshotItem[];
 }
+
+export type ERPMetricScope = 'all' | 'erpnext' | 'odoo' | 'zoho';
+
+export interface ERPKPIMetric {
+  id: string;
+  scope: ERPMetricScope;
+  displayValue: string;
+  numericTarget: number;
+  secondaryTarget?: number;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
+  separator?: string;
+  label: string;
+  impactSummary: string;
+  timeframe: string;
+  baseline: string;
+  moduleContext: string;
+  benchmarkPercent: number;
+}
+

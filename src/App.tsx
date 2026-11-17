@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from './types.ts';
 import { Navbar } from './components/Navbar.tsx';
 import { Footer } from './components/Footer.tsx';
@@ -15,7 +15,12 @@ import {
   BackToTopButton,
   PageTransitionOverlay,
 } from './components/motion/MotionPrimitives.tsx';
-import { pageTransitionVariants } from './utils/motion.ts';
+import { EASE_PREMIUM } from './utils/motion.ts';
+import {
+  PAGE_SEO_META,
+  getPageFromPathname,
+  getPathForPage,
+} from './utils/routing.ts';
 
 // Pages
 import { HomePage } from './pages/HomePage.tsx';
@@ -26,6 +31,8 @@ import { ERPNextPage } from './pages/ERPNextPage.tsx';
 import { OdooPage } from './pages/OdooPage.tsx';
 import { ZohoPage } from './pages/ZohoPage.tsx';
 import { ITSolutionsPage } from './pages/ITSolutionsPage.tsx';
+import { DemoWebsitesPage } from './pages/DemoWebsitesPage.tsx';
+import { ERPShowcasePage } from './pages/ERPShowcasePage.tsx';
 import { IndustriesPage } from './pages/IndustriesPage.tsx';
 import { CaseStudiesPage } from './pages/CaseStudiesPage.tsx';
 import { PortfolioPage } from './pages/PortfolioPage.tsx';
@@ -33,7 +40,9 @@ import { InsightsPage } from './pages/InsightsPage.tsx';
 import { ContactPage } from './pages/ContactPage.tsx';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [currentPage, setCurrentPage] = useState<PageId>(() =>
+    getPageFromPathname(window.location.pathname)
+  );
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('techsphere_theme_v2');
     if (saved === 'light' || saved === 'dark') return saved;
@@ -57,27 +66,61 @@ export default function App() {
     localStorage.setItem('techsphere_theme_v2', theme);
   }, [theme]);
 
+  // Sync browser back/forward navigation with URL pathname
+  useEffect(() => {
+    const onPopState = () => {
+      setCurrentPage(getPageFromPathname(window.location.pathname));
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // Update document title & meta description per active route for SEO
+  useEffect(() => {
+    const seo = PAGE_SEO_META[currentPage] ?? PAGE_SEO_META.home;
+    document.title = seo.title;
+
+    const descMeta = document.querySelector('meta[name="description"]');
+    if (descMeta) {
+      descMeta.setAttribute('content', seo.description);
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', seo.title);
+    }
+
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) {
+      ogDesc.setAttribute('content', seo.description);
+    }
+  }, [currentPage]);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const handleNavigate = (page: PageId) => {
+    const targetPath = getPathForPage(page);
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ page }, '', targetPath);
+    }
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion || currentPage !== page ? 'auto' : 'smooth' });
   };
 
   const handleConsultationSelect = (serviceName: string, notes: string = '') => {
     setSelectedService(serviceName);
     setSelectedMessage(notes);
-    setCurrentPage('request-consultation');
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    handleNavigate('request-consultation');
   };
 
   const isDark = theme === 'dark';
 
   return (
     <div
-      className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+      className={`min-h-screen flex flex-col font-sans ${
         isDark
           ? 'bg-[#090909] text-[#F5F5F5] selection:bg-white selection:text-[#090909]'
           : 'bg-white text-[#172033] selection:bg-sky-500 selection:text-white'
@@ -97,16 +140,14 @@ export default function App() {
         onToggleTheme={toggleTheme}
       />
 
-      {/* Main Page Body with Animated Transition */}
+      {/* Main Page Body with Instant Mount + Smooth Entrance Transition */}
       <main className={`flex-1 ${currentPage === 'home' ? '' : 'pt-24 pb-16'}`}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPage}
-            variants={prefersReducedMotion ? undefined : pageTransitionVariants}
-            initial={prefersReducedMotion ? false : 'initial'}
-            animate="animate"
-            exit={prefersReducedMotion ? undefined : 'exit'}
-          >
+        <motion.div
+          key={currentPage}
+          initial={prefersReducedMotion ? false : { opacity: 0.88, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: EASE_PREMIUM }}
+        >
             {currentPage === 'home' && (
               <HomePage
                 onNavigate={handleNavigate}
@@ -167,6 +208,22 @@ export default function App() {
               />
             )}
 
+            {currentPage === 'demo-websites' && (
+              <DemoWebsitesPage
+                onNavigate={handleNavigate}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                theme={theme}
+              />
+            )}
+
+            {currentPage === 'erp-showcase' && (
+              <ERPShowcasePage
+                onNavigate={handleNavigate}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                theme={theme}
+              />
+            )}
+
             {currentPage === 'industries' && (
               <IndustriesPage
                 onNavigate={handleNavigate}
@@ -195,8 +252,7 @@ export default function App() {
                 initialMessage={selectedMessage}
               />
             )}
-          </motion.div>
-        </AnimatePresence>
+        </motion.div>
       </main>
 
       {/* Global Enterprise Footer */}
