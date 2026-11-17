@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="favBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0b172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+    <linearGradient id="favArrow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="40%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <radialGradient id="favNode" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </radialGradient>
+    <filter id="favGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="80" fill="url(#favBg)" />
+
+  <g filter="url(#favGlow)">
+    <!-- Globe Lines -->
+    <circle cx="200" cy="195" r="102" fill="none" stroke="#0284c7" stroke-width="3" opacity="0.8" />
+    <circle cx="200" cy="195" r="102" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.95" />
+
+    <path d="M 200,93 C 165,140 165,250 200,297" fill="none" stroke="#0284c7" stroke-width="2.2" opacity="0.8" />
+    <path d="M 200,93 C 235,140 235,250 200,297" fill="none" stroke="#0284c7" stroke-width="2.2" opacity="0.8" />
+    <path d="M 112,150 C 150,185 250,185 288,150" fill="none" stroke="#0ea5e9" stroke-width="2" opacity="0.75" />
+    <path d="M 104,215 C 145,260 255,260 296,215" fill="none" stroke="#0284c7" stroke-width="2" opacity="0.7" />
+
+    <!-- Struts -->
+    <line x1="200" y1="93" x2="152" y2="120" stroke="#0ea5e9" stroke-width="2.2" />
+    <line x1="200" y1="93" x2="252" y2="122" stroke="#0ea5e9" stroke-width="2.2" />
+    <line x1="152" y1="120" x2="180" y2="148" stroke="#38bdf8" stroke-width="2.2" />
+    <line x1="180" y1="148" x2="245" y2="175" stroke="#0284c7" stroke-width="2.2" />
+    <line x1="152" y1="120" x2="118" y2="175" stroke="#0284c7" stroke-width="2.2" />
+    <line x1="118" y1="175" x2="148" y2="215" stroke="#38bdf8" stroke-width="2.2" />
+    <line x1="148" y1="215" x2="180" y2="148" stroke="#0284c7" stroke-width="2.2" />
+    <line x1="180" y1="148" x2="215" y2="215" stroke="#38bdf8" stroke-width="2.4" />
+    <line x1="215" y1="215" x2="245" y2="175" stroke="#0284c7" stroke-width="2" />
+    <line x1="215" y1="215" x2="242" y2="265" stroke="#0ea5e9" stroke-width="2" />
+    <line x1="180" y1="255" x2="200" y2="297" stroke="#0284c7" stroke-width="2.2" />
+    <line x1="242" y1="265" x2="200" y2="297" stroke="#0284c7" stroke-width="2" />
+
+    <!-- Nodes -->
+    <circle cx="200" cy="93" r="7" fill="url(#favNode)" />
+    <circle cx="152" cy="120" r="7" fill="url(#favNode)" />
+    <circle cx="118" cy="175" r="8" fill="url(#favNode)" />
+    <circle cx="180" cy="148" r="14" fill="url(#favNode)" />
+    <circle cx="252" cy="122" r="7" fill="url(#favNode)" />
+    <circle cx="245" cy="175" r="9" fill="url(#favNode)" />
+    <circle cx="215" cy="215" r="11" fill="url(#favNode)" />
+    <circle cx="148" cy="215" r="12" fill="url(#favNode)" />
+    <circle cx="180" cy="255" r="9" fill="url(#favNode)" />
+    <circle cx="242" cy="265" r="12" fill="url(#favNode)" />
+    <circle cx="200" cy="297" r="7" fill="url(#favNode)" />
+
+    <!-- Swoosh Arrow -->
+    <path
+      d="M 102,246 C 115,272 175,276 226,238 C 268,206 288,166 312,135 L 298,131 L 332,108 L 322,148 L 308,141 C 278,178 252,226 202,258 C 152,282 114,270 102,246 Z"
+      fill="url(#favArrow)"
+    />
+  </g>
+</svg>

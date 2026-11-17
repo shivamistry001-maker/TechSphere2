@@ -1,0 +1,423 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useForm, ValidationError } from '@formspree/react';
+import {
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Phone,
+  Mail,
+  ShieldCheck,
+  Building,
+  User,
+  MessageSquare,
+  FileSpreadsheet,
+} from 'lucide-react';
+import { ConsultationFormData, ThemeMode } from '../types.ts';
+import { COMPANY_INFO } from '../data/companyData.ts';
+
+interface ContactConsultationFormProps {
+  initialService?: string;
+  initialMessage?: string;
+  theme?: ThemeMode;
+}
+
+export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = ({
+  initialService = 'ERP Consultancy',
+  initialMessage = '',
+  theme = 'light',
+}) => {
+  const [state, handleSubmit, reset] = useForm('xaqrejgl');
+
+  const [formData, setFormData] = useState<ConsultationFormData>({
+    fullName: '',
+    companyName: '',
+    email: '',
+    phone: '',
+    industry: 'Manufacturing',
+    companySize: '16-50 employees',
+    interestedService: initialService,
+    currentERP: 'Excel / Spreadsheets',
+    message: initialMessage,
+  });
+
+  const isDark = theme === 'dark';
+
+  const handleReset = () => {
+    reset();
+    setFormData({
+      fullName: '',
+      companyName: '',
+      email: '',
+      phone: '',
+      industry: 'Manufacturing',
+      companySize: '16-50 employees',
+      interestedService: 'ERP Consultancy',
+      currentERP: 'Excel / Spreadsheets',
+      message: '',
+    });
+  };
+
+  return (
+    <div
+      className={`rounded-3xl border p-6 sm:p-10 transition-all ${
+        isDark
+          ? 'bg-slate-900/85 border-sky-500/20 shadow-2xl shadow-black/60 backdrop-blur-xl'
+          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50 backdrop-blur-xl'
+      }`}
+    >
+      <div className="mb-8">
+        <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
+          Direct Strategic Advisory
+        </span>
+        <h3 className={`text-2xl sm:text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          Let's Build What's Next.
+        </h3>
+        <p className={`text-sm mt-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+          Tell us about your business, your challenges and what you want to improve. We respond within 24 business hours.
+        </p>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {state.succeeded ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="py-10 text-center space-y-5"
+          >
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/20">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <h4 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Thank You!
+              </h4>
+              <p className="text-base font-semibold text-sky-500">
+                Your consultation request has been received. Our team will get back to you shortly.
+              </p>
+              {formData.fullName && (
+                <p className={`text-sm max-w-md mx-auto leading-relaxed pt-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  Thank you, <strong className={isDark ? 'text-white' : 'text-slate-900'}>{formData.fullName}</strong>. A senior TechSphere ERP &amp; IT consultant will review your specifications and connect shortly.
+                </p>
+              )}
+            </div>
+
+            <div
+              className={`p-4 rounded-xl text-xs max-w-md mx-auto text-left space-y-1.5 border ${
+                isDark ? 'bg-slate-950/60 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+              }`}
+            >
+              <div><strong>Service Requested:</strong> {formData.interestedService}</div>
+              <div><strong>Current System:</strong> {formData.currentERP}</div>
+              {formData.email && <div><strong>Email Confirmation:</strong> {formData.email}</div>}
+            </div>
+
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                className={`px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors ${
+                  isDark
+                    ? 'border-slate-700 hover:bg-slate-800 text-slate-300'
+                    : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                Submit Another Request
+              </button>
+              <a
+                href={`https://wa.me/${COMPANY_INFO.whatsappNumber}?text=${encodeURIComponent(
+                  `Hi TechSphere, I just submitted a consultation request for ${formData.companyName || formData.fullName}.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+              >
+                Fast-Track via WhatsApp
+              </a>
+            </div>
+          </motion.div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Formspree Error Banner */}
+            {state.errors && (
+              <div className={`p-4 rounded-xl border text-xs flex items-center gap-2 ${
+                isDark ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-red-50 border-red-200 text-red-700'
+              }`}>
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">Unable to transmit your request at this moment.</p>
+                  <p className={`text-[11px] mt-0.5 ${isDark ? 'text-red-400' : 'text-red-600'}`}>Please check your inputs or reach out directly to techsphereconsultancy@gmail.com or call 8320806363.</p>
+                  <ValidationError errors={state.errors} className={`text-[11px] mt-1 ${isDark ? 'text-red-400' : 'text-red-600'}`} />
+                </div>
+              </div>
+            )}
+
+            {/* Row 1: Name & Company */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="fullName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Full Name <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    placeholder="e.g. John Doe"
+                    className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                      isDark
+                        ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
+                        : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+                    }`}
+                  />
+                </div>
+                <ValidationError prefix="Full Name" field="fullName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+                <ValidationError prefix="Full Name" field="name" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+
+              <div>
+                <label htmlFor="companyName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Company Name
+                </label>
+                <input
+                  id="companyName"
+                  name="companyName"
+                  type="text"
+                  value={formData.companyName}
+                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                  placeholder="e.g. Acme Industrial Corp"
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+                  }`}
+                />
+                <ValidationError prefix="Company Name" field="companyName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+            </div>
+
+            {/* Row 2: Email & Phone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="email" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Email Address <span className="text-red-400">*</span>
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="name@company.com"
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+                  }`}
+                />
+                <ValidationError prefix="Email" field="email" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Phone Number <span className="text-red-400">*</span>
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="e.g. +91 83208 06363"
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+                  }`}
+                />
+                <ValidationError prefix="Phone" field="phone" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+            </div>
+
+            {/* Row 3: Industry & Company Size */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="industry" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Industry
+                </label>
+                <select
+                  id="industry"
+                  name="industry"
+                  value={formData.industry}
+                  onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
+                  }`}
+                >
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Retail">Retail &amp; POS</option>
+                  <option value="Distribution">Wholesale &amp; Distribution</option>
+                  <option value="Ecommerce">E-commerce</option>
+                  <option value="Services">Professional Services</option>
+                  <option value="Logistics">Logistics &amp; Supply Chain</option>
+                  <option value="Healthcare">Healthcare &amp; Clinics</option>
+                  <option value="Education">Education &amp; Training</option>
+                  <option value="Real Estate">Real Estate &amp; Property</option>
+                  <option value="Startup">Startup / Scaleup</option>
+                  <option value="Other">Other Specialized Sector</option>
+                </select>
+                <ValidationError prefix="Industry" field="industry" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+
+              <div>
+                <label htmlFor="companySize" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Company Size
+                </label>
+                <select
+                  id="companySize"
+                  name="companySize"
+                  value={formData.companySize}
+                  onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
+                  }`}
+                >
+                  <option value="1-15 employees">1 - 15 employees</option>
+                  <option value="16-50 employees">16 - 50 employees</option>
+                  <option value="51-200 employees">51 - 200 employees</option>
+                  <option value="200+ employees">200+ employees</option>
+                </select>
+                <ValidationError prefix="Company Size" field="companySize" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+            </div>
+
+            {/* Row 4: Interested Service & Current ERP */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="interestedService" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Interested Service
+                </label>
+                <select
+                  id="interestedService"
+                  name="interestedService"
+                  value={formData.interestedService}
+                  onChange={(e) => setFormData({ ...formData, interestedService: e.target.value })}
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
+                  }`}
+                >
+                  <option value="ERP Consultancy">ERP Consultancy</option>
+                  <option value="ERP Implementation">ERP Implementation</option>
+                  <option value="ERPNext">ERPNext</option>
+                  <option value="Odoo">Odoo</option>
+                  <option value="Zoho">Zoho</option>
+                  <option value="Custom ERP">Custom ERP</option>
+                  <option value="Website Development">Website Development</option>
+                  <option value="Automation">Automation</option>
+                  <option value="IT Consulting">IT Consulting</option>
+                  <option value="Other">Other</option>
+                </select>
+                <ValidationError prefix="Interested Service" field="interestedService" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+
+              <div>
+                <label htmlFor="currentERP" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  Current ERP / Software
+                </label>
+                <select
+                  id="currentERP"
+                  name="currentERP"
+                  value={formData.currentERP}
+                  onChange={(e) => setFormData({ ...formData, currentERP: e.target.value })}
+                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
+                    isDark
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
+                  }`}
+                >
+                  <option value="None">None</option>
+                  <option value="Excel / Spreadsheets">Excel / Spreadsheets</option>
+                  <option value="ERPNext">ERPNext</option>
+                  <option value="Odoo">Odoo</option>
+                  <option value="Zoho">Zoho</option>
+                  <option value="SAP">SAP</option>
+                  <option value="Oracle">Oracle</option>
+                  <option value="Tally">Tally</option>
+                  <option value="Other">Other</option>
+                </select>
+                <ValidationError prefix="Current ERP" field="currentERP" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+              </div>
+            </div>
+
+            {/* Row 5: Message */}
+            <div>
+              <label htmlFor="message" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                Message / Operational Pain Points <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows={4}
+                required
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Describe your current software setup, processes you want to automate, or goals for the ERP implementation..."
+                className={`w-full px-4 py-3 rounded-xl text-sm border transition-all outline-none resize-y ${
+                  isDark
+                    ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
+                    : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+                }`}
+              />
+              <ValidationError prefix="Message" field="message" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <button
+                type="submit"
+                disabled={state.submitting}
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:via-sky-500 hover:to-blue-500 shadow-lg shadow-sky-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+              >
+                {state.submitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Request Consultation</span>
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                <ShieldCheck className="w-4 h-4 text-sky-500" />
+                <span>NDA &amp; Strict Confidentiality Protected</span>
+              </div>
+            </div>
+          </form>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};

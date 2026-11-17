@@ -1,0 +1,218 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { IndustryItem } from '../types.ts';
+
+export const INDUSTRIES_DATA: IndustryItem[] = [
+  {
+    id: 'manufacturing',
+    name: 'Manufacturing',
+    iconName: 'Factory',
+    tagline: 'Multi-level Bill of Materials, shop-floor tracking, and predictive procurement.',
+    challenges: [
+      'Inaccurate raw material inventory and unexpected production halts',
+      'Complex multi-stage BOM tracking and scrap calculation errors',
+      'Difficulty determining accurate per-unit manufacturing cost',
+      'Unsynchronized machinery scheduling and worker capacity planning',
+    ],
+    solutions: [
+      'Work Order & Job Card tracking with shop floor kiosk interface',
+      'Automated material request generation linked to reorder levels',
+      'Accurate landed cost valuation including freight and labor hours',
+      'Integrated quality inspection checkpoints at receipt and dispatch',
+    ],
+    recommendedERP: ['ERPNext', 'Odoo Manufacturing', 'Custom MRP Modules'],
+  },
+  {
+    id: 'retail',
+    name: 'Retail',
+    iconName: 'Store',
+    tagline: 'Unified Point-of-Sale, omnichannel inventory, and loyalty rewards.',
+    challenges: [
+      'Inventory discrepancies between physical retail stores and warehouse',
+      'Slow checkout times during rush hours due to laggy POS systems',
+      'Fragmented customer purchase history across physical registers',
+      'Manual price updates and promotional discount coordination',
+    ],
+    solutions: [
+      'Fast offline-capable Point of Sale (POS) synced with central inventory',
+      'Centralized multi-store product catalog and pricing rules',
+      'Unified customer profiles and loyalty rewards points system',
+      'Automated replenishment transfers between central hub and branch stores',
+    ],
+    recommendedERP: ['Odoo POS & Retail', 'ERPNext Retail', 'Zoho Books & POS'],
+  },
+  {
+    id: 'distribution',
+    name: 'Distribution & Wholesale',
+    iconName: 'Truck',
+    tagline: 'High-volume order processing, batch tracking, and credit limit controls.',
+    challenges: [
+      'Handling complex bulk pricing tiers, discounts, and customer credit limits',
+      'Managing expiry dates and lot/serial numbers for sensitive goods',
+      'Delays in dispatching shipments and updating order tracking to clients',
+      'Managing sales rep commissions and field order collection manually',
+    ],
+    solutions: [
+      'Rule-based tiered pricing rules and automated credit limit enforcement',
+      'Strict FIFO / FEFO batch picking and barcode mobile verification',
+      'Customer self-service ordering portal with live stock availability',
+      'Sales rep mobile app for on-field order booking and collection recording',
+    ],
+    recommendedERP: ['ERPNext', 'Odoo Inventory', 'Custom B2B Portal'],
+  },
+  {
+    id: 'ecommerce',
+    name: 'E-commerce',
+    iconName: 'ShoppingBag',
+    tagline: 'Instant marketplace synchronization, automated fulfillment, and return handling.',
+    challenges: [
+      'Overselling on marketplaces due to delayed stock synchronization',
+      'Manual export and import of orders from Shopify, WooCommerce, or Amazon',
+      'Complex return and refund reconciliations across multiple payment gateways',
+      'High shipping carrier costs and disjointed label generation',
+    ],
+    solutions: [
+      'Real-time bi-directional inventory synchronization via webhooks',
+      'Automated order ingestion with instantaneous invoice creation',
+      'Integrated shipping carrier API for 1-click label printing & tracking updates',
+      'Automated customer return authorization and refund status notifications',
+    ],
+    recommendedERP: ['Odoo eCommerce', 'ERPNext with Shopify/Woo Connector', 'Zoho Inventory'],
+  },
+  {
+    id: 'professional-services',
+    name: 'Professional Services & Agencies',
+    iconName: 'Briefcase',
+    tagline: 'Project milestone billing, timesheets, resource utilization, and client portals.',
+    challenges: [
+      'Unbilled billable hours due to informal or delayed timesheet submission',
+      'Project scope creep and lack of visibility into actual project profitability',
+      'Delayed client invoicing and prolonged payment collection cycles',
+      'Disjointed communication tools leading to misaligned project deliverables',
+    ],
+    solutions: [
+      'Mobile and browser-based timesheet logging mapped directly to projects',
+      'Automated milestone and time-and-materials recurring client invoicing',
+      'Real-time project profit-and-loss tracking (budgeted vs. actual costs)',
+      'Dedicated client portal for reviewing deliverables, tickets, and payments',
+    ],
+    recommendedERP: ['Zoho Projects & Books', 'Odoo Services Suite', 'ERPNext Projects'],
+  },
+  {
+    id: 'logistics',
+    name: 'Logistics & Supply Chain',
+    iconName: 'Navigation',
+    tagline: 'Fleet coordination, freight documentation, warehouse transit, and route dispatch.',
+    challenges: [
+      'Disconnected dispatch planning and manual airway/lading bill creation',
+      'Lack of real-time visibility into transit checkpoints and delays',
+      'Complex fuel surcharge and subcontractor freight invoicing calculations',
+      'Manual proof-of-delivery (POD) collection and paper documentation filing',
+    ],
+    solutions: [
+      'Digital manifest, consignment note, and electronic POD capture',
+      'Driver mobile application for instant status updates and geofenced arrivals',
+      'Automated freight rate calculation engine and carrier billing sync',
+      'Centralized dispatch coordination console with route planning feeds',
+    ],
+    recommendedERP: ['ERPNext Logistics Customization', 'Odoo Fleet & Delivery', 'Custom Logistics Engine'],
+  },
+  {
+    id: 'healthcare',
+    name: 'Healthcare & Clinics',
+    iconName: 'Stethoscope',
+    tagline: 'Strict batch expiry tracking, procurement audits, and patient billing compliance.',
+    challenges: [
+      'Medical supply inventory stockouts or holding expired pharmaceutical batches',
+      'Complex patient billing involving co-pays, procedures, and consumables',
+      'Strict regulatory compliance and confidentiality requirements',
+      'Fragmented scheduling between doctors, diagnostic labs, and reception',
+    ],
+    solutions: [
+      'Automated near-expiry alerts with first-to-expire (FEFO) dispensing rules',
+      'Consolidated itemized patient invoicing linking consumables to procedures',
+      'Role-based access control ensuring patient records privacy and audit trails',
+      'Integrated appointment scheduling and automated reminder notifications',
+    ],
+    recommendedERP: ['ERPNext Healthcare Module', 'Odoo Healthcare Workflows', 'Custom Clinic ERP'],
+  },
+  {
+    id: 'education',
+    name: 'Education & Training',
+    iconName: 'GraduationCap',
+    tagline: 'Student fee management, enrollment lifecycles, and institutional asset tracking.',
+    challenges: [
+      'Uncollected tuition fees and manual follow-ups with parents/students',
+      'Paper-heavy admission, student onboarding, and document verification',
+      'Poor visibility into campus asset allocation and library resources',
+      'Fragmented examination records and manual grade card publishing',
+    ],
+    solutions: [
+      'Automated multi-installment fee schedules with payment gateway integration',
+      'Online student admission and document verification portal',
+      'Asset and laboratory equipment maintenance tracking with barcoding',
+      'Consolidated student performance ledger and automated report card export',
+    ],
+    recommendedERP: ['ERPNext Education', 'Odoo Education', 'Custom Student Portal'],
+  },
+  {
+    id: 'real-estate',
+    name: 'Real Estate & Property',
+    iconName: 'Building2',
+    tagline: 'Lease schedule automation, maintenance ticketing, and tenant billing.',
+    challenges: [
+      'Managing recurring lease renewals, escalations, and security deposits',
+      'Untracked maintenance requests and dispute resolution delays',
+      'Multiple property portfolios managed across scattered individual spreadsheets',
+      'Delayed vendor payments for facilities repair and property upkeep',
+    ],
+    solutions: [
+      'Automated monthly rental invoicing with automated late fee calculations',
+      'Tenant self-service ticketing portal for maintenance and repair requests',
+      'Unified property occupancy, vacancy, and yield analysis dashboards',
+      'Contractor work order management with digital sign-off and billing approval',
+    ],
+    recommendedERP: ['Odoo Property Management', 'ERPNext Real Estate Customization', 'Zoho CRM & Creator'],
+  },
+  {
+    id: 'startups',
+    name: 'Startups & Scaleups',
+    iconName: 'Rocket',
+    tagline: 'Lean tech stack, rapid financial instrumentation, and automated customer onboarding.',
+    challenges: [
+      'Limited operational bandwidth to manage manual back-office tasks',
+      'Need for rapid financial reporting for investors without huge upfront costs',
+      'Fast-changing business model and frequent workflow iterations',
+      'Tool fragmentation across a dozen disconnected free-tier SaaS apps',
+    ],
+    solutions: [
+      'Rapid-deployment cloud ERP for streamlined cashflow and burn-rate tracking',
+      'Automated Stripe/payment gateway subscription revenue accounting',
+      'Centralized customer data warehouse to avoid tool subscription sprawl',
+      'Agile modular architecture designed to scale seamlessly with series funding',
+    ],
+    recommendedERP: ['Zoho One Suite', 'Odoo Cloud Starter', 'ERPNext Cloud'],
+  },
+  {
+    id: 'smes',
+    name: 'Growing SMEs',
+    iconName: 'Building',
+    tagline: 'Transitioning from spreadsheet chaos to enterprise-grade operational discipline.',
+    challenges: [
+      'Business owner is overwhelmed acting as the bottleneck for every operational sign-off',
+      'Lack of visibility into real departmental costs and profit leakages',
+      'Difficulty onboarding new managers without documented standard workflows',
+      'Hesitation over high enterprise software license fees from legacy vendors',
+    ],
+    solutions: [
+      'Clear digital delegation with automated tiered approval workflows',
+      'Transparent real-time P&L, balance sheet, and departmental margin reports',
+      'Standardized digital forms and checklists that new staff can follow easily',
+      'Cost-effective modern ERP without burdensome recurring user penalties',
+    ],
+    recommendedERP: ['ERPNext', 'Odoo', 'Zoho Books / One'],
+  },
+];

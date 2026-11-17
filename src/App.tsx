@@ -1,0 +1,200 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { PageId, ThemeMode } from './types.ts';
+import { Navbar } from './components/Navbar.tsx';
+import { Footer } from './components/Footer.tsx';
+import { FloatingContact } from './components/FloatingContact.tsx';
+import { LegalModal } from './components/LegalModal.tsx';
+
+// Pages
+import { HomePage } from './pages/HomePage.tsx';
+import { AboutPage } from './pages/AboutPage.tsx';
+import { ServicesPage } from './pages/ServicesPage.tsx';
+import { ERPSolutionsPage } from './pages/ERPSolutionsPage.tsx';
+import { ERPNextPage } from './pages/ERPNextPage.tsx';
+import { OdooPage } from './pages/OdooPage.tsx';
+import { ZohoPage } from './pages/ZohoPage.tsx';
+import { ITSolutionsPage } from './pages/ITSolutionsPage.tsx';
+import { IndustriesPage } from './pages/IndustriesPage.tsx';
+import { CaseStudiesPage } from './pages/CaseStudiesPage.tsx';
+import { PortfolioPage } from './pages/PortfolioPage.tsx';
+import { InsightsPage } from './pages/InsightsPage.tsx';
+import { ContactPage } from './pages/ContactPage.tsx';
+
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('techsphere_theme_v2');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'light';
+  });
+  const [selectedService, setSelectedService] = useState<string>('ERP Consultancy');
+  const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+
+  // Apply theme class to document root
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+    }
+    localStorage.setItem('techsphere_theme_v2', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const handleNavigate = (page: PageId) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleConsultationSelect = (serviceName: string) => {
+    setSelectedService(serviceName);
+    setCurrentPage('request-consultation');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isDark = theme === 'dark';
+
+  return (
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+        isDark
+          ? 'bg-[#070D1C] text-slate-100 selection:bg-sky-500 selection:text-white'
+          : 'bg-white text-[#172033] selection:bg-sky-500 selection:text-white'
+      }`}
+    >
+      {/* Top Sticky Enterprise Navigation */}
+      <Navbar
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+
+      {/* Main Page Body with Animated Transition */}
+      <main className={`flex-1 ${currentPage === 'home' ? '' : 'pt-24 pb-16'}`}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+          >
+            {currentPage === 'home' && (
+              <HomePage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onSelectServiceForConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'about' && (
+              <AboutPage onNavigate={handleNavigate} theme={theme} />
+            )}
+
+            {currentPage === 'services' && (
+              <ServicesPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onSelectServiceForConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'erp-solutions' && (
+              <ERPSolutionsPage onNavigate={handleNavigate} theme={theme} />
+            )}
+
+            {currentPage === 'erpnext' && (
+              <ERPNextPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onBookConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'odoo' && (
+              <OdooPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onBookConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'zoho' && (
+              <ZohoPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onBookConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'it-solutions' && (
+              <ITSolutionsPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onBookConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'industries' && (
+              <IndustriesPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onBookConsultation={handleConsultationSelect}
+              />
+            )}
+
+            {currentPage === 'case-studies' && (
+              <CaseStudiesPage onNavigate={handleNavigate} theme={theme} />
+            )}
+
+            {currentPage === 'portfolio' && (
+              <PortfolioPage onNavigate={handleNavigate} theme={theme} />
+            )}
+
+            {currentPage === 'insights' && (
+              <InsightsPage onNavigate={handleNavigate} theme={theme} />
+            )}
+
+            {(currentPage === 'contact' || currentPage === 'request-consultation') && (
+              <ContactPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                initialService={selectedService}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
+      {/* Global Enterprise Footer */}
+      <Footer
+        onNavigate={handleNavigate}
+        theme={theme}
+        onOpenLegal={(type) => setLegalModalType(type)}
+      />
+
+      {/* Floating Action Controls (WhatsApp, Direct Telephone, Email) */}
+      <FloatingContact />
+
+      {/* Legal & Policy Modals (Privacy, Terms, Cookies) */}
+      <LegalModal
+        type={legalModalType}
+        onClose={() => setLegalModalType(null)}
+        theme={theme}
+      />
+    </div>
+  );
+}
