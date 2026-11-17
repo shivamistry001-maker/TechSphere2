@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import React, { useState, useRef } from 'react';
+import { motion, useReducedMotion, useScroll } from 'motion/react';
 import {
   Search,
   ClipboardList,
@@ -14,6 +14,16 @@ import {
   LifeBuoy,
 } from 'lucide-react';
 import { ThemeMode } from '../../types.ts';
+import { EASE_PREMIUM, computeColumnParallax, scrollCardItemVariants } from '../../utils/motion.ts';
+import {
+  CardGlareOverlay,
+  ScrollCascadeBlock,
+  ScrollCascadeGrid,
+  ScrollParallaxLayer,
+  ScrollSectionContainer,
+  updateCardGlareCoordinates,
+  useIsDesktop,
+} from '../motion/MotionPrimitives.tsx';
 
 interface ProcessSectionProps {
   theme?: ThemeMode;
@@ -71,27 +81,39 @@ const PROCESS_STEPS = [
 ];
 
 export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' }) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const prefersReducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop(1024);
   const isDark = theme === 'dark';
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
 
   return (
     <section
-      className={`py-20 sm:py-28 transition-colors duration-300 ${
-        isDark ? 'bg-[#070D1C]' : 'bg-white'
+      ref={sectionRef}
+      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
+        isDark ? 'bg-[#090909]' : 'bg-white'
       }`}
       aria-labelledby="process-heading"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="max-w-2xl mb-14 space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0284C7] dark:text-[#38BDF8]">
+        <ScrollCascadeBlock className="max-w-2xl mb-14 space-y-3">
+          <p
+            className={`text-xs font-semibold uppercase tracking-[0.18em] ${
+              isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+            }`}
+          >
             Our Working Process
           </p>
           <h2
             id="process-heading"
             className={`font-display font-extrabold tracking-tight leading-[1.1] text-balance ${
-              isDark ? 'text-white' : 'text-[#172033]'
+              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
             }`}
             style={{ fontSize: 'clamp(1.85rem, 3.4vw, 2.85rem)' }}
           >
@@ -99,25 +121,29 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
           </h2>
           <p
             className={`text-sm sm:text-base leading-relaxed ${
-              isDark ? 'text-slate-400' : 'text-slate-600'
+              isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
             }`}
           >
             Every engagement follows six transparent milestones designed to minimize operational disruption and drive lasting team adoption.
           </p>
-        </div>
+        </ScrollCascadeBlock>
 
         {/* Desktop Connecting Timeline Indicator Bar */}
-        <div className="hidden lg:block relative mb-10">
+        <ScrollCascadeBlock className="hidden lg:block relative mb-10">
           <div
             className={`h-[2px] w-full rounded-full ${
-              isDark ? 'bg-white/10' : 'bg-[#101B35]/10'
+              isDark ? 'bg-[#303030]' : 'bg-[#101B35]/10'
             }`}
           />
           <motion.div
-            className="absolute top-0 left-0 h-[2px] rounded-full bg-gradient-to-r from-[#38BDF8] to-[#0284C7]"
+            className={`absolute top-0 left-0 h-[2px] rounded-full ${
+              isDark
+                ? 'bg-gradient-to-r from-[#A3A3A3] to-white'
+                : 'bg-gradient-to-r from-[#38BDF8] to-[#0284C7]'
+            }`}
             initial={false}
             animate={{ width: `${((activeStep + 1) / PROCESS_STEPS.length) * 100}%` }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           />
           <div className="grid grid-cols-6 gap-4 -mt-[9px]">
             {PROCESS_STEPS.map((step, idx) => {
@@ -135,11 +161,15 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                   <span
                     className={`w-4 h-4 rounded-full border-2 transition-all duration-200 ${
                       isCurrent
-                        ? 'bg-[#38BDF8] border-[#101B35] dark:border-white scale-125 shadow-[0_0_14px_rgba(56,189,248,0.65)]'
+                        ? isDark
+                          ? 'bg-white border-[#090909] scale-125 shadow-[0_0_14px_rgba(255,255,255,0.55)]'
+                          : 'bg-[#38BDF8] border-[#101B35] scale-125 shadow-[0_0_14px_rgba(56,189,248,0.65)]'
                         : isCompleted
-                        ? 'bg-[#0284C7] border-[#38BDF8]'
+                        ? isDark
+                          ? 'bg-[#D4D4D4] border-white'
+                          : 'bg-[#0284C7] border-[#38BDF8]'
                         : isDark
-                        ? 'bg-[#070D1C] border-slate-600 group-hover:border-[#38BDF8]'
+                        ? 'bg-[#090909] border-[#525252] group-hover:border-white'
                         : 'bg-white border-slate-300 group-hover:border-[#0284C7]'
                     }`}
                   />
@@ -147,94 +177,108 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
               );
             })}
           </div>
-        </div>
+        </ScrollCascadeBlock>
 
         {/* 6 Step Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <ScrollCascadeGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {PROCESS_STEPS.map((step, idx) => {
             const Icon = step.icon;
             const isSelected = activeStep === idx;
             return (
-              <motion.div
+              <ScrollParallaxLayer
                 key={step.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{
-                  duration: 0.45,
-                  delay: idx * 0.06,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                onClick={() => setActiveStep(idx)}
-                onMouseEnter={() => setActiveStep(idx)}
-                className={`relative rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
-                  isSelected
-                    ? isDark
-                      ? 'bg-[#101B35] border-[#38BDF8] shadow-[0_18px_40px_rgba(56,189,248,0.12)]'
-                      : 'bg-white border-[#38BDF8] shadow-[0_18px_42px_rgba(16,27,53,0.08)]'
-                    : isDark
-                    ? 'bg-[#0B1429] border-white/10 hover:border-sky-400/35'
-                    : 'bg-[#F5FAFE] border-[#101B35]/[0.07] hover:border-[#38BDF8]/50'
-                }`}
+                scrollYProgress={scrollYProgress}
+                yRange={computeColumnParallax(idx, 3, 12)}
+                enabled={isDesktop}
+                className="h-full"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <span
-                      className={`font-display text-2xl font-extrabold tabular-nums transition-colors ${
-                        isSelected
-                          ? 'text-[#0284C7] dark:text-[#38BDF8]'
-                          : isDark
-                          ? 'text-slate-500'
-                          : 'text-[#101B35]/35'
-                      }`}
-                    >
-                      {step.number}
-                    </span>
-
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${
-                        isSelected
-                          ? 'bg-[#101B35] border-[#101B35] text-[#38BDF8] dark:bg-[#38BDF8] dark:border-[#38BDF8] dark:text-[#101B35]'
-                          : isDark
-                          ? 'bg-[#101B35] border-white/10 text-[#38BDF8]'
-                          : 'bg-white border-[#101B35]/[0.08] text-[#0284C7]'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  <h3
-                    className={`font-display text-lg font-bold mb-2 ${
-                      isDark ? 'text-white' : 'text-[#172033]'
-                    }`}
-                  >
-                    {step.number} – {step.title}
-                  </h3>
-
-                  <p
-                    className={`text-xs sm:text-sm leading-relaxed ${
-                      isDark ? 'text-slate-300' : 'text-slate-600'
-                    }`}
-                  >
-                    {step.summary}
-                  </p>
-                </div>
-
-                <div
-                  className={`mt-5 pt-3 border-t text-[11px] font-medium ${
-                    isDark
-                      ? 'border-white/10 text-slate-400'
-                      : 'border-[#101B35]/[0.07] text-slate-500'
+                <motion.div
+                  variants={scrollCardItemVariants}
+                  whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
+                  onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
+                  onClick={() => setActiveStep(idx)}
+                  onMouseEnter={() => setActiveStep(idx)}
+                  className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                    isSelected
+                      ? isDark
+                        ? 'bg-[#1D1D1D] border-white shadow-[0_18px_40px_rgba(0,0,0,0.55)]'
+                        : 'bg-white border-[#38BDF8] shadow-[0_18px_42px_rgba(16,27,53,0.08)]'
+                      : isDark
+                      ? 'bg-[#171717] border-[#303030] hover:border-white/40'
+                      : 'bg-[#F5FAFE] border-[#101B35]/[0.07] hover:border-[#38BDF8]/50'
                   }`}
                 >
-                  Output: <span className="font-semibold text-[#0284C7] dark:text-[#38BDF8]">{step.deliverable}</span>
-                </div>
-              </motion.div>
+                  <CardGlareOverlay theme={theme} subtle />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-5">
+                      <span
+                        className={`font-display text-2xl font-extrabold tabular-nums transition-colors ${
+                          isSelected
+                            ? isDark
+                              ? 'text-white'
+                              : 'text-[#0284C7]'
+                            : isDark
+                            ? 'text-[#737373]'
+                            : 'text-[#101B35]/35'
+                        }`}
+                      >
+                        {step.number}
+                      </span>
+
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                          isSelected
+                            ? isDark
+                              ? 'bg-white border-white text-[#090909] scale-105'
+                              : 'bg-[#101B35] border-[#101B35] text-[#38BDF8] scale-105'
+                            : isDark
+                            ? 'bg-[#1D1D1D] border-[#303030] text-[#D4D4D4]'
+                            : 'bg-white border-[#101B35]/[0.08] text-[#0284C7]'
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <h3
+                      className={`font-display text-lg font-bold mb-2 ${
+                        isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
+                      }`}
+                    >
+                      {step.number} – {step.title}
+                    </h3>
+
+                    <p
+                      className={`text-xs sm:text-sm leading-relaxed ${
+                        isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
+                      }`}
+                    >
+                      {step.summary}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`relative z-10 mt-5 pt-3 border-t text-[11px] font-medium ${
+                      isDark
+                        ? 'border-[#303030] text-[#A3A3A3]'
+                        : 'border-[#101B35]/[0.07] text-slate-500'
+                    }`}
+                  >
+                    Output:{' '}
+                    <span
+                      className={`font-semibold ${
+                        isDark ? 'text-white' : 'text-[#0284C7]'
+                      }`}
+                    >
+                      {step.deliverable}
+                    </span>
+                  </div>
+                </motion.div>
+              </ScrollParallaxLayer>
             );
           })}
-        </div>
-      </div>
+        </ScrollCascadeGrid>
+      </ScrollSectionContainer>
     </section>
   );
 };

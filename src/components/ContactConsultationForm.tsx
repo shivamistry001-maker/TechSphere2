@@ -3,21 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useForm, ValidationError } from '@formspree/react';
 import {
   Send,
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Phone,
-  Mail,
   ShieldCheck,
-  Building,
-  User,
-  MessageSquare,
-  FileSpreadsheet,
 } from 'lucide-react';
 import { ConsultationFormData, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
@@ -34,6 +28,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
   theme = 'light',
 }) => {
   const [state, handleSubmit, reset] = useForm('xaqrejgl');
+  const prefersReducedMotion = useReducedMotion();
 
   const [formData, setFormData] = useState<ConsultationFormData>({
     fullName: '',
@@ -47,10 +42,23 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
     message: initialMessage,
   });
 
+  const [touched, setTouched] = useState<{ email?: boolean; fullName?: boolean; phone?: boolean }>({});
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      interestedService: initialService || prev.interestedService,
+      message: initialMessage || prev.message,
+    }));
+  }, [initialService, initialMessage]);
+
   const isDark = theme === 'dark';
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
 
   const handleReset = () => {
     reset();
+    setTouched({});
     setFormData({
       fullName: '',
       companyName: '',
@@ -64,22 +72,34 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
     });
   };
 
+  const inputClass = isDark
+    ? 'w-full px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] placeholder-[#737373] focus:border-white focus:ring-1 focus:ring-white/40'
+    : 'w-full px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 outline-none bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30';
+
+  const selectClass = isDark
+    ? 'w-full px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] focus:border-white focus:ring-1 focus:ring-white/40'
+    : 'w-full px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 outline-none bg-white border-slate-300 text-slate-900 focus:border-sky-500';
+
   return (
     <div
       className={`rounded-3xl border p-6 sm:p-10 transition-all ${
         isDark
-          ? 'bg-slate-900/85 border-sky-500/20 shadow-2xl shadow-black/60 backdrop-blur-xl'
+          ? 'bg-[#171717] border-[#303030] shadow-2xl shadow-black/60'
           : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50 backdrop-blur-xl'
       }`}
     >
       <div className="mb-8">
-        <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
+        <span
+          className={`text-xs font-semibold uppercase tracking-wider ${
+            isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+          }`}
+        >
           Direct Strategic Advisory
         </span>
-        <h3 className={`text-2xl sm:text-3xl font-bold mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-          Let's Build What's Next.
+        <h3 className={`text-2xl sm:text-3xl font-bold mt-1 ${isDark ? 'text-[#F5F5F5]' : 'text-slate-900'}`}>
+          Let&apos;s Build What&apos;s Next.
         </h3>
-        <p className={`text-sm mt-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+        <p className={`text-sm mt-2 ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
           Tell us about your business, your challenges and what you want to improve. We respond within 24 business hours.
         </p>
       </div>
@@ -87,12 +107,19 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       <AnimatePresence mode="wait">
         {state.succeeded ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            key="success-view"
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.95 }}
             className="py-10 text-center space-y-5"
           >
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/20">
+            <div
+              className={`w-16 h-16 mx-auto rounded-2xl border flex items-center justify-center ${
+                isDark
+                  ? 'bg-[#1D1D1D] border-white/30 text-white'
+                  : 'bg-emerald-500/20 border-emerald-400/40 text-emerald-500 shadow-lg shadow-emerald-500/20'
+              }`}
+            >
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
@@ -100,11 +127,11 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               <h4 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Thank You!
               </h4>
-              <p className="text-base font-semibold text-sky-500">
+              <p className={`text-base font-semibold ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`}>
                 Your consultation request has been received. Our team will get back to you shortly.
               </p>
               {formData.fullName && (
-                <p className={`text-sm max-w-md mx-auto leading-relaxed pt-1 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                <p className={`text-sm max-w-md mx-auto leading-relaxed pt-1 ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
                   Thank you, <strong className={isDark ? 'text-white' : 'text-slate-900'}>{formData.fullName}</strong>. A senior TechSphere ERP &amp; IT consultant will review your specifications and connect shortly.
                 </p>
               )}
@@ -112,21 +139,29 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
 
             <div
               className={`p-4 rounded-xl text-xs max-w-md mx-auto text-left space-y-1.5 border ${
-                isDark ? 'bg-slate-950/60 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+                isDark ? 'bg-[#111111] border-[#303030] text-[#A3A3A3]' : 'bg-slate-50 border-slate-200 text-slate-600'
               }`}
             >
-              <div><strong>Service Requested:</strong> {formData.interestedService}</div>
-              <div><strong>Current System:</strong> {formData.currentERP}</div>
-              {formData.email && <div><strong>Email Confirmation:</strong> {formData.email}</div>}
+              <div>
+                <strong>Service Requested:</strong> {formData.interestedService}
+              </div>
+              <div>
+                <strong>Current System:</strong> {formData.currentERP}
+              </div>
+              {formData.email && (
+                <div>
+                  <strong>Email Confirmation:</strong> {formData.email}
+                </div>
+              )}
             </div>
 
             <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={handleReset}
-                className={`px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors ${
+                className={`px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                   isDark
-                    ? 'border-slate-700 hover:bg-slate-800 text-slate-300'
+                    ? 'border-[#303030] hover:bg-[#252525] text-[#D4D4D4]'
                     : 'border-slate-300 hover:bg-slate-100 text-slate-700'
                 }`}
               >
@@ -138,7 +173,11 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                  isDark
+                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                }`}
               >
                 Fast-Track via WhatsApp
               </a>
@@ -148,13 +187,17 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Formspree Error Banner */}
             {state.errors && (
-              <div className={`p-4 rounded-xl border text-xs flex items-center gap-2 ${
-                isDark ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-red-50 border-red-200 text-red-700'
-              }`}>
+              <div
+                className={`p-4 rounded-xl border text-xs flex items-center gap-2 ${
+                  isDark ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-red-50 border-red-200 text-red-700'
+                }`}
+              >
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Unable to transmit your request at this moment.</p>
-                  <p className={`text-[11px] mt-0.5 ${isDark ? 'text-red-400' : 'text-red-600'}`}>Please check your inputs or reach out directly to techsphereconsultancy@gmail.com or call 8320806363.</p>
+                  <p className={`text-[11px] mt-0.5 ${isDark ? 'text-red-400' : 'text-red-600'}`}>
+                    Please check your inputs or reach out directly to techsphereconsultancy@gmail.com or call 8320806363.
+                  </p>
                   <ValidationError errors={state.errors} className={`text-[11px] mt-1 ${isDark ? 'text-red-400' : 'text-red-600'}`} />
                 </div>
               </div>
@@ -163,7 +206,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             {/* Row 1: Name & Company */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="fullName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="fullName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Full Name <span className="text-red-400">*</span>
                 </label>
                 <div className="relative">
@@ -173,21 +216,21 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                     type="text"
                     required
                     value={formData.fullName}
+                    onBlur={() => setTouched((prev) => ({ ...prev, fullName: true }))}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     placeholder="e.g. John Doe"
-                    className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                      isDark
-                        ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
-                        : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-                    }`}
+                    className={inputClass}
                   />
                 </div>
+                {touched.fullName && !formData.fullName.trim() && (
+                  <p className="text-[11px] text-red-400 mt-1">Please enter your full name.</p>
+                )}
                 <ValidationError prefix="Full Name" field="fullName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
                 <ValidationError prefix="Full Name" field="name" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
 
               <div>
-                <label htmlFor="companyName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="companyName" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Company Name
                 </label>
                 <input
@@ -197,11 +240,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                   placeholder="e.g. Acme Industrial Corp"
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-                  }`}
+                  className={inputClass}
                 />
                 <ValidationError prefix="Company Name" field="companyName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
@@ -210,7 +249,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             {/* Row 2: Email & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="email" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Email Address <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -219,19 +258,19 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   type="email"
                   required
                   value={formData.email}
+                  onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@company.com"
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-                  }`}
+                  className={inputClass}
                 />
+                {touched.email && formData.email.trim() && !isEmailValid && (
+                  <p className="text-[11px] text-red-400 mt-1">Please enter a valid work email address.</p>
+                )}
                 <ValidationError prefix="Email" field="email" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
 
               <div>
-                <label htmlFor="phone" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="phone" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Phone Number <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -240,14 +279,14 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   type="tel"
                   required
                   value={formData.phone}
+                  onBlur={() => setTouched((prev) => ({ ...prev, phone: true }))}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="e.g. +91 83208 06363"
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-                  }`}
+                  className={inputClass}
                 />
+                {touched.phone && !formData.phone.trim() && (
+                  <p className="text-[11px] text-red-400 mt-1">Please provide a contact phone number.</p>
+                )}
                 <ValidationError prefix="Phone" field="phone" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
             </div>
@@ -255,7 +294,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             {/* Row 3: Industry & Company Size */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="industry" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="industry" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Industry
                 </label>
                 <select
@@ -263,11 +302,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="industry"
                   value={formData.industry}
                   onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
-                  }`}
+                  className={selectClass}
                 >
                   <option value="Manufacturing">Manufacturing</option>
                   <option value="Retail">Retail &amp; POS</option>
@@ -285,7 +320,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               </div>
 
               <div>
-                <label htmlFor="companySize" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="companySize" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Company Size
                 </label>
                 <select
@@ -293,11 +328,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="companySize"
                   value={formData.companySize}
                   onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
-                  }`}
+                  className={selectClass}
                 >
                   <option value="1-15 employees">1 - 15 employees</option>
                   <option value="16-50 employees">16 - 50 employees</option>
@@ -311,7 +342,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             {/* Row 4: Interested Service & Current ERP */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="interestedService" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="interestedService" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Interested Service
                 </label>
                 <select
@@ -319,11 +350,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="interestedService"
                   value={formData.interestedService}
                   onChange={(e) => setFormData({ ...formData, interestedService: e.target.value })}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
-                  }`}
+                  className={selectClass}
                 >
                   <option value="ERP Consultancy">ERP Consultancy</option>
                   <option value="ERP Implementation">ERP Implementation</option>
@@ -340,7 +367,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               </div>
 
               <div>
-                <label htmlFor="currentERP" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <label htmlFor="currentERP" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                   Current ERP / Software
                 </label>
                 <select
@@ -348,11 +375,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="currentERP"
                   value={formData.currentERP}
                   onChange={(e) => setFormData({ ...formData, currentERP: e.target.value })}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all outline-none ${
-                    isDark
-                      ? 'bg-slate-950 border-slate-800 text-white focus:border-sky-400'
-                      : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500'
-                  }`}
+                  className={selectClass}
                 >
                   <option value="None">None</option>
                   <option value="Excel / Spreadsheets">Excel / Spreadsheets</option>
@@ -370,7 +393,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
 
             {/* Row 5: Message */}
             <div>
-              <label htmlFor="message" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+              <label htmlFor="message" className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
                 Message / Operational Pain Points <span className="text-red-400">*</span>
               </label>
               <textarea
@@ -381,21 +404,23 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Describe your current software setup, processes you want to automate, or goals for the ERP implementation..."
-                className={`w-full px-4 py-3 rounded-xl text-sm border transition-all outline-none resize-y ${
-                  isDark
-                    ? 'bg-slate-950/60 border-slate-800 text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400/40'
-                    : 'bg-white border-slate-300 text-slate-900 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-                }`}
+                className={`${inputClass} py-3 resize-y`}
               />
               <ValidationError prefix="Message" field="message" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
             </div>
 
             {/* Submit Button */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <button
+              <motion.button
                 type="submit"
                 disabled={state.submitting}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:via-sky-500 hover:to-blue-500 shadow-lg shadow-sky-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
+                  isDark
+                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] shadow-lg shadow-black/40'
+                    : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:via-sky-500 hover:to-blue-500 shadow-lg shadow-sky-600/30'
+                }`}
               >
                 {state.submitting ? (
                   <>
@@ -408,10 +433,10 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                     <Send className="w-4 h-4" />
                   </>
                 )}
-              </button>
+              </motion.button>
 
-              <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                <ShieldCheck className="w-4 h-4 text-sky-500" />
+              <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
+                <ShieldCheck className={`w-4 h-4 ${isDark ? 'text-white' : 'text-sky-500'}`} />
                 <span>NDA &amp; Strict Confidentiality Protected</span>
               </div>
             </div>

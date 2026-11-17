@@ -4,12 +4,18 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from './types.ts';
 import { Navbar } from './components/Navbar.tsx';
 import { Footer } from './components/Footer.tsx';
 import { FloatingContact } from './components/FloatingContact.tsx';
 import { LegalModal } from './components/LegalModal.tsx';
+import {
+  ScrollProgressBar,
+  BackToTopButton,
+  PageTransitionOverlay,
+} from './components/motion/MotionPrimitives.tsx';
+import { pageTransitionVariants } from './utils/motion.ts';
 
 // Pages
 import { HomePage } from './pages/HomePage.tsx';
@@ -34,7 +40,9 @@ export default function App() {
     return 'light';
   });
   const [selectedService, setSelectedService] = useState<string>('ERP Consultancy');
+  const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   // Apply theme class to document root
   useEffect(() => {
@@ -55,13 +63,14 @@ export default function App() {
 
   const handleNavigate = (page: PageId) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   };
 
-  const handleConsultationSelect = (serviceName: string) => {
+  const handleConsultationSelect = (serviceName: string, notes: string = '') => {
     setSelectedService(serviceName);
+    setSelectedMessage(notes);
     setCurrentPage('request-consultation');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   };
 
   const isDark = theme === 'dark';
@@ -70,10 +79,16 @@ export default function App() {
     <div
       className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
         isDark
-          ? 'bg-[#070D1C] text-slate-100 selection:bg-sky-500 selection:text-white'
+          ? 'bg-[#090909] text-[#F5F5F5] selection:bg-white selection:text-[#090909]'
           : 'bg-white text-[#172033] selection:bg-sky-500 selection:text-white'
       }`}
     >
+      {/* Top Scroll Progress Indicator */}
+      <ScrollProgressBar theme={theme} />
+
+      {/* Non-Blocking Futuristic Page Transition Sweep */}
+      <PageTransitionOverlay transitionKey={currentPage} theme={theme} />
+
       {/* Top Sticky Enterprise Navigation */}
       <Navbar
         currentPage={currentPage}
@@ -87,16 +102,16 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            variants={prefersReducedMotion ? undefined : pageTransitionVariants}
+            initial={prefersReducedMotion ? false : 'initial'}
+            animate="animate"
+            exit={prefersReducedMotion ? undefined : 'exit'}
           >
             {currentPage === 'home' && (
               <HomePage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onSelectServiceForConsultation={handleConsultationSelect}
+                onSelectServiceForConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -108,19 +123,23 @@ export default function App() {
               <ServicesPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onSelectServiceForConsultation={handleConsultationSelect}
+                onSelectServiceForConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
             {currentPage === 'erp-solutions' && (
-              <ERPSolutionsPage onNavigate={handleNavigate} theme={theme} />
+              <ERPSolutionsPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                onSelectRecommendation={handleConsultationSelect}
+              />
             )}
 
             {currentPage === 'erpnext' && (
               <ERPNextPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleConsultationSelect}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -128,7 +147,7 @@ export default function App() {
               <OdooPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleConsultationSelect}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -136,7 +155,7 @@ export default function App() {
               <ZohoPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleConsultationSelect}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -144,7 +163,7 @@ export default function App() {
               <ITSolutionsPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleConsultationSelect}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -152,7 +171,7 @@ export default function App() {
               <IndustriesPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleConsultationSelect}
+                onBookConsultation={(svc) => handleConsultationSelect(svc)}
               />
             )}
 
@@ -173,6 +192,7 @@ export default function App() {
                 onNavigate={handleNavigate}
                 theme={theme}
                 initialService={selectedService}
+                initialMessage={selectedMessage}
               />
             )}
           </motion.div>
@@ -186,8 +206,11 @@ export default function App() {
         onOpenLegal={(type) => setLegalModalType(type)}
       />
 
+      {/* Floating Back-to-Top Control */}
+      <BackToTopButton theme={theme} />
+
       {/* Floating Action Controls (WhatsApp, Direct Telephone, Email) */}
-      <FloatingContact />
+      <FloatingContact theme={theme} />
 
       {/* Legal & Policy Modals (Privacy, Terms, Cookies) */}
       <LegalModal

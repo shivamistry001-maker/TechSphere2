@@ -4,9 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
-  CheckCircle2,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
@@ -14,13 +13,12 @@ import {
   Building,
   Users,
   Factory,
-  Calculator,
   Compass,
   ShoppingBag,
-  Sliders,
   Check,
 } from 'lucide-react';
 import { PageId, ThemeMode, QuizState } from '../types.ts';
+import { getERPRecommendation } from '../utils/erpWizardLogic.ts';
 
 interface FindYourERPWizardProps {
   onNavigate: (page: PageId) => void;
@@ -28,22 +26,25 @@ interface FindYourERPWizardProps {
   onSelectRecommendation?: (erpName: string, notes: string) => void;
 }
 
+const INITIAL_QUIZ_STATE: QuizState = {
+  businessType: '',
+  employees: '',
+  coreNeeds: [],
+  needsManufacturing: '',
+  needsAccounting: '',
+  needsCRM: '',
+  needsEcommerce: '',
+  customizationExpectation: '',
+};
+
 export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
   onNavigate,
   theme = 'dark',
   onSelectRecommendation,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [quizState, setQuizState] = useState<QuizState>({
-    businessType: '',
-    employees: '',
-    coreNeeds: [],
-    needsManufacturing: '',
-    needsAccounting: '',
-    needsCRM: '',
-    needsEcommerce: '',
-    customizationExpectation: '',
-  });
+  const [quizState, setQuizState] = useState<QuizState>(INITIAL_QUIZ_STATE);
+  const prefersReducedMotion = useReducedMotion();
 
   const isDark = theme === 'dark';
 
@@ -125,75 +126,20 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
   ];
 
   const handleSelectOption = (field: keyof QuizState, value: string) => {
-    setQuizState({ ...quizState, [field]: value });
+    setQuizState((prev) => ({ ...prev, [field]: value }));
     if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
-      setCurrentStep(questions.length); // Results step
+      setCurrentStep(questions.length);
     }
   };
 
-  // Evaluate Neutral Recommendation Matrix
-  const getRecommendation = () => {
-    const { businessType, needsManufacturing, needsCRM, needsEcommerce, customizationExpectation, employees } = quizState;
-
-    // Neutral scoring logic
-    if (needsManufacturing === 'Yes' || businessType === 'Manufacturing') {
-      return {
-        primary: 'ERPNext',
-        badge: 'Recommended for Deep Manufacturing & Operational Control',
-        description:
-          'Based on your emphasis on production workflows, multi-level BOMs, and inventory tracking, ERPNext represents an exceptional candidate. Its open-source architecture eliminates licensing ceilings as your workstation count grows.',
-        alternatives: ['Odoo Manufacturing', 'Custom MRP Modules'],
-        matchReason: 'Unmatched native manufacturing, job cards, and unified data architecture without per-user module fees.',
-      };
-    }
-
-    if (businessType === 'Retail' || needsEcommerce === 'POS_and_Ecom') {
-      return {
-        primary: 'Odoo',
-        badge: 'Recommended for Omnichannel Retail & Modular Architecture',
-        description:
-          'Your operational focus on retail Point of Sale (POS) combined with eCommerce synchronization aligns closely with Odoo’s modular ecosystem. Its sleek user interface minimizes training time for floor staff.',
-        alternatives: ['ERPNext with Retail POS', 'Zoho Inventory & Commerce'],
-        matchReason: 'Exceptional integrated Point-of-Sale (POS) and drag-and-drop modular application catalog.',
-      };
-    }
-
-    if (businessType === 'Services' || businessType === 'Startup' || needsCRM === 'Critical') {
-      return {
-        primary: 'Zoho One / Books / CRM',
-        badge: 'Recommended for Cloud Productivity & Fast Deployment',
-        description:
-          'For agile teams and services prioritizing client acquisition, project milestones, automated recurring invoicing, and cloud mobility, the Zoho suite delivers world-class velocity with zero server maintenance.',
-        alternatives: ['Odoo Services', 'ERPNext Projects'],
-        matchReason: 'Industry-leading CRM automation, intuitive Zoho Books finance, and turnkey cloud infrastructure.',
-      };
-    }
-
-    if (customizationExpectation === 'Heavy') {
-      return {
-        primary: 'Custom ERP or ERPNext Framework',
-        badge: 'Recommended for Proprietary Operational Workflows',
-        description:
-          'Your requirement for deep custom logic indicates that rigid proprietary SaaS platforms may cause operational friction. A custom architecture or a headless Frappe/ERPNext framework will preserve your operational moat.',
-        alternatives: ['Frappe Framework', 'Bespoke React + Node + PostgreSQL'],
-        matchReason: 'Tailored specifically around your proprietary algorithms with 100% intellectual property ownership.',
-      };
-    }
-
-    // Balanced default
-    return {
-      primary: 'ERPNext or Odoo (Comparative Evaluation)',
-      badge: 'Balanced Platform Assessment Recommended',
-      description:
-        'Your operational profile can be successfully addressed by either ERPNext (for comprehensive data ownership) or Odoo (for modular app-by-app adoption). We recommend a brief consultative discovery to evaluate your specific team preferences.',
-      alternatives: ['Zoho One', 'Custom Architecture'],
-      matchReason: 'Balanced operational needs across finance, inventory, and sales.',
-    };
+  const handleRestart = () => {
+    setQuizState(INITIAL_QUIZ_STATE);
+    setCurrentStep(0);
   };
 
-  const recommendation = getRecommendation();
+  const recommendation = getERPRecommendation(quizState);
 
   const handleBookConsultationWithPrefill = () => {
     if (onSelectRecommendation) {
@@ -209,95 +155,122 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
     <div
       className={`rounded-3xl border p-6 sm:p-10 transition-all ${
         isDark
-          ? 'bg-slate-900/80 border-sky-500/20 shadow-2xl shadow-black/60 backdrop-blur-xl'
-          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50 backdrop-blur-xl'
+          ? 'bg-[#171717] border-[#303030] shadow-2xl shadow-black/60'
+          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
       }`}
     >
       {/* Quiz Progress Header */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-sky-500/10">
+      <div
+        className={`flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b ${
+          isDark ? 'border-[#303030]' : 'border-sky-500/15'
+        }`}
+      >
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
+          <span
+            className={`text-xs font-semibold uppercase tracking-wider ${
+              isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+            }`}
+          >
             Interactive Diagnostic Tool
           </span>
-          <h3 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+          <h3 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-[#F5F5F5]' : 'text-slate-900'}`}>
             Find Your ERP
           </h3>
         </div>
 
         {currentStep < questions.length ? (
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-mono font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+          <div className="flex items-center gap-2.5">
+            <span className={`text-xs font-mono font-medium ${isDark ? 'text-[#A3A3A3]' : 'text-slate-500'}`}>
               Step {currentStep + 1} of {questions.length}
             </span>
-            <div className={`w-24 sm:w-32 h-2 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`}>
-              <div
-                className="h-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
+            <div className={`w-24 sm:w-32 h-2 rounded-full overflow-hidden ${isDark ? 'bg-[#252525]' : 'bg-slate-200'}`}>
+              <motion.div
+                className={
+                  isDark
+                    ? 'h-full bg-gradient-to-r from-[#A3A3A3] to-white'
+                    : 'h-full bg-gradient-to-r from-sky-400 to-blue-500'
+                }
+                initial={false}
+                animate={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
           </div>
         ) : (
-          <button
-            onClick={() => setCurrentStep(0)}
-            className="flex items-center gap-1.5 text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors"
+          <motion.button
+            type="button"
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+            onClick={handleRestart}
+            className={`flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer ${
+              isDark ? 'text-white hover:text-[#D4D4D4]' : 'text-sky-600 hover:text-sky-500'
+            }`}
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Restart Quiz</span>
-          </button>
+          </motion.button>
         )}
       </div>
 
       {/* Quiz Step Content */}
-      {currentStep < questions.length ? (
-        <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait">
+        {currentStep < questions.length ? (
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, x: 18 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }}
+            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-6"
           >
             <div>
-              <h4 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <h4 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-[#F5F5F5]' : 'text-slate-900'}`}>
                 {questions[currentStep].title}
               </h4>
-              <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
                 {questions[currentStep].description}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {questions[currentStep].options.map((option) => {
-                const currentVal = (quizState as any)[questions[currentStep].id];
+                const currentVal = quizState[questions[currentStep].id as keyof QuizState];
                 const isSelected = currentVal === option.value;
                 return (
-                  <button
+                  <motion.button
                     key={option.value}
+                    type="button"
+                    whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.01 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
                     onClick={() =>
                       handleSelectOption(questions[currentStep].id as keyof QuizState, option.value)
                     }
-                    className={`p-4 rounded-xl text-left border transition-all flex items-start justify-between group ${
+                    className={`p-4 rounded-xl text-left border transition-all flex items-start justify-between group cursor-pointer ${
                       isSelected
                         ? isDark
-                          ? 'bg-sky-500/15 border-sky-400 text-white shadow-md shadow-sky-500/10'
+                          ? 'bg-[#1D1D1D] border-white text-white shadow-md'
                           : 'bg-sky-50 border-sky-500 text-slate-900 shadow-md shadow-sky-500/10'
                         : isDark
-                        ? 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-sky-500/40 hover:bg-slate-900'
+                        ? 'bg-[#111111] border-[#303030] text-[#D4D4D4] hover:border-white/45 hover:bg-[#1D1D1D]'
                         : 'bg-slate-50 border-slate-200 text-slate-800 hover:border-sky-400 hover:bg-white'
                     }`}
                   >
                     <span className="text-sm font-medium pr-3">{option.label}</span>
-                    <div
+                    <motion.div
+                      animate={prefersReducedMotion ? undefined : { scale: isSelected ? 1.08 : 1 }}
                       className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors ${
                         isSelected
-                          ? 'border-sky-400 bg-sky-500 text-white'
-                          : 'border-slate-600 group-hover:border-sky-400'
+                          ? isDark
+                            ? 'border-white bg-white text-[#090909]'
+                            : 'border-sky-400 bg-sky-500 text-white'
+                          : isDark
+                          ? 'border-[#525252] group-hover:border-white'
+                          : 'border-slate-400 group-hover:border-sky-500'
                       }`}
                     >
                       {isSelected && <Check className="w-3 h-3" />}
-                    </div>
-                  </button>
+                    </motion.div>
+                  </motion.button>
                 );
               })}
             </div>
@@ -306,9 +279,10 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
             {currentStep > 0 && (
               <div className="pt-4">
                 <button
+                  type="button"
                   onClick={() => setCurrentStep(currentStep - 1)}
-                  className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
-                    isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                  className={`inline-flex items-center gap-1.5 text-xs transition-colors cursor-pointer ${
+                    isDark ? 'text-[#A3A3A3] hover:text-white' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
@@ -317,70 +291,103 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
               </div>
             )}
           </motion.div>
-        </AnimatePresence>
-      ) : (
-        /* Results View */
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-6"
-        >
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-sky-500/10 via-blue-500/5 to-transparent border border-sky-500/30">
-            <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
-              Impartial Diagnostic Output
-            </span>
-            <div className="mt-2 flex flex-wrap items-center gap-3">
-              <h4 className={`text-2xl sm:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                {recommendation.primary}
-              </h4>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/15 border border-sky-400/30 ${isDark ? 'text-sky-300' : 'text-sky-700'}`}>
-                {recommendation.badge}
+        ) : (
+          /* Results View */
+          <motion.div
+            key="wizard-results"
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-6"
+          >
+            <div
+              className={`p-6 rounded-2xl border ${
+                isDark
+                  ? 'bg-[#1D1D1D] border-[#404040]'
+                  : 'bg-gradient-to-br from-sky-500/10 via-blue-500/5 to-transparent border-sky-500/30'
+              }`}
+            >
+              <span
+                className={`text-xs font-semibold uppercase tracking-wider ${
+                  isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+                }`}
+              >
+                Impartial Diagnostic Output
+              </span>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <h4 className={`text-2xl sm:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {recommendation.primary}
+                </h4>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                    isDark
+                      ? 'bg-[#111111] border-[#404040] text-[#F5F5F5]'
+                      : 'bg-sky-500/15 border-sky-400/30 text-sky-700'
+                  }`}
+                >
+                  {recommendation.badge}
+                </span>
+              </div>
+
+              <p className={`mt-4 text-sm sm:text-base leading-relaxed ${isDark ? 'text-[#D4D4D4]' : 'text-slate-700'}`}>
+                {recommendation.description}
+              </p>
+
+              <div
+                className={`mt-4 pt-4 border-t text-xs ${
+                  isDark ? 'border-[#303030] text-[#A3A3A3]' : 'border-sky-500/20 text-slate-600'
+                }`}
+              >
+                <strong className={isDark ? 'text-white' : undefined}>Key Factor:</strong>{' '}
+                {recommendation.matchReason}
+              </div>
+            </div>
+
+            <div
+              className={`p-4 rounded-xl text-xs flex items-center justify-between gap-4 border ${
+                isDark
+                  ? 'bg-[#111111] border-[#303030] text-[#A3A3A3]'
+                  : 'bg-slate-50 border-slate-200 text-slate-600'
+              }`}
+            >
+              <span>
+                <strong className={isDark ? 'text-[#F5F5F5]' : undefined}>Note on objectivity:</strong>{' '}
+                No single platform is universally superior. TechSphere independently evaluates workflows to engineer the right implementation.
               </span>
             </div>
 
-            <p className={`mt-4 text-sm sm:text-base leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              {recommendation.description}
-            </p>
+            {/* Action CTAs */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <motion.button
+                type="button"
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                onClick={handleBookConsultationWithPrefill}
+                className={`group w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  isDark
+                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
+                    : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-600/30'
+                }`}
+              >
+                <span>Discuss Your Requirements With TechSphere</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </motion.button>
 
-            <div className={`mt-4 pt-4 border-t border-sky-500/20 text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-              <strong>Key Factor:</strong> {recommendation.matchReason}
+              <button
+                type="button"
+                onClick={handleRestart}
+                className={`w-full sm:w-auto px-6 py-3.5 rounded-xl font-medium text-sm border transition-colors cursor-pointer ${
+                  isDark
+                    ? 'border-[#303030] text-[#D4D4D4] hover:bg-[#252525] hover:text-white'
+                    : 'border-slate-300 text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                Retake Assessment
+              </button>
             </div>
-          </div>
-
-          <div
-            className={`p-4 rounded-xl text-xs flex items-center justify-between gap-4 ${
-              isDark ? 'bg-slate-950/70 text-slate-400' : 'bg-slate-50 text-slate-600'
-            }`}
-          >
-            <span>
-              <strong>Note on objectivity:</strong> No single platform is universally superior. TechSphere independently evaluates workflows to engineer the right implementation.
-            </span>
-          </div>
-
-          {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-            <button
-              onClick={handleBookConsultationWithPrefill}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-600/30 transition-all flex items-center justify-center gap-2"
-            >
-              <span>Discuss Your Requirements With TechSphere</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => onNavigate('erp-solutions')}
-              className={`w-full sm:w-auto px-6 py-3.5 rounded-xl font-medium text-sm border transition-colors ${
-                isDark
-                  ? 'border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
-                  : 'border-slate-300 text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              View Detailed Comparison
-            </button>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

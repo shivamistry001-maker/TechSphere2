@@ -12,6 +12,7 @@ import { WhyTechSphereSection } from '../components/home/WhyTechSphereSection.ts
 import { IndustriesSection } from '../components/home/IndustriesSection.tsx';
 import { ProcessSection } from '../components/home/ProcessSection.tsx';
 import { ProjectShowcaseSection } from '../components/home/ProjectShowcaseSection.tsx';
+import { ERPDemoShowcaseSection } from '../components/showcase/ERPDemoShowcaseSection.tsx';
 import { FAQSection } from '../components/home/FAQSection.tsx';
 import { ContactCTASection } from '../components/home/ContactCTASection.tsx';
 
@@ -38,8 +39,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         theme={theme}
       />
 
-      {/* 3. Dark Navy Interactive Technology Showcase (Lead -> Reports Pipeline) */}
-      <TechnologyShowcaseSection onNavigate={onNavigate} />
+      {/* 3. Dark Interactive Technology Showcase (Lead -> Reports Pipeline) */}
+      <TechnologyShowcaseSection onNavigate={onNavigate} theme={theme} />
 
       {/* 4. Why TechSphere (Real Solutions. Real Business Impact.) */}
       <WhyTechSphereSection onNavigate={onNavigate} theme={theme} />
@@ -50,10 +51,13 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 6. Our Working Process (01 - 06 Animated Workflow) */}
       <ProcessSection theme={theme} />
 
-      {/* 7. Project Showcase (Editable Demo & Concept Builds) */}
+      {/* 7. Project Showcase (4 Live Website Demos + Category Filters) */}
       <ProjectShowcaseSection onNavigate={onNavigate} theme={theme} />
 
-      {/* 8. Interactive FAQ Split Accordion */}
+      {/* 8. Explore ERP Solutions (ERPNext, Odoo ERP, Zoho Screenshot Galleries) */}
+      <ERPDemoShowcaseSection theme={theme} />
+
+      {/* 9. Interactive FAQ Split Accordion */}
       <FAQSection onNavigate={onNavigate} theme={theme} />
 
       {/* 9. Final CTA & Embedded Formspree Consultation Form */}

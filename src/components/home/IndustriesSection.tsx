@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import React, { useRef } from 'react';
+import { motion, useReducedMotion, useScroll } from 'motion/react';
 import {
   Factory,
   PackageSearch,
@@ -15,6 +15,16 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { PageId, ThemeMode } from '../../types.ts';
+import { computeColumnParallax, scrollCardItemVariants } from '../../utils/motion.ts';
+import {
+  CardGlareOverlay,
+  ScrollCascadeBlock,
+  ScrollCascadeGrid,
+  ScrollParallaxLayer,
+  ScrollSectionContainer,
+  updateCardGlareCoordinates,
+  useIsDesktop,
+} from '../motion/MotionPrimitives.tsx';
 
 interface IndustriesSectionProps {
   onNavigate: (page: PageId) => void;
@@ -76,26 +86,38 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
   onNavigate,
   theme = 'light',
 }) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop(1024);
   const isDark = theme === 'dark';
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
 
   return (
     <section
-      className={`py-20 sm:py-28 transition-colors duration-300 ${
-        isDark ? 'bg-[#0B1429]' : 'bg-[#F5FAFE]'
+      ref={sectionRef}
+      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
+        isDark ? 'bg-[#111111]' : 'bg-[#F5FAFE]'
       }`}
       aria-labelledby="industries-heading"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+      <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ScrollCascadeBlock className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div className="max-w-2xl space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0284C7] dark:text-[#38BDF8]">
+            <p
+              className={`text-xs font-semibold uppercase tracking-[0.18em] ${
+                isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+              }`}
+            >
               Industries We Serve
             </p>
             <h2
               id="industries-heading"
               className={`font-display font-extrabold tracking-tight leading-[1.1] text-balance ${
-                isDark ? 'text-white' : 'text-[#172033]'
+                isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
               }`}
               style={{ fontSize: 'clamp(1.85rem, 3.4vw, 2.85rem)' }}
             >
@@ -103,83 +125,97 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
             </h2>
           </div>
 
-          <button
+          <motion.button
             type="button"
+            whileHover={prefersReducedMotion ? undefined : { x: 2 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             onClick={() => onNavigate('industries')}
-            className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#0284C7] dark:text-[#38BDF8] hover:underline cursor-pointer shrink-0"
+            className={`group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold hover:underline cursor-pointer shrink-0 ${
+              isDark ? 'text-white' : 'text-[#0284C7]'
+            }`}
           >
             <span>Explore All Industries</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </motion.button>
+        </ScrollCascadeBlock>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ScrollCascadeGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {INDUSTRIES_SHOWCASE.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <motion.div
+              <ScrollParallaxLayer
                 key={item.id}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{
-                  duration: 0.45,
-                  delay: idx * 0.06,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                onClick={() => onNavigate('industries')}
-                className={`group rounded-2xl p-6 sm:p-7 border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
-                  isDark
-                    ? 'bg-[#101B35] border-sky-400/15 hover:border-[#38BDF8]/50 hover:-translate-y-1'
-                    : 'bg-white border-[#101B35]/[0.07] hover:border-[#38BDF8]/60 shadow-[0_10px_28px_rgba(16,27,53,0.04)] hover:shadow-[0_20px_44px_rgba(16,27,53,0.08)] hover:-translate-y-1'
-                }`}
+                scrollYProgress={scrollYProgress}
+                yRange={computeColumnParallax(idx, 3, 12)}
+                enabled={isDesktop}
+                className="h-full"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div
-                      className={`w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
-                        isDark
-                          ? 'bg-[#38BDF8]/10 border border-[#38BDF8]/25 text-[#38BDF8]'
-                          : 'bg-[#F5FAFE] border border-[#38BDF8]/25 text-[#0284C7]'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
+                <motion.div
+                  variants={scrollCardItemVariants}
+                  whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
+                  onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
+                  onClick={() => onNavigate('industries')}
+                  className={`group relative overflow-hidden h-full rounded-2xl p-6 sm:p-7 border transition-colors duration-300 cursor-pointer flex flex-col justify-between ${
+                    isDark
+                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45 shadow-[0_14px_34px_rgba(0,0,0,0.45)]'
+                      : 'bg-white border-[#101B35]/[0.07] hover:border-[#38BDF8]/60 shadow-[0_10px_28px_rgba(16,27,53,0.04)] hover:shadow-[0_20px_44px_rgba(16,27,53,0.08)]'
+                  }`}
+                >
+                  <CardGlareOverlay theme={theme} subtle />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-5">
+                      <div
+                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:-rotate-3 ${
+                          isDark
+                            ? 'bg-[#1D1D1D] border border-[#303030] text-white group-hover:bg-white group-hover:text-[#090909]'
+                            : 'bg-[#F5FAFE] border border-[#38BDF8]/25 text-[#0284C7]'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span
+                        className={`text-[11px] font-medium ${
+                          isDark ? 'text-[#A3A3A3]' : 'text-slate-500'
+                        }`}
+                      >
+                        {item.systems}
+                      </span>
                     </div>
-                    <span
-                      className={`text-[11px] font-medium ${
-                        isDark ? 'text-slate-400' : 'text-slate-500'
+
+                    <h3
+                      className={`font-display text-lg font-bold mb-2 ${
+                        isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
                       }`}
                     >
-                      {item.systems}
-                    </span>
+                      {item.title}
+                    </h3>
+
+                    <p
+                      className={`text-xs sm:text-sm leading-relaxed ${
+                        isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
+                      }`}
+                    >
+                      {item.description}
+                    </p>
                   </div>
 
-                  <h3
-                    className={`font-display text-lg font-bold mb-2 ${
-                      isDark ? 'text-white' : 'text-[#172033]'
+                  <div
+                    className={`relative z-10 mt-5 pt-3 border-t flex items-center justify-between text-xs font-semibold ${
+                      isDark
+                        ? 'border-[#303030] text-white'
+                        : 'border-[#101B35]/[0.06] text-[#0284C7]'
                     }`}
                   >
-                    {item.title}
-                  </h3>
-
-                  <p
-                    className={`text-xs sm:text-sm leading-relaxed ${
-                      isDark ? 'text-slate-300' : 'text-slate-600'
-                    }`}
-                  >
-                    {item.description}
-                  </p>
-                </div>
-
-                <div className="mt-5 pt-3 border-t border-[#101B35]/[0.06] dark:border-white/10 flex items-center justify-between text-xs font-semibold text-[#0284C7] dark:text-[#38BDF8]">
-                  <span>View Industry Solutions</span>
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
-                </div>
-              </motion.div>
+                    <span>View Industry Solutions</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                  </div>
+                </motion.div>
+              </ScrollParallaxLayer>
             );
           })}
-        </div>
-      </div>
+        </ScrollCascadeGrid>
+      </ScrollSectionContainer>
     </section>
   );
 };

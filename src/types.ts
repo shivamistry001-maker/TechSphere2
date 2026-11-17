@@ -124,3 +124,40 @@ export interface QuizState {
   needsEcommerce: string;
   customizationExpectation: string;
 }
+
+export type WebsiteDemoCategory =
+  | 'All'
+  | 'Hospitality'
+  | 'Professional Services'
+  | 'Creative Business'
+  | 'Manufacturing';
+
+export interface WebsiteDemoProject {
+  id: string;
+  title: string;
+  category: Exclude<WebsiteDemoCategory, 'All'>;
+  categoryLabel: string;
+  liveUrl: string;
+  previewImage: string;
+  previewAlt: string;
+  description: string;
+  features: string[];
+}
+
+export interface ERPScreenshotItem {
+  id: string;
+  src: string;
+  title: string;
+  module: string;
+  caption: string;
+  alt: string;
+}
+
+export interface ERPDemoPlatform {
+  id: 'erpnext' | 'odoo' | 'zoho';
+  name: string;
+  subtitle: string;
+  description: string;
+  highlights: string[];
+  screenshots: ERPScreenshotItem[];
+}

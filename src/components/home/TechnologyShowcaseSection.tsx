@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence, useReducedMotion, useScroll } from 'motion/react';
 import {
   ArrowRight,
   UserPlus,
@@ -17,10 +17,19 @@ import {
   BarChart3,
   CheckCircle2,
 } from 'lucide-react';
-import { PageId } from '../../types.ts';
+import { PageId, ThemeMode } from '../../types.ts';
+import {
+  ScanningLine,
+  ScrollCascadeBlock,
+  ScrollParallaxLayer,
+  ScrollSectionContainer,
+  useIsDesktop,
+} from '../motion/MotionPrimitives.tsx';
+import { EASE_PREMIUM } from '../../utils/motion.ts';
 
 interface TechnologyShowcaseSectionProps {
   onNavigate: (page: PageId) => void;
+  theme?: ThemeMode;
 }
 
 interface WorkflowStage {
@@ -177,33 +186,56 @@ const WORKFLOW_STAGES: WorkflowStage[] = [
 
 export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps> = ({
   onNavigate,
+  theme = 'light',
 }) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop(1024);
+  const isDark = theme === 'dark';
   const activeStage = WORKFLOW_STAGES[activeIndex];
   const ActiveIcon = activeStage.icon;
 
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
   return (
     <section
-      className="relative py-20 sm:py-28 bg-[#101B35] text-white overflow-hidden"
+      ref={sectionRef}
+      className={`relative py-20 sm:py-28 text-white overflow-x-clip transition-colors duration-300 ${
+        isDark ? 'bg-[#090909] border-t border-b border-[#303030]' : 'bg-[#101B35]'
+      }`}
       aria-labelledby="tech-showcase-heading"
     >
-      {/* Subtle Sky-Blue Atmospheric Glow */}
+      {/* Subtle Atmospheric Glow */}
       <div
         className="absolute top-0 right-1/4 w-[620px] h-[620px] rounded-full pointer-events-none"
         style={{
-          background:
-            'radial-gradient(circle, rgba(56, 189, 248, 0.14) 0%, rgba(16, 27, 53, 0) 70%)',
+          background: isDark
+            ? 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, rgba(9, 9, 9, 0) 70%)'
+            : 'radial-gradient(circle, rgba(56, 189, 248, 0.14) 0%, rgba(16, 27, 53, 0) 70%)',
         }}
         aria-hidden="true"
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollSectionContainer className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
-          {/* LEFT COLUMN: Editorial Heading & Interactive Process Steps (Inspired by 00:04) */}
-          <div className="lg:col-span-5 space-y-8">
+          {/* LEFT COLUMN: Editorial Heading & Interactive Process Steps */}
+          <ScrollParallaxLayer
+            scrollYProgress={scrollYProgress}
+            yRange={[14, -14]}
+            enabled={isDesktop}
+            className="lg:col-span-5"
+          >
+            <ScrollCascadeBlock className="space-y-8">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#38BDF8]">
+              <p
+                className={`text-xs font-semibold uppercase tracking-[0.18em] ${
+                  isDark ? 'text-[#D4D4D4]' : 'text-[#38BDF8]'
+                }`}
+              >
                 Connected ERP Architecture
               </p>
               <h2
@@ -213,13 +245,23 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
               >
                 See How Technology Transforms Your Business.
               </h2>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+              <p
+                className={`text-sm sm:text-base leading-relaxed ${
+                  isDark ? 'text-[#A3A3A3]' : 'text-slate-300'
+                }`}
+              >
                 Replace disconnected spreadsheets with one intelligent pipeline. Select any stage below to inspect how data flows seamlessly from first inquiry to executive reporting.
               </p>
             </div>
 
             {/* Interactive Stage List */}
-            <div className="divide-y divide-white/10 border-t border-b border-white/10">
+            <div
+              className={`divide-y border-t border-b ${
+                isDark
+                  ? 'divide-[#303030] border-[#303030]'
+                  : 'divide-white/10 border-white/10'
+              }`}
+            >
               {WORKFLOW_STAGES.map((stage, idx) => {
                 const isActive = idx === activeIndex;
                 return (
@@ -228,14 +270,26 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                     type="button"
                     onClick={() => setActiveIndex(idx)}
                     onMouseEnter={() => setActiveIndex(idx)}
-                    className={`w-full py-3.5 px-2 flex items-center justify-between text-left transition-colors cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8] ${
-                      isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                    className={`w-full py-3.5 px-2 flex items-center justify-between text-left transition-colors cursor-pointer group focus:outline-none focus-visible:ring-2 rounded-lg ${
+                      isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
+                    } ${
+                      isActive
+                        ? 'text-white'
+                        : isDark
+                        ? 'text-[#737373] hover:text-[#D4D4D4]'
+                        : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <span
                         className={`text-xs font-mono tabular-nums transition-colors ${
-                          isActive ? 'text-[#38BDF8] font-bold' : 'text-slate-500'
+                          isActive
+                            ? isDark
+                              ? 'text-white font-bold'
+                              : 'text-[#38BDF8] font-bold'
+                            : isDark
+                            ? 'text-[#737373]'
+                            : 'text-slate-500'
                         }`}
                       >
                         0{idx + 1}
@@ -244,7 +298,11 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                         {stage.label}
                       </span>
                       {idx < WORKFLOW_STAGES.length - 1 && (
-                        <span className="hidden sm:inline text-[11px] text-slate-500">
+                        <span
+                          className={`hidden sm:inline text-[11px] ${
+                            isDark ? 'text-[#737373]' : 'text-slate-500'
+                          }`}
+                        >
                           → {WORKFLOW_STAGES[idx + 1].label}
                         </span>
                       )}
@@ -253,7 +311,11 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                     <ArrowRight
                       className={`w-4 h-4 transition-all duration-200 ${
                         isActive
-                          ? 'text-[#38BDF8] translate-x-0 opacity-100'
+                          ? isDark
+                            ? 'text-white translate-x-0 opacity-100'
+                            : 'text-[#38BDF8] translate-x-0 opacity-100'
+                          : isDark
+                          ? 'text-[#737373] -translate-x-1 opacity-40 group-hover:opacity-80'
                           : 'text-slate-600 -translate-x-1 opacity-40 group-hover:opacity-80'
                       }`}
                     />
@@ -266,47 +328,80 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
               <button
                 type="button"
                 onClick={() => onNavigate('erp-solutions')}
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#38BDF8] hover:text-sky-300 transition-colors cursor-pointer"
+                className={`group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+                  isDark
+                    ? 'text-white hover:text-[#D4D4D4]'
+                    : 'text-[#38BDF8] hover:text-sky-300'
+                }`}
               >
                 <span>Compare ERPNext, Odoo &amp; Zoho Architectures</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </button>
             </div>
-          </div>
+            </ScrollCascadeBlock>
+          </ScrollParallaxLayer>
 
-          {/* RIGHT COLUMN: Dark Dashboard Interface with Animated Funnel Connections (Inspired by 00:04 & 00:25) */}
-          <div className="lg:col-span-7">
-            <div className="rounded-3xl bg-[#0B1429]/95 border border-sky-400/20 p-5 sm:p-8 shadow-[0_30px_70px_rgba(0,0,0,0.45)] relative overflow-hidden">
+          {/* RIGHT COLUMN: Dashboard Interface with Animated Funnel Connections */}
+          <ScrollParallaxLayer
+            scrollYProgress={scrollYProgress}
+            yRange={[-16, 16]}
+            enabled={isDesktop}
+            className="lg:col-span-7"
+          >
+            <ScrollCascadeBlock>
+            <div
+              className={`rounded-3xl border p-5 sm:p-8 shadow-[0_30px_70px_rgba(0,0,0,0.45)] relative overflow-hidden ${
+                isDark
+                  ? 'bg-[#111111] border-[#303030]'
+                  : 'bg-[#0B1429]/95 border-sky-400/20'
+              }`}
+            >
+              {/* Subtle Scanning Line Effect */}
+              <ScanningLine theme={theme} />
+
               {/* Top Interactive 8-Node Pipeline Bar */}
               <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 relative z-10">
                 {WORKFLOW_STAGES.map((stage, idx) => {
                   const Icon = stage.icon;
                   const isActive = idx === activeIndex;
                   return (
-                    <button
+                    <motion.button
                       key={stage.id}
                       type="button"
                       onClick={() => setActiveIndex(idx)}
-                      className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border text-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8] ${
+                      whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                      className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border text-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                        isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
+                      } ${
                         isActive
-                          ? 'bg-[#38BDF8]/15 border-[#38BDF8] text-white shadow-[0_0_20px_rgba(56,189,248,0.25)]'
+                          ? isDark
+                            ? 'bg-white text-[#090909] border-white shadow-[0_0_20px_rgba(255,255,255,0.18)]'
+                            : 'bg-[#38BDF8]/15 border-[#38BDF8] text-white shadow-[0_0_20px_rgba(56,189,248,0.25)]'
+                          : isDark
+                          ? 'bg-[#171717] border-[#303030] text-[#A3A3A3] hover:border-[#737373] hover:text-white'
                           : 'bg-[#101B35]/90 border-white/10 text-slate-400 hover:border-sky-400/35 hover:text-slate-200'
                       }`}
                     >
                       <Icon
                         className={`w-4 h-4 mb-1.5 ${
-                          isActive ? 'text-[#38BDF8]' : 'text-slate-400'
+                          isActive
+                            ? isDark
+                              ? 'text-[#090909]'
+                              : 'text-[#38BDF8]'
+                            : isDark
+                            ? 'text-[#A3A3A3]'
+                            : 'text-slate-400'
                         }`}
                       />
                       <span className="text-[10px] font-semibold whitespace-nowrap">
                         {stage.label}
                       </span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
 
-              {/* Animated SVG Funnel Convergence to Central Glowing Core */}
+              {/* Animated SVG Funnel Convergence to Central Core */}
               <div className="relative h-32 sm:h-36 flex items-center justify-center my-2">
                 <svg
                   viewBox="0 0 600 130"
@@ -314,20 +409,18 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                   preserveAspectRatio="none"
                   aria-hidden="true"
                 >
-                  <defs>
-                    <linearGradient id="funnelLineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.45" />
-                      <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.95" />
-                    </linearGradient>
-                  </defs>
                   {[40, 114, 188, 262, 338, 412, 486, 560].map((startX, idx) => {
                     const isActivePath = idx === activeIndex;
+                    const activeStroke = isDark ? '#FFFFFF' : '#38BDF8';
+                    const idleStroke = isDark
+                      ? 'rgba(163, 163, 163, 0.22)'
+                      : 'rgba(148, 163, 184, 0.22)';
                     return (
                       <path
                         key={startX}
                         d={`M ${startX} 0 C ${startX} 60, 300 50, 300 105`}
                         fill="none"
-                        stroke={isActivePath ? '#38BDF8' : 'rgba(148, 163, 184, 0.22)'}
+                        stroke={isActivePath ? activeStroke : idleStroke}
                         strokeWidth={isActivePath ? '2.5' : '1.2'}
                         strokeDasharray={isActivePath ? 'none' : '4 4'}
                       />
@@ -340,6 +433,14 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                   animate={
                     prefersReducedMotion
                       ? undefined
+                      : isDark
+                      ? {
+                          boxShadow: [
+                            '0 0 18px rgba(255,255,255,0.2)',
+                            '0 0 32px rgba(255,255,255,0.38)',
+                            '0 0 18px rgba(255,255,255,0.2)',
+                          ],
+                        }
                       : {
                           boxShadow: [
                             '0 0 24px rgba(56,189,248,0.45)',
@@ -349,9 +450,13 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                         }
                   }
                   transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                  className="absolute bottom-1 w-14 h-14 rounded-full bg-gradient-to-br from-[#7DD3FC] via-[#38BDF8] to-[#0284C7] flex items-center justify-center border-2 border-white/60"
+                  className={`absolute bottom-1 w-14 h-14 rounded-full flex items-center justify-center border-2 ${
+                    isDark
+                      ? 'bg-gradient-to-br from-white via-[#D4D4D4] to-[#737373] border-white/80'
+                      : 'bg-gradient-to-br from-[#7DD3FC] via-[#38BDF8] to-[#0284C7] border-white/60'
+                  }`}
                 >
-                  <ActiveIcon className="w-6 h-6 text-[#101B35]" />
+                  <ActiveIcon className={`w-6 h-6 ${isDark ? 'text-[#090909]' : 'text-[#101B35]'}`} />
                 </motion.div>
               </div>
 
@@ -362,48 +467,98 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="rounded-2xl bg-white text-[#172033] p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
+                  transition={{ duration: 0.24, ease: EASE_PREMIUM }}
+                  className={`rounded-2xl p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] border ${
+                    isDark
+                      ? 'bg-[#171717] border-[#303030] text-[#F5F5F5]'
+                      : 'bg-white border-transparent text-[#172033]'
+                  }`}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-slate-200/80">
+                  <div
+                    className={`flex flex-wrap items-center justify-between gap-2 pb-4 border-b ${
+                      isDark ? 'border-[#303030]' : 'border-slate-200/80'
+                    }`}
+                  >
                     <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0284C7]">
+                      <span
+                        className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                          isDark ? 'text-[#A3A3A3]' : 'text-[#0284C7]'
+                        }`}
+                      >
                         Stage 0{activeIndex + 1} · {activeStage.label}
                       </span>
-                      <h3 className="font-display text-lg sm:text-xl font-bold text-[#101B35] mt-0.5">
+                      <h3
+                        className={`font-display text-lg sm:text-xl font-bold mt-0.5 ${
+                          isDark ? 'text-white' : 'text-[#101B35]'
+                        }`}
+                      >
                         {activeStage.title}
                       </h3>
                     </div>
 
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <div
+                      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${
+                        isDark
+                          ? 'text-[#F5F5F5] bg-[#252525] border-[#303030]'
+                          : 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                      }`}
+                    >
+                      <CheckCircle2
+                        className={`w-3.5 h-3.5 ${isDark ? 'text-white' : 'text-emerald-600'}`}
+                      />
                       <span>{activeStage.status}</span>
                     </div>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-4">
+                  <p
+                    className={`text-xs sm:text-sm leading-relaxed mt-4 ${
+                      isDark ? 'text-[#A3A3A3]' : 'text-slate-600'
+                    }`}
+                  >
                     {activeStage.summary}
                   </p>
 
-                  {/* Structured Data Output Rows (Inspired by Freight Data Summary Card in 00:04) */}
+                  {/* Structured Data Output Rows */}
                   <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {activeStage.details.map((item) => (
                       <div
                         key={item.key}
-                        className="rounded-xl bg-[#F5FAFE] border border-[#101B35]/[0.06] p-3"
+                        className={`rounded-xl border p-3 ${
+                          isDark
+                            ? 'bg-[#1D1D1D] border-[#303030]'
+                            : 'bg-[#F5FAFE] border-[#101B35]/[0.06]'
+                        }`}
                       >
-                        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                        <div
+                          className={`text-[10px] font-semibold uppercase tracking-wider ${
+                            isDark ? 'text-[#737373]' : 'text-slate-500'
+                          }`}
+                        >
                           {item.key}
                         </div>
-                        <div className="text-xs sm:text-[13px] font-bold text-[#101B35] mt-1">
+                        <div
+                          className={`text-xs sm:text-[13px] font-bold mt-1 ${
+                            isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
+                          }`}
+                        >
                           {item.value}
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
-                    <span className="font-mono text-[#0284C7] font-semibold">
+                  <div
+                    className={`mt-4 pt-3 border-t flex flex-wrap items-center justify-between gap-2 text-[11px] ${
+                      isDark
+                        ? 'border-[#303030] text-[#737373]'
+                        : 'border-slate-100 text-slate-500'
+                    }`}
+                  >
+                    <span
+                      className={`font-mono font-semibold ${
+                        isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'
+                      }`}
+                    >
                       {activeStage.recordCode}
                     </span>
                     <span>
@@ -413,9 +568,10 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                 </motion.div>
               </AnimatePresence>
             </div>
-          </div>
+            </ScrollCascadeBlock>
+          </ScrollParallaxLayer>
         </div>
-      </div>
+      </ScrollSectionContainer>
     </section>
   );
 };
