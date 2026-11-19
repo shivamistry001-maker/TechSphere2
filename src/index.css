@@ -64,10 +64,13 @@
   --ts-text-secondary: #475569;
   --ts-text-muted: #64748b;
   --ts-accent: #0284c7;
+  --ts-selection-bg: #0ea5e9;
+  --ts-selection-text: #ffffff;
   --ts-theme-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --ts-theme-dur-bg: 380ms;
-  --ts-theme-dur-text: 280ms;
-  --ts-theme-dur-shadow: 340ms;
+  /* Default to 0ms at initial load (zero startup flash, zero post-FCP rAF invalidation) */
+  --ts-theme-dur-bg: 0ms;
+  --ts-theme-dur-text: 0ms;
+  --ts-theme-dur-shadow: 0ms;
 
   /* Hybrid Liquid Glass Tokens — Light Mode (Clean White + Sky-Blue Refraction) */
   --ts-glass-blur-nav: 14px;
@@ -121,6 +124,8 @@ html.dark {
   --ts-text-secondary: #a3a3a3;
   --ts-text-muted: #737373;
   --ts-accent: #ffffff;
+  --ts-selection-bg: #ffffff;
+  --ts-selection-text: #090909;
 
   /* Hybrid Liquid Glass Tokens — Dark Mode (Strict Deep Black & Charcoal + White Specular Highlights, Zero Blue) */
   --ts-glass-nav-bg: rgba(12, 12, 12, 0.66);
@@ -156,6 +161,17 @@ html.dark {
   color-scheme: dark;
 }
 
+/*
+ * CSS-Variable Theme Transition Activation
+ * Durations switch from 0ms -> active timings synchronously on user theme toggle
+ * (no requestAnimationFrame, no forced reflow, and zero idle selector overhead).
+ */
+:root[data-theme-transition="active"] {
+  --ts-theme-dur-bg: 380ms;
+  --ts-theme-dur-text: 280ms;
+  --ts-theme-dur-shadow: 340ms;
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);
@@ -170,69 +186,64 @@ html.dark {
   }
 
   /*
-   * Permanent global theme transition layer enabled once after first paint
-   * (html.ts-theme-ready).
+   * Scoped CSS-variable theme transition layer active ONLY while switching themes
+   * (:root[data-theme-transition="active"]).
    *
-   * Key performance & visual consistency optimization:
-   * - Non-inherited paint properties (background-color, border-color, box-shadow,
-   *   outline-color) transition cleanly across all surfaces without cascading lag.
-   * - Inherited `color` (and SVG `fill`/`stroke`) transitions ONLY on root/text-bearing
-   *   elements that explicitly declare a color class (or form controls), NEVER on plain
-   *   inheriting `span`/`svg`/`path` children — eliminating double-cascaded color lag
-   *   (e.g., white-on-white inverted CTA buttons or dark-on-dark nav links mid-switch).
-   * - Never transitions `all`, layout dimensions, or global `transform`/`opacity`.
+   * Key performance & visual consistency optimizations:
+   * - Initial paint and idle browsing match ZERO global transition selectors (no post-FCP rAF).
+   * - Surface rule targets ONLY elements declaring backgrounds, borders, shadows, or glass
+   *   layers — avoiding hundreds of invisible border-color transitions on borderless layout divs.
+   * - Inherited `color` (and SVG `fill`/`stroke`) transitions ONLY on root, form controls,
+   *   and elements declaring explicit color utilities — NEVER on pure size/alignment classes
+   *   (`text-sm`, `text-center`, `text-left`) or inheriting children, eliminating double-cascaded lag.
+   * - Never transitions `all`, layout dimensions, `outline-color`, or global `transform`/`opacity`.
    */
-  html.ts-theme-ready,
-  html.ts-theme-ready :where(
+  :root[data-theme-transition="active"],
+  :root[data-theme-transition="active"] :where(
     body,
-    header,
-    nav,
-    main,
-    footer,
-    section,
-    article,
-    aside,
-    div,
-    button,
-    a,
+    [class*="bg-"],
+    [class*="border"],
+    [class*="shadow"],
+    [class*="ts-glass-"],
+    .ts-showcase-card-rim,
+    hr,
     input,
     textarea,
-    select,
-    label,
-    hr,
-    table,
-    thead,
-    tbody,
-    tr,
-    th,
-    td
+    select
   ):not([data-no-theme-transition]) {
-    transition-property: background-color, border-color, box-shadow, outline-color;
+    transition-property: background-color, border-color, box-shadow;
     transition-duration:
       var(--ts-theme-dur-bg),
       var(--ts-theme-dur-text),
-      var(--ts-theme-dur-shadow),
-      var(--ts-theme-dur-text);
+      var(--ts-theme-dur-shadow);
     transition-timing-function: var(--ts-theme-ease);
   }
 
-  html.ts-theme-ready,
-  html.ts-theme-ready :where(
+  :root[data-theme-transition="active"],
+  :root[data-theme-transition="active"] :where(
     body,
     input,
     textarea,
     select,
-    [class*="text-"],
+    [class*="text-["],
+    [class*="text-white"],
+    [class*="text-slate-"],
+    [class*="text-neutral-"],
+    [class*="text-sky-"],
+    [class*="text-blue-"],
+    [class*="text-emerald-"],
+    [class*="text-red-"],
+    [class*="text-rose-"],
+    [class*="text-brand-"],
     [class*="fill-"],
     [class*="stroke-"]
   ):not([data-no-theme-transition]) {
-    transition-property: background-color, border-color, color, box-shadow, fill, stroke, outline-color;
+    transition-property: background-color, border-color, color, box-shadow, fill, stroke;
     transition-duration:
       var(--ts-theme-dur-bg),
       var(--ts-theme-dur-text),
       var(--ts-theme-dur-text),
       var(--ts-theme-dur-shadow),
-      var(--ts-theme-dur-text),
       var(--ts-theme-dur-text),
       var(--ts-theme-dur-text);
     transition-timing-function: var(--ts-theme-ease);
@@ -249,39 +260,22 @@ html.dark {
   }
 }
 
-/* Synchronize utility transitions with the global theme curve without using `transition: all` */
-html.ts-theme-ready .transition-colors {
-  transition-property: background-color, border-color, color, box-shadow, fill, stroke, outline-color;
+/* Synchronize utility transitions with the global theme curve ONLY during active switches */
+:root[data-theme-transition="active"] .transition-colors {
+  transition-property: background-color, border-color, color, box-shadow, fill, stroke;
   transition-duration:
     var(--ts-theme-dur-bg),
     var(--ts-theme-dur-text),
     var(--ts-theme-dur-text),
     var(--ts-theme-dur-shadow),
-    var(--ts-theme-dur-text),
     var(--ts-theme-dur-text),
     var(--ts-theme-dur-text);
   transition-timing-function: var(--ts-theme-ease);
 }
 
-html.ts-theme-ready .transition-transform {
-  transition-property: transform, background-color, border-color, color, box-shadow;
-  transition-duration:
-    220ms,
-    var(--ts-theme-dur-bg),
-    var(--ts-theme-dur-text),
-    var(--ts-theme-dur-text),
-    var(--ts-theme-dur-shadow);
-  transition-timing-function: var(--ts-theme-ease);
-}
-
-html.ts-theme-ready .transition-opacity {
-  transition-property: opacity, background-color, border-color, color, box-shadow;
-  transition-duration:
-    var(--ts-theme-dur-shadow),
-    var(--ts-theme-dur-bg),
-    var(--ts-theme-dur-text),
-    var(--ts-theme-dur-text),
-    var(--ts-theme-dur-shadow);
+:root[data-theme-transition="active"] .transition-opacity {
+  transition-property: opacity;
+  transition-duration: var(--ts-theme-dur-shadow);
   transition-timing-function: var(--ts-theme-ease);
 }
 

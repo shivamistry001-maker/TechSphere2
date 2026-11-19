@@ -6,6 +6,8 @@
 import { ThemeMode } from '../types.ts';
 
 export const THEME_STORAGE_KEY = 'techsphere_theme_v2';
+export const THEME_TRANSITION_ATTR = 'data-theme-transition';
+export const THEME_TRANSITION_ACTIVE_VALUE = 'active';
 
 export const THEME_TRANSITION_TIMINGS = {
   backgroundMs: 380,
@@ -15,12 +17,49 @@ export const THEME_TRANSITION_TIMINGS = {
   easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
 } as const;
 
+export interface ApplyThemeOptions {
+  /**
+   * When true, activates CSS-variable-driven transition durations synchronously
+   * in the same style frame as the theme switch (no requestAnimationFrame needed).
+   */
+  animate?: boolean;
+}
+
+export interface ThemeCssVariables {
+  '--ts-theme-dur-bg': string;
+  '--ts-theme-dur-text': string;
+  '--ts-theme-dur-shadow': string;
+  '--ts-theme-ease': string;
+}
+
 export interface ThemeTransitionRunState {
   active: boolean;
   runId: number;
   targetTheme: ThemeMode;
   durationMs: number;
   totalMs: number;
+}
+
+/**
+ * Returns the CSS custom property values governing theme transition timings.
+ * Defaults to 0ms when not actively transitioning so initial paint and idle browsing
+ * incur zero transition or post-FCP style-invalidation overhead.
+ */
+export function getThemeCssVariables(animate: boolean): ThemeCssVariables {
+  if (!animate) {
+    return {
+      '--ts-theme-dur-bg': '0ms',
+      '--ts-theme-dur-text': '0ms',
+      '--ts-theme-dur-shadow': '0ms',
+      '--ts-theme-ease': THEME_TRANSITION_TIMINGS.easing,
+    };
+  }
+  return {
+    '--ts-theme-dur-bg': `${THEME_TRANSITION_TIMINGS.backgroundMs}ms`,
+    '--ts-theme-dur-text': `${THEME_TRANSITION_TIMINGS.textAndBorderMs}ms`,
+    '--ts-theme-dur-shadow': `${THEME_TRANSITION_TIMINGS.shadowAndOpacityMs}ms`,
+    '--ts-theme-ease': THEME_TRANSITION_TIMINGS.easing,
+  };
 }
 
 /**
@@ -115,11 +154,74 @@ export function persistTheme(theme: ThemeMode): void {
   }
 }
 
+export const THEME_TRANSITION_CLEANUP_FALLBACK_MS = 1200;
+
 /**
- * Synchronizes document root classes, data-theme attribute, and color-scheme
- * without triggering duplicate DOM mutations or layout reads.
+ * Clears the active CSS-variable theme transition attribute after a theme switch finishes.
+ * Returns true if the attribute was present and removed, false when already idle.
  */
-export function applyThemeToDocument(theme: ThemeMode, root?: HTMLElement | null): boolean {
+export function clearThemeTransitionState(root?: HTMLElement | null): boolean {
+  const target = root ?? (typeof document !== 'undefined' ? document.documentElement : null);
+  if (!target || !target.hasAttribute(THEME_TRANSITION_ATTR)) {
+    return false;
+  }
+  target.removeAttribute(THEME_TRANSITION_ATTR);
+  return true;
+}
+
+/**
+ * Schedules removal of data-theme-transition="active" as soon as the root element's
+ * longest transition (`background-color`, 380ms) emits `transitionend`, with a
+ * safety fallback timer for backgrounded tabs or interrupted transitions.
+ * Returns a disposer to cancel pending cleanup on rapid consecutive toggles or unmount.
+ */
+export function scheduleThemeTransitionCleanup(
+  root?: HTMLElement | null,
+  fallbackMs: number = THEME_TRANSITION_CLEANUP_FALLBACK_MS
+): () => void {
+  const target = root ?? (typeof document !== 'undefined' ? document.documentElement : null);
+  if (!target) return () => {};
+
+  let done = false;
+  let timerId: ReturnType<typeof setTimeout> | null = null;
+
+  const cleanup = () => {
+    if (done) return;
+    done = true;
+    target.removeEventListener('transitionend', onTransitionEnd as EventListener);
+    if (timerId !== null) {
+      clearTimeout(timerId);
+      timerId = null;
+    }
+  };
+
+  const finish = () => {
+    cleanup();
+    clearThemeTransitionState(target);
+  };
+
+  const onTransitionEnd = (event: TransitionEvent) => {
+    if (event.target === target && event.propertyName === 'background-color') {
+      finish();
+    }
+  };
+
+  target.addEventListener('transitionend', onTransitionEnd as EventListener);
+  timerId = setTimeout(finish, fallbackMs);
+
+  return cleanup;
+}
+
+/**
+ * Synchronizes document root classes, data-theme attribute, color-scheme, and optional
+ * CSS-variable transition activation in a single synchronous write batch — eliminating
+ * requestAnimationFrame scheduling, forced reflows, and post-paint useEffect desyncs.
+ */
+export function applyThemeToDocument(
+  theme: ThemeMode,
+  root?: HTMLElement | null,
+  options: ApplyThemeOptions = {}
+): boolean {
   const target = root ?? (typeof document !== 'undefined' ? document.documentElement : null);
   if (!target) return false;
 
@@ -130,6 +232,14 @@ export function applyThemeToDocument(theme: ThemeMode, root?: HTMLElement | null
 
   if (!shouldApplyThemeUpdate(currentAttr, theme) && hasMatchingClass && !hasOppositeClass) {
     return false;
+  }
+
+  if (options.animate === true) {
+    if (target.getAttribute(THEME_TRANSITION_ATTR) !== THEME_TRANSITION_ACTIVE_VALUE) {
+      target.setAttribute(THEME_TRANSITION_ATTR, THEME_TRANSITION_ACTIVE_VALUE);
+    }
+  } else if (options.animate === false) {
+    target.removeAttribute(THEME_TRANSITION_ATTR);
   }
 
   target.classList.toggle('dark', theme === 'dark');

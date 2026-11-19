@@ -30,10 +30,12 @@ import {
 import {
   ThemeTransitionRunState,
   applyThemeToDocument,
+  clearThemeTransitionState,
   createThemeTransitionState,
   getNextTheme,
   persistTheme,
   readStoredTheme,
+  scheduleThemeTransitionCleanup,
 } from './utils/theme.ts';
 import { playThemeToggleClickSound } from './utils/themeSound.ts';
 
@@ -117,22 +119,7 @@ export default function App() {
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Enable permanent global theme transitions once after initial paint (never toggled on clicks)
-  useEffect(() => {
-    let raf1 = 0;
-    let raf2 = 0;
-    raf1 = window.requestAnimationFrame(() => {
-      raf2 = window.requestAnimationFrame(() => {
-        document.documentElement.classList.add('ts-theme-ready');
-      });
-    });
-    return () => {
-      window.cancelAnimationFrame(raf1);
-      window.cancelAnimationFrame(raf2);
-    };
-  }, []);
-
-  // Apply theme class, data-theme attribute, color-scheme, and persistence without redundant DOM writes
+  // Idempotent root sync on mount (no-op when index.html bootstrap or toggleTheme already applied)
   useEffect(() => {
     applyThemeToDocument(theme);
     persistTheme(theme);
@@ -190,6 +177,7 @@ export default function App() {
   const themeRef = useRef<ThemeMode>(theme);
   const runIdRef = useRef<number>(0);
   const themeProgressTimerRef = useRef<number | null>(null);
+  const cancelThemeTransitionCleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     themeRef.current = theme;
@@ -200,14 +188,34 @@ export default function App() {
       if (themeProgressTimerRef.current !== null) {
         window.clearTimeout(themeProgressTimerRef.current);
       }
+      if (cancelThemeTransitionCleanupRef.current) {
+        cancelThemeTransitionCleanupRef.current();
+        cancelThemeTransitionCleanupRef.current = null;
+      }
+      clearThemeTransitionState();
     };
   }, []);
 
   const toggleTheme = useCallback(() => {
     const nextTheme = getNextTheme(themeRef.current);
+    const animate = !prefersReducedMotion;
     themeRef.current = nextTheme;
+
+    if (cancelThemeTransitionCleanupRef.current) {
+      cancelThemeTransitionCleanupRef.current();
+      cancelThemeTransitionCleanupRef.current = null;
+    }
+
+    // Synchronously update root theme tokens + CSS-variable transition flag in the same
+    // frame as React's state update (eliminates post-paint useEffect desync & rAF).
+    applyThemeToDocument(nextTheme, undefined, { animate });
+    persistTheme(nextTheme);
     playThemeToggleClickSound(nextTheme);
     setTheme(nextTheme);
+
+    if (animate) {
+      cancelThemeTransitionCleanupRef.current = scheduleThemeTransitionCleanup();
+    }
 
     if (themeProgressTimerRef.current !== null) {
       window.clearTimeout(themeProgressTimerRef.current);
@@ -276,13 +284,7 @@ export default function App() {
   const isDark = theme === 'dark';
 
   return (
-    <div
-      className={`min-h-screen flex flex-col font-sans ${
-        isDark
-          ? 'bg-[#090909] text-[#F5F5F5] selection:bg-white selection:text-[#090909]'
-          : 'bg-white text-[#172033] selection:bg-sky-500 selection:text-white'
-      }`}
-    >
+    <div className="min-h-screen flex flex-col font-sans bg-[var(--ts-bg-main)] text-[var(--ts-text-primary)] selection:bg-[var(--ts-selection-bg)] selection:text-[var(--ts-selection-text)]">
       {/* Global Theme Switch Top Progress Indicator */}
       <ThemeTransitionProgressBar
         active={themeTransition.active}
