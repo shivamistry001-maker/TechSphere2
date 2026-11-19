@@ -80,14 +80,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                 <Phone className={`w-4 h-4 flex-shrink-0 ${isDark ? 'text-[#D4D4D4]' : 'text-[#38BDF8]'}`} />
                 <div className="flex flex-wrap items-center gap-x-2">
                   <a
-                    href={`tel:${COMPANY_INFO.phones[0].raw}`}
+                    href={`tel:${COMPANY_INFO.phones[0].international}`}
                     className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
                   >
                     {COMPANY_INFO.phones[0].display}
                   </a>
                   <span className={isDark ? 'text-[#737373]' : 'text-slate-600'}>·</span>
                   <a
-                    href={`tel:${COMPANY_INFO.phones[1].raw}`}
+                    href={`tel:${COMPANY_INFO.phones[1].international}`}
                     className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
                   >
                     {COMPANY_INFO.phones[1].display}

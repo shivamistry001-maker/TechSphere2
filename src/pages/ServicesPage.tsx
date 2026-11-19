@@ -7,6 +7,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from '../types.ts';
 import { SERVICES_DATA } from '../data/servicesData.ts';
+import { resolveConsultationService } from '../data/consultationServices.ts';
 import { CheckCircle2, ArrowRight, Database, Code, Globe, Zap, Cloud, Network } from 'lucide-react';
 import {
   CardGlareOverlay,
@@ -54,7 +55,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
 
   const handleConsultService = (srvTitle: string) => {
     if (onSelectServiceForConsultation) {
-      onSelectServiceForConsultation(srvTitle);
+      onSelectServiceForConsultation(resolveConsultationService(srvTitle));
     }
     onNavigate('request-consultation');
   };

@@ -25,7 +25,7 @@ import { EASE_PREMIUM } from '../utils/motion.ts';
 interface IndustriesPageProps {
   onNavigate: (page: PageId) => void;
   theme: ThemeMode;
-  onBookConsultation?: (industryName: string) => void;
+  onBookConsultation?: (serviceName: string, notes?: string) => void;
 }
 
 export const IndustriesPage: React.FC<IndustriesPageProps> = ({
@@ -42,7 +42,10 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
 
   const handleConsult = (indName: string) => {
     if (onBookConsultation) {
-      onBookConsultation(`Consultation for ${indName} Industry`);
+      onBookConsultation(
+        'ERP Consultancy',
+        `Industry Focus: ${indName} Sector — interested in tailored ERP & IT architecture.`
+      );
     } else {
       onNavigate('request-consultation');
     }

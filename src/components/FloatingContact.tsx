@@ -75,7 +75,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
 
             {/* Phone 1 */}
             <a
-              href={`tel:${COMPANY_INFO.phones[0].raw}`}
+              href={`tel:${COMPANY_INFO.phones[0].international}`}
               className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'
@@ -99,7 +99,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
 
             {/* Phone 2 */}
             <a
-              href={`tel:${COMPANY_INFO.phones[1].raw}`}
+              href={`tel:${COMPANY_INFO.phones[1].international}`}
               className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'

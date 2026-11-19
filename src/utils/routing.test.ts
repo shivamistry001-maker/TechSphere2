@@ -16,20 +16,25 @@ test('normalizePathname strips trailing slashes and query params cleanly', () =>
   assert.equal(normalizePathname(''), '/');
 });
 
-test('getPageFromPathname resolves /demo-websites, /erp-showcase, and fallback paths accurately', () => {
+test('getPageFromPathname resolves /demo-websites, /erp-showcase, and unknown 404 paths accurately', () => {
+  assert.equal(getPageFromPathname('/'), 'home');
   assert.equal(getPageFromPathname('/demo-websites'), 'demo-websites');
   assert.equal(getPageFromPathname('/demo-websites/'), 'demo-websites');
   assert.equal(getPageFromPathname('/erp-showcase'), 'erp-showcase');
   assert.equal(getPageFromPathname('/erp-showcase/'), 'erp-showcase');
   assert.equal(getPageFromPathname('/portfolio'), 'portfolio');
-  assert.equal(getPageFromPathname('/unknown-route'), 'home');
+  assert.equal(getPageFromPathname('/insights'), 'not-found');
+  assert.equal(getPageFromPathname('/unknown-route'), 'not-found');
+  assert.equal(getPageFromPathname('/bad/nested/path'), 'not-found');
 });
 
-test('getPathForPage and PAGE_SEO_META define dedicated routes and titles for showcase pages', () => {
+test('getPathForPage and PAGE_SEO_META define dedicated routes and titles for showcase and 404 pages', () => {
   assert.equal(getPathForPage('demo-websites'), '/demo-websites');
   assert.equal(getPathForPage('erp-showcase'), '/erp-showcase');
   assert.ok(PAGE_SEO_META['demo-websites'].title.includes('Website Development Demonstrations'));
   assert.ok(PAGE_SEO_META['erp-showcase'].title.includes('ERP Software Demonstrations'));
+  assert.ok(PAGE_SEO_META['not-found'].title.includes('404'));
+  assert.notEqual(PAGE_SEO_META['not-found'].title, PAGE_SEO_META.home.title);
   assert.notEqual(
     PAGE_SEO_META['demo-websites'].description,
     PAGE_SEO_META['erp-showcase'].description

@@ -144,8 +144,8 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
   const handleBookConsultationWithPrefill = () => {
     if (onSelectRecommendation) {
       onSelectRecommendation(
-        recommendation.primary,
-        `Find Your ERP Quiz Result: Business: ${quizState.businessType}, Team: ${quizState.employees}, Mfg: ${quizState.needsManufacturing}, CRM: ${quizState.needsCRM}, POS/Ecom: ${quizState.needsEcommerce}, Customization: ${quizState.customizationExpectation}`
+        recommendation.consultationService,
+        `Find Your ERP Quiz Result (${recommendation.primary}): Business: ${quizState.businessType}, Team: ${quizState.employees}, Mfg: ${quizState.needsManufacturing}, CRM: ${quizState.needsCRM}, POS/Ecom: ${quizState.needsEcommerce}, Customization: ${quizState.customizationExpectation}`
       );
     }
     onNavigate('request-consultation');

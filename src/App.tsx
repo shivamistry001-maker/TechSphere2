@@ -24,6 +24,10 @@ import {
   getPathForPage,
 } from './utils/routing.ts';
 import {
+  DEFAULT_CONSULTATION_SERVICE,
+  resolveConsultationService,
+} from './data/consultationServices.ts';
+import {
   ThemeTransitionRunState,
   applyThemeToDocument,
   createThemeTransitionState,
@@ -73,11 +77,11 @@ const CaseStudiesPage = lazy(() =>
 const PortfolioPage = lazy(() =>
   import('./pages/PortfolioPage.tsx').then((m) => ({ default: m.PortfolioPage }))
 );
-const InsightsPage = lazy(() =>
-  import('./pages/InsightsPage.tsx').then((m) => ({ default: m.InsightsPage }))
-);
 const ContactPage = lazy(() =>
   import('./pages/ContactPage.tsx').then((m) => ({ default: m.ContactPage }))
+);
+const NotFoundPage = lazy(() =>
+  import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage }))
 );
 
 function RouteLoadingFallback({ isDark }: { isDark: boolean }) {
@@ -108,7 +112,7 @@ export default function App() {
     getPageFromPathname(window.location.pathname)
   );
   const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme('light'));
-  const [selectedService, setSelectedService] = useState<string>('ERP Consultancy');
+  const [selectedService, setSelectedService] = useState<string>(DEFAULT_CONSULTATION_SERVICE);
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -247,7 +251,7 @@ export default function App() {
 
   const handleConsultationSelect = useCallback(
     (serviceName: string, notes: string = '') => {
-      setSelectedService(serviceName);
+      setSelectedService(resolveConsultationService(serviceName));
       setSelectedMessage(notes);
       handleNavigate('request-consultation');
     },
@@ -389,7 +393,7 @@ export default function App() {
               <IndustriesPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={handleServiceConsultation}
+                onBookConsultation={handleConsultationSelect}
               />
             )}
 
@@ -401,16 +405,20 @@ export default function App() {
               <PortfolioPage onNavigate={handleNavigate} theme={theme} />
             )}
 
-            {currentPage === 'insights' && (
-              <InsightsPage onNavigate={handleNavigate} theme={theme} />
-            )}
-
             {(currentPage === 'contact' || currentPage === 'request-consultation') && (
               <ContactPage
                 onNavigate={handleNavigate}
                 theme={theme}
                 initialService={selectedService}
                 initialMessage={selectedMessage}
+              />
+            )}
+
+            {currentPage === 'not-found' && (
+              <NotFoundPage
+                onNavigate={handleNavigate}
+                theme={theme}
+                requestedPath={window.location.pathname}
               />
             )}
           </Suspense>

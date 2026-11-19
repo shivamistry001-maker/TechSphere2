@@ -19,9 +19,9 @@ export const PAGE_PATHS: Readonly<Record<PageId, string>> = {
   industries: '/industries',
   'case-studies': '/case-studies',
   portfolio: '/portfolio',
-  insights: '/insights',
   contact: '/contact',
   'request-consultation': '/request-consultation',
+  'not-found': '/404',
 };
 
 export interface PageSEOMeta {
@@ -95,11 +95,6 @@ export const PAGE_SEO_META: Readonly<Record<PageId, PageSEOMeta>> = {
     description:
       'Browse TechSphere engineering prototypes, custom portal architectures, ERP automation systems, and digital platform blueprints.',
   },
-  insights: {
-    title: 'Insights & ERP Knowledge Hub | TechSphere',
-    description:
-      'Technical guides and strategic insights on ERP selection, automation architecture, Odoo, ERPNext, and digital transformation.',
-  },
   contact: {
     title: 'Contact TechSphere | Book an Advisory Call',
     description:
@@ -109,6 +104,11 @@ export const PAGE_SEO_META: Readonly<Record<PageId, PageSEOMeta>> = {
     title: 'Book a Free Consultation | TechSphere IT & ERP Consultancy',
     description:
       'Schedule a discovery call with TechSphere to scope ERP implementation, website development, or business workflow automation.',
+  },
+  'not-found': {
+    title: '404 — Page Not Found | TechSphere IT & ERP Consultancy',
+    description:
+      'The requested page could not be found. Explore TechSphere IT solutions, ERP consultancy, or contact our team.',
   },
 };
 
@@ -121,11 +121,12 @@ export function normalizePathname(pathname: string): string {
 export function getPageFromPathname(pathname: string): PageId {
   const normalized = normalizePathname(pathname);
   for (const [pageId, routePath] of Object.entries(PAGE_PATHS) as [PageId, string][]) {
+    if (pageId === 'not-found') continue;
     if (routePath === normalized) {
       return pageId;
     }
   }
-  return 'home';
+  return 'not-found';
 }
 
 export const SITE_ORIGIN = 'https://techsphere.consulting';

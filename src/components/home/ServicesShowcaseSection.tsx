@@ -39,6 +39,7 @@ const FEATURED_SERVICES = [
   {
     id: 'erp-consultancy',
     title: 'ERP Consultancy',
+    consultationService: 'ERP Consultancy',
     description:
       'ERP selection, implementation, customization, and business process optimization.',
     targetPage: 'erp-solutions' as PageId,
@@ -48,6 +49,7 @@ const FEATURED_SERVICES = [
   {
     id: 'odoo-erp',
     title: 'Odoo ERP Solutions',
+    consultationService: 'Odoo',
     description:
       'Odoo implementation, configuration, customization, and training.',
     targetPage: 'odoo' as PageId,
@@ -57,6 +59,7 @@ const FEATURED_SERVICES = [
   {
     id: 'erpnext',
     title: 'ERPNext Solutions',
+    consultationService: 'ERPNext',
     description:
       'Open-source ERP implementation, customization, and deployment.',
     targetPage: 'erpnext' as PageId,
@@ -66,6 +69,7 @@ const FEATURED_SERVICES = [
   {
     id: 'website-dev',
     title: 'Website Development',
+    consultationService: 'Website Development',
     description:
       'Modern, responsive, SEO-friendly business websites and web applications.',
     targetPage: 'it-solutions' as PageId,
@@ -75,6 +79,7 @@ const FEATURED_SERVICES = [
   {
     id: 'business-automation',
     title: 'Business Automation',
+    consultationService: 'Business Automation',
     description:
       'Workflow automation, process optimization, and operational efficiency.',
     targetPage: 'services' as PageId,
@@ -84,6 +89,7 @@ const FEATURED_SERVICES = [
   {
     id: 'it-consultancy',
     title: 'IT Consultancy',
+    consultationService: 'IT Consulting',
     description:
       'Technology planning, digital transformation, and technical consulting.',
     targetPage: 'it-solutions' as PageId,
@@ -258,7 +264,7 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
                     {onSelectService && (
                       <button
                         type="button"
-                        onClick={() => onSelectService(service.title)}
+                        onClick={() => onSelectService(service.consultationService)}
                         className={`inline-flex items-center min-h-[44px] py-2.5 text-[11px] font-medium transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 rounded-md ${
                           isDark
                             ? 'text-[#A3A3A3] hover:text-white focus-visible:ring-white'

@@ -523,7 +523,6 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 { key: 'industries', label: 'Industries', page: 'industries' as PageId },
                 { key: 'portfolio', label: 'Portfolio', page: 'portfolio' as PageId },
                 { key: 'case-studies', label: 'Case Studies', page: 'case-studies' as PageId },
-                { key: 'insights', label: 'Insights & Blog', page: 'insights' as PageId },
                 { key: 'contact', label: 'Contact', page: 'contact' as PageId },
               ].map((item, idx) => {
                 const isItemActive = currentPage === item.page;
@@ -583,7 +582,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                   }`}
                 >
                   <a
-                    href={`tel:${COMPANY_INFO.phones[0].raw}`}
+                    href={`tel:${COMPANY_INFO.phones[0].international}`}
                     className={`flex items-center gap-2.5 min-h-[44px] py-2 transition-colors ${
                       isDark ? 'hover:text-white' : 'hover:text-[#0284C7]'
                     }`}

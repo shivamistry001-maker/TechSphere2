@@ -6,6 +6,7 @@
 import React from 'react';
 import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
+import { resolveConsultationService } from '../data/consultationServices.ts';
 import { ContactConsultationForm } from '../components/ContactConsultationForm.tsx';
 import { Phone, Mail, Globe, MessageSquare, Clock } from 'lucide-react';
 import {
@@ -89,7 +90,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     </span>
                     <div className="flex flex-col space-y-0 lg:space-y-1 font-semibold text-sm sm:text-base mt-0.5">
                       <a
-                        href={`tel:${COMPANY_INFO.phones[0].raw}`}
+                        href={`tel:${COMPANY_INFO.phones[0].international}`}
                         className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${
                           isDark ? 'text-[#F5F5F5] hover:text-[#D4D4D4]' : 'text-slate-800 hover:text-[#0284C7]'
                         }`}
@@ -97,7 +98,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                         {COMPANY_INFO.phones[0].display}
                       </a>
                       <a
-                        href={`tel:${COMPANY_INFO.phones[1].raw}`}
+                        href={`tel:${COMPANY_INFO.phones[1].international}`}
                         className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${
                           isDark ? 'text-[#F5F5F5] hover:text-[#D4D4D4]' : 'text-slate-800 hover:text-[#0284C7]'
                         }`}
@@ -203,7 +204,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
           {/* Right Column: Interactive Consultation Form */}
           <ScrollCascadeBlock className="lg:col-span-7">
             <ContactConsultationForm
-              initialService={initialService || 'ERP Consultancy'}
+              initialService={resolveConsultationService(initialService)}
               initialMessage={initialMessage || ''}
               theme={theme}
             />

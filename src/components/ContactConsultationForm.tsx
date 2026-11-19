@@ -15,6 +15,17 @@ import {
 } from 'lucide-react';
 import { ConsultationFormData, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
+import {
+  CONSULTATION_SERVICES,
+  DEFAULT_CONSULTATION_SERVICE,
+  resolveConsultationService,
+} from '../data/consultationServices.ts';
+import {
+  ContactValidationErrors,
+  ContactValidationField,
+  validateContactField,
+  validateContactForm,
+} from '../utils/formValidation.ts';
 
 interface ContactConsultationFormProps {
   initialService?: string;
@@ -23,7 +34,7 @@ interface ContactConsultationFormProps {
 }
 
 export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = ({
-  initialService = 'ERP Consultancy',
+  initialService = DEFAULT_CONSULTATION_SERVICE,
   initialMessage = '',
   theme = 'light',
 }) => {
@@ -37,28 +48,74 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
     phone: '',
     industry: 'Manufacturing',
     companySize: '16-50 employees',
-    interestedService: initialService,
+    interestedService: resolveConsultationService(initialService),
     currentERP: 'Excel / Spreadsheets',
     message: initialMessage,
   });
 
-  const [touched, setTouched] = useState<{ email?: boolean; fullName?: boolean; phone?: boolean }>({});
+  const [fieldErrors, setFieldErrors] = useState<ContactValidationErrors>({});
 
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      interestedService: initialService || prev.interestedService,
-      message: initialMessage || prev.message,
+      interestedService: resolveConsultationService(initialService || prev.interestedService),
+      message: initialMessage,
     }));
   }, [initialService, initialMessage]);
 
   const isDark = theme === 'dark';
 
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
+  const handleFieldBlur = (field: ContactValidationField, value: string) => {
+    const error = validateContactField(field, value);
+    setFieldErrors((prev) => {
+      if (!error) {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [field]: error };
+    });
+  };
+
+  const handleValidatedChange = (field: ContactValidationField, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (fieldErrors[field]) {
+      const error = validateContactField(field, value);
+      setFieldErrors((prev) => {
+        if (!error) {
+          const { [field]: _, ...rest } = prev;
+          return rest;
+        }
+        return { ...prev, [field]: error };
+      });
+    }
+  };
+
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const validation = validateContactForm({
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+    });
+
+    if (!validation.valid) {
+      e.preventDefault();
+      setFieldErrors(validation.errors);
+      const fieldOrder: ContactValidationField[] = ['fullName', 'email', 'phone', 'message'];
+      const firstInvalid = fieldOrder.find((field) => Boolean(validation.errors[field]));
+      if (firstInvalid) {
+        document.getElementById(firstInvalid)?.focus();
+      }
+      return;
+    }
+
+    setFieldErrors({});
+    return handleSubmit(e);
+  };
 
   const handleReset = () => {
     reset();
-    setTouched({});
+    setFieldErrors({});
     setFormData({
       fullName: '',
       companyName: '',
@@ -66,15 +123,24 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       phone: '',
       industry: 'Manufacturing',
       companySize: '16-50 employees',
-      interestedService: 'ERP Consultancy',
+      interestedService: DEFAULT_CONSULTATION_SERVICE,
       currentERP: 'Excel / Spreadsheets',
       message: '',
     });
   };
 
-  const inputClass = isDark
-    ? 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] placeholder-[#737373] focus:border-white focus:ring-1 focus:ring-white/40'
-    : 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30';
+  const getInputClass = (hasError?: boolean) =>
+    isDark
+      ? `w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] text-[#F5F5F5] placeholder-[#737373] ${
+          hasError
+            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400/50'
+            : 'border-[#303030] focus:border-white focus:ring-1 focus:ring-white/40'
+        }`
+      : `w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white text-slate-900 placeholder-slate-400 ${
+          hasError
+            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/30'
+            : 'border-slate-300 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
+        }`;
 
   const selectClass = isDark
     ? 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] focus:border-white focus:ring-1 focus:ring-white/40'
@@ -184,7 +250,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             </div>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={onFormSubmit} noValidate className="space-y-5">
             {/* Formspree Error Banner */}
             {state.errors && (
               <div
@@ -196,7 +262,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 <div>
                   <p className="font-semibold">Unable to transmit your request at this moment.</p>
                   <p className={`text-[11px] mt-0.5 ${isDark ? 'text-red-400' : 'text-red-600'}`}>
-                    Please check your inputs or reach out directly to techsphereconsultancy@gmail.com or call 8320806363.
+                    Please check your inputs or reach out directly to {COMPANY_INFO.email} or call {COMPANY_INFO.phones[0].display}.
                   </p>
                   <ValidationError errors={state.errors} className={`text-[11px] mt-1 ${isDark ? 'text-red-400' : 'text-red-600'}`} />
                 </div>
@@ -215,15 +281,19 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                     name="fullName"
                     type="text"
                     required
+                    aria-invalid={Boolean(fieldErrors.fullName)}
+                    aria-describedby={fieldErrors.fullName ? 'fullName-error' : undefined}
                     value={formData.fullName}
-                    onBlur={() => setTouched((prev) => ({ ...prev, fullName: true }))}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onBlur={(e) => handleFieldBlur('fullName', e.target.value)}
+                    onChange={(e) => handleValidatedChange('fullName', e.target.value)}
                     placeholder="e.g. John Doe"
-                    className={inputClass}
+                    className={getInputClass(Boolean(fieldErrors.fullName))}
                   />
                 </div>
-                {touched.fullName && !formData.fullName.trim() && (
-                  <p className="text-[11px] text-red-400 mt-1">Please enter your full name.</p>
+                {fieldErrors.fullName && (
+                  <p id="fullName-error" role="alert" className="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                    {fieldErrors.fullName}
+                  </p>
                 )}
                 <ValidationError prefix="Full Name" field="fullName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
                 <ValidationError prefix="Full Name" field="name" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
@@ -240,7 +310,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                   placeholder="e.g. Acme Industrial Corp"
-                  className={inputClass}
+                  className={getInputClass(false)}
                 />
                 <ValidationError prefix="Company Name" field="companyName" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
@@ -257,14 +327,18 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="email"
                   type="email"
                   required
+                  aria-invalid={Boolean(fieldErrors.email)}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   value={formData.email}
-                  onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onBlur={(e) => handleFieldBlur('email', e.target.value)}
+                  onChange={(e) => handleValidatedChange('email', e.target.value)}
                   placeholder="name@company.com"
-                  className={inputClass}
+                  className={getInputClass(Boolean(fieldErrors.email))}
                 />
-                {touched.email && formData.email.trim() && !isEmailValid && (
-                  <p className="text-[11px] text-red-400 mt-1">Please enter a valid work email address.</p>
+                {fieldErrors.email && (
+                  <p id="email-error" role="alert" className="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                    {fieldErrors.email}
+                  </p>
                 )}
                 <ValidationError prefix="Email" field="email" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
@@ -278,14 +352,18 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   name="phone"
                   type="tel"
                   required
+                  aria-invalid={Boolean(fieldErrors.phone)}
+                  aria-describedby={fieldErrors.phone ? 'phone-error' : undefined}
                   value={formData.phone}
-                  onBlur={() => setTouched((prev) => ({ ...prev, phone: true }))}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onBlur={(e) => handleFieldBlur('phone', e.target.value)}
+                  onChange={(e) => handleValidatedChange('phone', e.target.value)}
                   placeholder="e.g. +91 83208 06363"
-                  className={inputClass}
+                  className={getInputClass(Boolean(fieldErrors.phone))}
                 />
-                {touched.phone && !formData.phone.trim() && (
-                  <p className="text-[11px] text-red-400 mt-1">Please provide a contact phone number.</p>
+                {fieldErrors.phone && (
+                  <p id="phone-error" role="alert" className="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                    {fieldErrors.phone}
+                  </p>
                 )}
                 <ValidationError prefix="Phone" field="phone" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
@@ -352,16 +430,11 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   onChange={(e) => setFormData({ ...formData, interestedService: e.target.value })}
                   className={selectClass}
                 >
-                  <option value="ERP Consultancy">ERP Consultancy</option>
-                  <option value="ERP Implementation">ERP Implementation</option>
-                  <option value="ERPNext">ERPNext</option>
-                  <option value="Odoo">Odoo</option>
-                  <option value="Zoho">Zoho</option>
-                  <option value="Custom ERP">Custom ERP</option>
-                  <option value="Website Development">Website Development</option>
-                  <option value="Automation">Automation</option>
-                  <option value="IT Consulting">IT Consulting</option>
-                  <option value="Other">Other</option>
+                  {CONSULTATION_SERVICES.map((serviceOption) => (
+                    <option key={serviceOption} value={serviceOption}>
+                      {serviceOption}
+                    </option>
+                  ))}
                 </select>
                 <ValidationError prefix="Interested Service" field="interestedService" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
               </div>
@@ -401,11 +474,19 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 name="message"
                 rows={4}
                 required
+                aria-invalid={Boolean(fieldErrors.message)}
+                aria-describedby={fieldErrors.message ? 'message-error' : undefined}
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onBlur={(e) => handleFieldBlur('message', e.target.value)}
+                onChange={(e) => handleValidatedChange('message', e.target.value)}
                 placeholder="Describe your current software setup, processes you want to automate, or goals for the ERP implementation..."
-                className={`${inputClass} py-3 resize-y`}
+                className={`${getInputClass(Boolean(fieldErrors.message))} py-3 resize-y`}
               />
+              {fieldErrors.message && (
+                <p id="message-error" role="alert" className="text-[11px] text-red-500 dark:text-red-400 mt-1">
+                  {fieldErrors.message}
+                </p>
+              )}
               <ValidationError prefix="Message" field="message" errors={state.errors} className="text-[11px] text-red-400 mt-1 block" />
             </div>
 

@@ -41,7 +41,7 @@ export const ITSolutionsPage: React.FC<ITSolutionsPageProps> = ({
 
   const handleConsult = () => {
     if (onBookConsultation) {
-      onBookConsultation('Custom IT & Cloud Architecture');
+      onBookConsultation('Custom IT Solutions');
     } else {
       onNavigate('request-consultation');
     }

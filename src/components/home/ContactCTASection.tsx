@@ -19,6 +19,16 @@ import {
 import { PageId, ThemeMode } from '../../types.ts';
 import { COMPANY_INFO } from '../../data/companyData.ts';
 import {
+  CONSULTATION_SERVICES,
+  DEFAULT_CONSULTATION_SERVICE,
+} from '../../data/consultationServices.ts';
+import {
+  ContactValidationErrors,
+  ContactValidationField,
+  validateContactField,
+  validateContactForm,
+} from '../../utils/formValidation.ts';
+import {
   ScrollCascadeBlock,
   ScrollCascadeGrid,
   ScrollParallaxLayer,
@@ -40,8 +50,9 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [service, setService] = useState('ERP Consultancy');
+  const [service, setService] = useState<string>(DEFAULT_CONSULTATION_SERVICE);
   const [requirements, setRequirements] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<ContactValidationErrors>({});
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop(1024);
@@ -53,23 +64,86 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
 
   const isDark = theme === 'dark';
 
+  const handleFieldBlur = (field: ContactValidationField, value: string) => {
+    const error = validateContactField(field, value);
+    setFieldErrors((prev) => {
+      if (!error) {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [field]: error };
+    });
+  };
+
+  const clearOrRevalidateField = (field: ContactValidationField, value: string) => {
+    if (!fieldErrors[field]) return;
+    const error = validateContactField(field, value);
+    setFieldErrors((prev) => {
+      if (!error) {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [field]: error };
+    });
+  };
+
+  const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const validation = validateContactForm({
+      fullName: name,
+      email,
+      phone,
+      message: requirements,
+    });
+
+    if (!validation.valid) {
+      e.preventDefault();
+      setFieldErrors(validation.errors);
+      const idByField: Record<ContactValidationField, string> = {
+        fullName: 'home-name',
+        email: 'home-email',
+        phone: 'home-phone',
+        message: 'home-requirements',
+      };
+      const firstInvalid = (['fullName', 'email', 'phone', 'message'] as ContactValidationField[]).find(
+        (field) => Boolean(validation.errors[field])
+      );
+      if (firstInvalid) {
+        document.getElementById(idByField[firstInvalid])?.focus();
+      }
+      return;
+    }
+
+    setFieldErrors({});
+    return handleSubmit(e);
+  };
+
   const handleReset = () => {
     reset();
     setName('');
     setCompany('');
     setEmail('');
     setPhone('');
-    setService('ERP Consultancy');
+    setService(DEFAULT_CONSULTATION_SERVICE);
     setRequirements('');
+    setFieldErrors({});
   };
 
   const whatsappText = encodeURIComponent(
     `Hello TechSphere Team, I'd like to discuss ${service} for ${company || 'my business'}.`
   );
 
-  const inputBaseClass = isDark
-    ? 'w-full min-h-[44px] px-4 py-3 rounded-xl bg-[#1D1D1D] border border-[#303030] text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-200 focus:border-white focus:ring-1 focus:ring-white'
-    : 'w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-sm text-white placeholder-slate-400 outline-none transition-colors duration-200 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]';
+  const getInputClass = (hasError?: boolean) =>
+    isDark
+      ? `w-full min-h-[44px] px-4 py-3 rounded-xl bg-[#1D1D1D] border text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-200 ${
+          hasError
+            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400'
+            : 'border-[#303030] focus:border-white focus:ring-1 focus:ring-white'
+        }`
+      : `w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.06] border text-sm text-white placeholder-slate-400 outline-none transition-colors duration-200 ${
+          hasError
+            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400'
+            : 'border-white/15 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]'
+        }`;
 
   return (
     <section
@@ -206,7 +280,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                   <motion.a
                     whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                    href={`tel:${COMPANY_INFO.phones[0].raw}`}
+                    href={`tel:${COMPANY_INFO.phones[0].international}`}
                     className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl border text-xs font-medium transition-colors ${
                       isDark
                         ? 'bg-[#1D1D1D] hover:bg-[#252525] border-[#303030] text-[#F5F5F5]'
@@ -271,7 +345,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                     </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={onFormSubmit} noValidate className="space-y-4">
                     {state.errors && (
                       <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -294,11 +368,22 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           name="fullName"
                           type="text"
                           required
+                          aria-invalid={Boolean(fieldErrors.fullName)}
+                          aria-describedby={fieldErrors.fullName ? 'home-name-error' : undefined}
                           value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          onBlur={(e) => handleFieldBlur('fullName', e.target.value)}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            clearOrRevalidateField('fullName', e.target.value);
+                          }}
                           placeholder="John Doe"
-                          className={inputBaseClass}
+                          className={getInputClass(Boolean(fieldErrors.fullName))}
                         />
+                        {fieldErrors.fullName && (
+                          <p id="home-name-error" role="alert" className="text-[11px] text-red-400 mt-1">
+                            {fieldErrors.fullName}
+                          </p>
+                        )}
                         <ValidationError
                           prefix="Name"
                           field="fullName"
@@ -323,7 +408,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           placeholder="Acme Industries"
-                          className={inputBaseClass}
+                          className={getInputClass(false)}
                         />
                       </div>
                     </div>
@@ -343,11 +428,22 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           name="email"
                           type="email"
                           required
+                          aria-invalid={Boolean(fieldErrors.email)}
+                          aria-describedby={fieldErrors.email ? 'home-email-error' : undefined}
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onBlur={(e) => handleFieldBlur('email', e.target.value)}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            clearOrRevalidateField('email', e.target.value);
+                          }}
                           placeholder="john@company.com"
-                          className={inputBaseClass}
+                          className={getInputClass(Boolean(fieldErrors.email))}
                         />
+                        {fieldErrors.email && (
+                          <p id="home-email-error" role="alert" className="text-[11px] text-red-400 mt-1">
+                            {fieldErrors.email}
+                          </p>
+                        )}
                         <ValidationError
                           prefix="Email"
                           field="email"
@@ -370,11 +466,22 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           name="phone"
                           type="tel"
                           required
+                          aria-invalid={Boolean(fieldErrors.phone)}
+                          aria-describedby={fieldErrors.phone ? 'home-phone-error' : undefined}
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          onBlur={(e) => handleFieldBlur('phone', e.target.value)}
+                          onChange={(e) => {
+                            setPhone(e.target.value);
+                            clearOrRevalidateField('phone', e.target.value);
+                          }}
                           placeholder="+91 83208 06363"
-                          className={inputBaseClass}
+                          className={getInputClass(Boolean(fieldErrors.phone))}
                         />
+                        {fieldErrors.phone && (
+                          <p id="home-phone-error" role="alert" className="text-[11px] text-red-400 mt-1">
+                            {fieldErrors.phone}
+                          </p>
+                        )}
                         <ValidationError
                           prefix="Phone"
                           field="phone"
@@ -404,12 +511,11 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                             : 'bg-[#101B35] border-white/15 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]'
                         }`}
                       >
-                        <option value="ERP Consultancy">ERP Consultancy</option>
-                        <option value="Odoo ERP Solutions">Odoo ERP Solutions</option>
-                        <option value="ERPNext Solutions">ERPNext Solutions</option>
-                        <option value="Website Development">Website Development</option>
-                        <option value="Business Automation">Business Automation</option>
-                        <option value="IT Consultancy">IT Consultancy</option>
+                        {CONSULTATION_SERVICES.map((serviceOption) => (
+                          <option key={serviceOption} value={serviceOption}>
+                            {serviceOption}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -428,11 +534,22 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                         name="message"
                         rows={3}
                         required
+                        aria-invalid={Boolean(fieldErrors.message)}
+                        aria-describedby={fieldErrors.message ? 'home-requirements-error' : undefined}
                         value={requirements}
-                        onChange={(e) => setRequirements(e.target.value)}
+                        onBlur={(e) => handleFieldBlur('message', e.target.value)}
+                        onChange={(e) => {
+                          setRequirements(e.target.value);
+                          clearOrRevalidateField('message', e.target.value);
+                        }}
                         placeholder="Tell us about your current systems, processes to automate, or goals..."
-                        className={`${inputBaseClass} resize-y`}
+                        className={`${getInputClass(Boolean(fieldErrors.message))} resize-y`}
                       />
+                      {fieldErrors.message && (
+                        <p id="home-requirements-error" role="alert" className="text-[11px] text-red-400 mt-1">
+                          {fieldErrors.message}
+                        </p>
+                      )}
                       <ValidationError
                         prefix="Project Requirements"
                         field="message"

@@ -17,9 +17,9 @@ export type PageId =
   | 'industries'
   | 'case-studies'
   | 'portfolio'
-  | 'insights'
   | 'contact'
-  | 'request-consultation';
+  | 'request-consultation'
+  | 'not-found';
 
 export type ShowcaseSectionId = 'website-demo-projects' | 'explore-erp-solutions';
 
@@ -86,17 +86,6 @@ export interface PortfolioItem {
   description: string;
   technologies: string[];
   highlight: string;
-}
-
-export interface InsightArticle {
-  id: string;
-  title: string;
-  category: 'ERP' | 'Business Automation' | 'Odoo' | 'ERPNext' | 'Zoho' | 'IT Solutions' | 'Digital Transformation';
-  readTime: string;
-  summary: string;
-  content: string[];
-  isDemo: true;
-  publishDate: string;
 }
 
 export interface FAQItem {

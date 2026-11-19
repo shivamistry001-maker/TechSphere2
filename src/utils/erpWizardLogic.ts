@@ -4,9 +4,11 @@
  */
 
 import type { ERPComparisonItem, QuizState } from '../types.ts';
+import type { ConsultationServiceOption } from '../data/consultationServices.ts';
 
 export interface ERPRecommendationResult {
   primary: string;
+  consultationService: ConsultationServiceOption;
   badge: string;
   description: string;
   alternatives: string[];
@@ -29,6 +31,7 @@ export function getERPRecommendation(quizState: QuizState): ERPRecommendationRes
   if (needsManufacturing === 'Yes' || businessType === 'Manufacturing') {
     return {
       primary: 'ERPNext',
+      consultationService: 'ERPNext',
       badge: 'Recommended for Deep Manufacturing & Operational Control',
       description:
         'Based on your emphasis on production workflows, multi-level BOMs, and inventory tracking, ERPNext represents an exceptional candidate. Its open-source architecture eliminates licensing ceilings as your workstation count grows.',
@@ -41,6 +44,7 @@ export function getERPRecommendation(quizState: QuizState): ERPRecommendationRes
   if (businessType === 'Retail' || needsEcommerce === 'POS_and_Ecom') {
     return {
       primary: 'Odoo',
+      consultationService: 'Odoo',
       badge: 'Recommended for Omnichannel Retail & Modular Architecture',
       description:
         'Your operational focus on retail Point of Sale (POS) combined with eCommerce synchronization aligns closely with Odoo’s modular ecosystem. Its sleek user interface minimizes training time for floor staff.',
@@ -53,6 +57,7 @@ export function getERPRecommendation(quizState: QuizState): ERPRecommendationRes
   if (businessType === 'Services' || businessType === 'Startup' || needsCRM === 'Critical') {
     return {
       primary: 'Zoho One / Books / CRM',
+      consultationService: 'Zoho',
       badge: 'Recommended for Cloud Productivity & Fast Deployment',
       description:
         'For agile teams and services prioritizing client acquisition, project milestones, automated recurring invoicing, and cloud mobility, the Zoho suite delivers world-class velocity with zero server maintenance.',
@@ -65,6 +70,7 @@ export function getERPRecommendation(quizState: QuizState): ERPRecommendationRes
   if (customizationExpectation === 'Heavy') {
     return {
       primary: 'Custom ERP or ERPNext Framework',
+      consultationService: 'Custom ERP',
       badge: 'Recommended for Proprietary Operational Workflows',
       description:
         'Your requirement for deep custom logic indicates that rigid proprietary SaaS platforms may cause operational friction. A custom architecture or a headless Frappe/ERPNext framework will preserve your operational moat.',
@@ -76,6 +82,7 @@ export function getERPRecommendation(quizState: QuizState): ERPRecommendationRes
 
   return {
     primary: 'ERPNext or Odoo (Comparative Evaluation)',
+    consultationService: 'ERP Consultancy',
     badge: 'Balanced Platform Assessment Recommended',
     description:
       'Your operational profile can be successfully addressed by either ERPNext (for comprehensive data ownership) or Odoo (for modular app-by-app adoption). We recommend a brief consultative discovery to evaluate your specific team preferences.',
