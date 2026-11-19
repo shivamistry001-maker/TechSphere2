@@ -159,7 +159,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                   aria-label={`Step ${step.number}: ${step.title}`}
                 >
                   <span
-                    className={`w-4 h-4 rounded-full border-2 transition-all duration-200 ${
+                    className={`w-4 h-4 rounded-full border-2 transition-transform duration-200 ${
                       isCurrent
                         ? isDark
                           ? 'bg-white border-[#090909] scale-125 shadow-[0_0_14px_rgba(255,255,255,0.55)]'
@@ -198,7 +198,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
                   onClick={() => setActiveStep(idx)}
                   onMouseEnter={() => setActiveStep(idx)}
-                  className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                  className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-colors duration-300 cursor-pointer flex flex-col justify-between ${
                     isSelected
                       ? isDark
                         ? 'bg-[#1D1D1D] border-white shadow-[0_18px_40px_rgba(0,0,0,0.55)]'
@@ -226,7 +226,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                       </span>
 
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-300 ${
                           isSelected
                             ? isDark
                               ? 'bg-white border-white text-[#090909] scale-105'

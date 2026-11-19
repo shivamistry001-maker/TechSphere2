@@ -138,6 +138,42 @@ export const ScrollProgressBar: React.FC<{ theme: ThemeMode }> = ({ theme }) => 
 };
 
 /* -------------------------------------------------------------------------- */
+/* 1b. Global Theme Transition Top Progress Indicator                         */
+/* -------------------------------------------------------------------------- */
+export const ThemeTransitionProgressBar: React.FC<{
+  active: boolean;
+  runId: number;
+  targetTheme: ThemeMode;
+}> = ({ active, runId, targetTheme }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const isTargetDark = targetTheme === 'dark';
+  const showBar = active && !prefersReducedMotion && runId > 0;
+
+  return (
+    <div
+      aria-hidden="true"
+      data-no-theme-transition=""
+      data-testid="theme-transition-progress"
+      data-state={showBar ? 'active' : 'idle'}
+      data-target-theme={targetTheme}
+      className="fixed top-0 left-0 right-0 h-[3px] z-[70] pointer-events-none overflow-hidden"
+    >
+      {showBar && (
+        <div
+          key={`theme-progress-${runId}`}
+          data-no-theme-transition=""
+          className={`ts-theme-progress-bar h-full w-full ${
+            isTargetDark
+              ? 'bg-gradient-to-r from-[#737373] via-[#E5E5E5] to-[#FFFFFF] shadow-[0_0_12px_rgba(255,255,255,0.42)]'
+              : 'bg-gradient-to-r from-[#0284C7] via-[#38BDF8] to-[#7DD3FC] shadow-[0_0_12px_rgba(56,189,248,0.4)]'
+          }`}
+        />
+      )}
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
 /* 2. Floating Back-to-Top Button                                             */
 /* -------------------------------------------------------------------------- */
 export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {

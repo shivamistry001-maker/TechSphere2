@@ -333,7 +333,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                             onClick={() => handleSelectCardThumbnail(platform.id, sIdx)}
                             aria-label={`Select ${platform.name} screenshot ${sIdx + 1}: ${shot.title}`}
                             aria-pressed={isSelected}
-                            className={`relative aspect-[16/10] rounded-lg overflow-hidden border transition-all cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                            className={`relative aspect-[16/10] rounded-lg overflow-hidden border transition-opacity cursor-pointer focus:outline-none focus-visible:ring-2 ${
                               isSelected
                                 ? isDark
                                   ? 'border-white ring-1 ring-white/70 opacity-100'
@@ -589,7 +589,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                           }
                           aria-label={`View slide ${dotIdx + 1} of ${activeLightboxPlatform.screenshots.length}`}
                           aria-current={active ? 'true' : undefined}
-                          className={`h-2 rounded-full transition-all cursor-pointer ${
+                          className={`h-2 rounded-full transition-[width,background-color] duration-200 cursor-pointer ${
                             active
                               ? isDark
                                 ? 'w-6 bg-white'
@@ -615,7 +615,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                           setLightbox((prev) => (prev ? { ...prev, index: sIdx } : null))
                         }
                         aria-label={`Jump to screenshot ${sIdx + 1}: ${shot.title}`}
-                        className={`w-16 h-10 rounded-lg overflow-hidden border transition-all cursor-pointer ${
+                        className={`w-16 h-10 rounded-lg overflow-hidden border transition-opacity cursor-pointer ${
                           isSelected
                             ? isDark
                               ? 'border-white ring-2 ring-white/60 opacity-100'

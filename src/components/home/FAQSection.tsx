@@ -147,7 +147,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                           : HOME_FAQS.find((f) => f.category === category);
                       if (first) setOpenId(first.id);
                     }}
-                    className={`text-left px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+                    className={`text-left px-3.5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
                       isActive
                         ? isDark
                           ? 'bg-[#171717] text-white font-semibold border border-[#303030]'

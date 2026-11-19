@@ -67,7 +67,7 @@ export const CaseStudiesPage: React.FC<CaseStudiesPageProps> = ({ onNavigate, th
               variants={scrollCardItemVariants}
               whileHover={prefersReducedMotion ? undefined : { y: -4 }}
             onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-            className={`group relative overflow-hidden rounded-3xl p-8 sm:p-12 border transition-all ${
+            className={`group relative overflow-hidden rounded-3xl p-8 sm:p-12 border transition-colors ${
               isDark
                 ? 'bg-[#171717] border-[#303030] hover:border-white/40'
                 : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50 hover:border-sky-300'

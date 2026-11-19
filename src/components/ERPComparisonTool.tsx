@@ -72,7 +72,7 @@ export const ERPComparisonTool: React.FC<ERPComparisonToolProps> = ({
               onChange={(e) => setFilterQuery(e.target.value)}
               placeholder="Filter dimensions..."
               aria-label="Filter comparison dimensions"
-              className={`pl-8 pr-7 py-1.5 rounded-lg text-xs border outline-none transition-all w-44 sm:w-48 ${
+              className={`pl-8 pr-7 py-1.5 rounded-lg text-xs border outline-none transition-colors w-44 sm:w-48 ${
                 isDark
                   ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] placeholder-[#737373] focus:border-white'
                   : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-[#0284C7]'
@@ -102,7 +102,7 @@ export const ERPComparisonTool: React.FC<ERPComparisonToolProps> = ({
                   whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
                   onClick={() => togglePlatform(platform.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border cursor-pointer ${
                     isSelected
                       ? isDark
                         ? 'bg-white text-[#090909] border-white shadow-sm'
@@ -122,7 +122,7 @@ export const ERPComparisonTool: React.FC<ERPComparisonToolProps> = ({
 
       {/* Comparison Table Container */}
       <div
-        className={`rounded-2xl border overflow-hidden shadow-xl transition-all ${
+        className={`rounded-2xl border overflow-hidden shadow-xl transition-colors ${
           isDark
             ? 'bg-[#171717] border-[#303030] shadow-black/50'
             : 'bg-white border-slate-200 shadow-slate-200/50'
@@ -277,7 +277,7 @@ export const ERPComparisonTool: React.FC<ERPComparisonToolProps> = ({
             whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             onClick={() => onNavigate('request-consultation')}
-            className={`group flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`group flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors cursor-pointer ${
               isDark
                 ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                 : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-md shadow-sky-600/25'

@@ -68,8 +68,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
   );
 
   const inputBaseClass = isDark
-    ? 'w-full px-4 py-3 rounded-xl bg-[#1D1D1D] border border-[#303030] text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-all duration-200 focus:border-white focus:ring-1 focus:ring-white'
-    : 'w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-sm text-white placeholder-slate-400 outline-none transition-all duration-200 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]';
+    ? 'w-full px-4 py-3 rounded-xl bg-[#1D1D1D] border border-[#303030] text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-200 focus:border-white focus:ring-1 focus:ring-white'
+    : 'w-full px-4 py-3 rounded-xl bg-white/[0.06] border border-white/15 text-sm text-white placeholder-slate-400 outline-none transition-colors duration-200 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]';
 
   return (
     <section
@@ -137,7 +137,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                     whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                     onClick={() => onNavigate('request-consultation')}
-                    className={`group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-all cursor-pointer ${
+                    className={`group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-colors cursor-pointer ${
                       isDark
                         ? 'bg-white hover:bg-[#D4D4D4] text-[#090909]'
                         : 'bg-[#38BDF8] hover:bg-[#7DD3FC] text-[#101B35]'
@@ -152,7 +152,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                     whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                     onClick={() => onNavigate('contact')}
-                    className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border text-white text-xs font-semibold tracking-wide whitespace-nowrap transition-all cursor-pointer ${
+                    className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border text-white text-xs font-semibold tracking-wide whitespace-nowrap transition-colors cursor-pointer ${
                       isDark
                         ? 'bg-[#171717] hover:bg-[#252525] border-[#303030]'
                         : 'bg-white/10 hover:bg-white/15 border-white/15'
@@ -398,7 +398,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                         name="interestedService"
                         value={service}
                         onChange={(e) => setService(e.target.value)}
-                        className={`w-full px-4 py-3 rounded-xl border text-sm text-white outline-none transition-all duration-200 ${
+                        className={`w-full px-4 py-3 rounded-xl border text-sm text-white outline-none transition-colors duration-200 ${
                           isDark
                             ? 'bg-[#1D1D1D] border-[#303030] focus:border-white focus:ring-1 focus:ring-white'
                             : 'bg-[#101B35] border-white/15 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]'
@@ -446,7 +446,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                       disabled={state.submitting}
                       whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
-                      className={`group w-full py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
+                      className={`group w-full py-3.5 px-6 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
                         isDark
                           ? 'bg-white hover:bg-[#D4D4D4] text-[#090909]'
                           : 'bg-white hover:bg-[#F5FAFE] text-[#101B35]'

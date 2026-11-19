@@ -18,15 +18,19 @@ import {
   useIsDesktop,
 } from '../motion/MotionPrimitives.tsx';
 import { PreviewImage } from './PreviewImage.tsx';
+import { useSectionDataLoader } from '../../utils/sectionLoader.ts';
+import { WebsiteDemosGridSkeleton } from '../skeletons/SectionSkeletons.tsx';
 
 interface WebsiteDemosGridProps {
   theme: ThemeMode;
   sectionRef: React.RefObject<HTMLElement | null>;
+  isLoading?: boolean;
 }
 
 export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
   theme,
   sectionRef,
+  isLoading: externalLoading = false,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<WebsiteDemoCategory>('All Projects');
   const prefersReducedMotion = useReducedMotion();
@@ -38,7 +42,16 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
     offset: ['start end', 'end start'],
   });
 
-  const visibleDemos = filterWebsiteDemos(LIVE_WEBSITE_DEMOS, selectedCategory);
+  const filteredDemos = filterWebsiteDemos(LIVE_WEBSITE_DEMOS, selectedCategory);
+  const { items: visibleDemos, isLoading } = useSectionDataLoader(
+    filteredDemos,
+    `website-demos-${selectedCategory}`,
+    {
+      externalLoading,
+      prefersReducedMotion: Boolean(prefersReducedMotion),
+      isFilterTransition: selectedCategory !== 'All Projects',
+    }
+  );
 
   return (
     <>
@@ -60,7 +73,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                 } ${
                   active
@@ -86,6 +99,9 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
           yRange={[8, -8]}
           enabled={isDesktop}
         >
+          {isLoading ? (
+            <WebsiteDemosGridSkeleton theme={theme} count={filteredDemos.length || 4} />
+          ) : (
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCategory}
@@ -234,6 +250,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
               ))}
             </motion.div>
           </AnimatePresence>
+          )}
         </ScrollParallaxLayer>
       </ScrollCascadeBlock>
     </>

@@ -25,11 +25,14 @@ import {
   updateCardGlareCoordinates,
   useIsDesktop,
 } from '../motion/MotionPrimitives.tsx';
+import { useSectionDataLoader } from '../../utils/sectionLoader.ts';
+import { ServiceShowcaseGridSkeleton } from '../skeletons/SectionSkeletons.tsx';
 
 interface ServicesShowcaseSectionProps {
   onNavigate: (page: PageId) => void;
   onSelectService?: (serviceName: string) => void;
   theme?: ThemeMode;
+  isLoading?: boolean;
 }
 
 const FEATURED_SERVICES = [
@@ -93,11 +96,21 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
   onNavigate,
   onSelectService,
   theme = 'light',
+  isLoading: externalLoading = false,
 }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useIsDesktop(1024);
   const isDark = theme === 'dark';
+
+  const { items: services, isLoading } = useSectionDataLoader(
+    FEATURED_SERVICES,
+    'home-services-showcase',
+    {
+      externalLoading,
+      prefersReducedMotion: Boolean(prefersReducedMotion),
+    }
+  );
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -143,9 +156,12 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
           </p>
         </ScrollCascadeBlock>
 
-        {/* 6 Interactive Service Cards with Hover Shine/Glare & Scroll Parallax */}
+        {/* 6 Interactive Service Cards with Lightweight Skeleton Fallback, Hover Shine & Parallax */}
+        {isLoading ? (
+          <ServiceShowcaseGridSkeleton theme={theme} count={FEATURED_SERVICES.length} />
+        ) : (
         <ScrollCascadeGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURED_SERVICES.map((service, idx) => {
+          {services.map((service, idx) => {
             const Icon = service.icon;
             const parallaxRange = computeColumnParallax(idx, 3, 14);
             return (
@@ -258,6 +274,7 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
             );
           })}
         </ScrollCascadeGrid>
+        )}
       </ScrollSectionContainer>
     </section>
   );

@@ -171,7 +171,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                   variants={scrollCardItemVariants}
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden h-full rounded-3xl p-7 sm:p-8 border transition-all flex flex-col justify-between ${
+                className={`group relative overflow-hidden h-full rounded-3xl p-7 sm:p-8 border transition-colors flex flex-col justify-between ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
                     : 'bg-white border-slate-200 shadow-lg shadow-slate-200/50 hover:border-sky-300'

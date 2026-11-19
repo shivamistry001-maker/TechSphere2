@@ -44,7 +44,7 @@ export const Hero3DEcosystem: React.FC<Hero3DEcosystemProps> = ({ theme = 'dark'
 
       {/* Main Container Frame */}
       <div
-        className={`relative rounded-3xl p-6 sm:p-8 overflow-hidden transition-all duration-300 ${
+        className={`relative rounded-3xl p-6 sm:p-8 overflow-hidden transition-colors duration-300 ${
           isDark
             ? 'bg-[#171717] border border-[#303030] shadow-2xl shadow-black/60'
             : 'bg-white/80 border border-sky-200/80 shadow-2xl shadow-sky-900/10 backdrop-blur-xl'
@@ -99,7 +99,7 @@ export const Hero3DEcosystem: React.FC<Hero3DEcosystemProps> = ({ theme = 'dark'
                 <React.Fragment key={stg.name}>
                   <div className="flex flex-col items-center min-w-[60px] text-center">
                     <div
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all ${
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors ${
                         isDark
                           ? 'bg-[#1D1D1D] border border-[#303030] text-white'
                           : 'bg-sky-50 border border-sky-200 text-slate-800 shadow-sm'
@@ -141,7 +141,7 @@ export const Hero3DEcosystem: React.FC<Hero3DEcosystemProps> = ({ theme = 'dark'
           <motion.div
             animate={{ scale: [1, 1.02, 1] }}
             transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-            className={`z-20 w-36 sm:w-44 p-4 rounded-2xl text-center border transition-all ${
+            className={`z-20 w-36 sm:w-44 p-4 rounded-2xl text-center border transition-colors ${
               isDark
                 ? 'bg-[#111111] border-white/40 ring-1 ring-white/20 shadow-2xl'
                 : 'bg-white border-sky-300 ring-2 ring-sky-100 shadow-xl'

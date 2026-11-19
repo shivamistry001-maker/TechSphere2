@@ -104,7 +104,7 @@ export const ERPSolutionsPage: React.FC<ERPSolutionsPageProps> = ({
                   variants={scrollCardItemVariants}
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden h-full rounded-3xl p-7 border transition-all flex flex-col justify-between ${
+                className={`group relative overflow-hidden h-full rounded-3xl p-7 border transition-colors flex flex-col justify-between ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
                     : 'bg-white border-slate-200 shadow-lg shadow-slate-200/50 hover:border-sky-300'
@@ -143,7 +143,7 @@ export const ERPSolutionsPage: React.FC<ERPSolutionsPageProps> = ({
                     else if (plat.id === 'zoho') onNavigate('zoho');
                     else onNavigate('it-solutions');
                   }}
-                  className={`relative z-10 w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`relative z-10 w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                     isDark
                       ? 'bg-[#1D1D1D] hover:bg-white hover:text-[#090909] text-white border-[#303030]'
                       : 'bg-sky-500/10 hover:bg-sky-500 hover:text-white text-sky-600 border-sky-500/20'
@@ -191,7 +191,7 @@ export const ERPSolutionsPage: React.FC<ERPSolutionsPageProps> = ({
                   variants={scrollCardItemVariants}
                   whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-all ${
+                className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-colors ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] hover:border-white/40'
                     : 'bg-white border-slate-200 shadow-md hover:border-sky-300'

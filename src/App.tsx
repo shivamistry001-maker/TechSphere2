@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from './types.ts';
 import { Navbar } from './components/Navbar.tsx';
@@ -12,6 +12,7 @@ import { FloatingContact } from './components/FloatingContact.tsx';
 import { LegalModal } from './components/LegalModal.tsx';
 import {
   ScrollProgressBar,
+  ThemeTransitionProgressBar,
   BackToTopButton,
   PageTransitionOverlay,
 } from './components/motion/MotionPrimitives.tsx';
@@ -21,6 +22,15 @@ import {
   getPageFromPathname,
   getPathForPage,
 } from './utils/routing.ts';
+import {
+  ThemeTransitionRunState,
+  applyThemeToDocument,
+  createThemeTransitionState,
+  getNextTheme,
+  persistTheme,
+  readStoredTheme,
+} from './utils/theme.ts';
+import { playThemeToggleClickSound } from './utils/themeSound.ts';
 
 // Pages
 import { HomePage } from './pages/HomePage.tsx';
@@ -43,27 +53,31 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>(() =>
     getPageFromPathname(window.location.pathname)
   );
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('techsphere_theme_v2');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return 'light';
-  });
+  const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme('light'));
   const [selectedService, setSelectedService] = useState<string>('ERP Consultancy');
   const [selectedMessage, setSelectedMessage] = useState<string>('');
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Apply theme class to document root
+  // Enable permanent global theme transitions once after initial paint (never toggled on clicks)
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-    }
-    localStorage.setItem('techsphere_theme_v2', theme);
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = window.requestAnimationFrame(() => {
+      raf2 = window.requestAnimationFrame(() => {
+        document.documentElement.classList.add('ts-theme-ready');
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
+  }, []);
+
+  // Apply theme class, data-theme attribute, color-scheme, and persistence without redundant DOM writes
+  useEffect(() => {
+    applyThemeToDocument(theme);
+    persistTheme(theme);
   }, [theme]);
 
   // Sync browser back/forward navigation with URL pathname
@@ -97,24 +111,83 @@ export default function App() {
     }
   }, [currentPage]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  const [themeTransition, setThemeTransition] = useState<ThemeTransitionRunState>(() => ({
+    active: false,
+    runId: 0,
+    targetTheme: theme,
+    durationMs: 0,
+    totalMs: 0,
+  }));
+  const themeRef = useRef<ThemeMode>(theme);
+  const runIdRef = useRef<number>(0);
+  const themeProgressTimerRef = useRef<number | null>(null);
 
-  const handleNavigate = (page: PageId) => {
-    const targetPath = getPathForPage(page);
-    if (window.location.pathname !== targetPath) {
-      window.history.pushState({ page }, '', targetPath);
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    return () => {
+      if (themeProgressTimerRef.current !== null) {
+        window.clearTimeout(themeProgressTimerRef.current);
+      }
+    };
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    const nextTheme = getNextTheme(themeRef.current);
+    themeRef.current = nextTheme;
+    playThemeToggleClickSound(nextTheme);
+    setTheme(nextTheme);
+
+    if (themeProgressTimerRef.current !== null) {
+      window.clearTimeout(themeProgressTimerRef.current);
+      themeProgressTimerRef.current = null;
     }
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion || currentPage !== page ? 'auto' : 'smooth' });
-  };
 
-  const handleConsultationSelect = (serviceName: string, notes: string = '') => {
-    setSelectedService(serviceName);
-    setSelectedMessage(notes);
-    handleNavigate('request-consultation');
-  };
+    const nextRun = createThemeTransitionState(
+      runIdRef.current,
+      nextTheme,
+      Boolean(prefersReducedMotion)
+    );
+    runIdRef.current = nextRun.runId;
+    setThemeTransition(nextRun);
+
+    if (nextRun.active && nextRun.totalMs > 0) {
+      themeProgressTimerRef.current = window.setTimeout(() => {
+        setThemeTransition((current) =>
+          current.runId === nextRun.runId ? { ...current, active: false } : current
+        );
+        themeProgressTimerRef.current = null;
+      }, nextRun.totalMs);
+    }
+  }, [prefersReducedMotion]);
+
+  const handleNavigate = useCallback(
+    (page: PageId) => {
+      const targetPath = getPathForPage(page);
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState({ page }, '', targetPath);
+      }
+      setCurrentPage((prevPage) => {
+        window.scrollTo({
+          top: 0,
+          behavior: prefersReducedMotion || prevPage !== page ? 'auto' : 'smooth',
+        });
+        return page;
+      });
+    },
+    [prefersReducedMotion]
+  );
+
+  const handleConsultationSelect = useCallback(
+    (serviceName: string, notes: string = '') => {
+      setSelectedService(serviceName);
+      setSelectedMessage(notes);
+      handleNavigate('request-consultation');
+    },
+    [handleNavigate]
+  );
 
   const isDark = theme === 'dark';
 
@@ -126,6 +199,13 @@ export default function App() {
           : 'bg-white text-[#172033] selection:bg-sky-500 selection:text-white'
       }`}
     >
+      {/* Global Theme Switch Top Progress Indicator */}
+      <ThemeTransitionProgressBar
+        active={themeTransition.active}
+        runId={themeTransition.runId}
+        targetTheme={themeTransition.targetTheme}
+      />
+
       {/* Top Scroll Progress Indicator */}
       <ScrollProgressBar theme={theme} />
 

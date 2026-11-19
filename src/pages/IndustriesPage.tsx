@@ -83,7 +83,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => setSelectedIndustry(ind.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors border cursor-pointer ${
                   isSelected
                     ? isDark
                       ? 'bg-white text-[#090909] border-white shadow-md'
@@ -109,7 +109,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.3, ease: EASE_PREMIUM }}
             onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-            className={`group relative overflow-hidden rounded-3xl p-8 sm:p-12 border transition-all ${
+            className={`group relative overflow-hidden rounded-3xl p-8 sm:p-12 border transition-colors ${
               isDark
                 ? 'bg-[#171717] border-[#303030]'
                 : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
@@ -152,7 +152,7 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => handleConsult(currentInd.name)}
-                className={`group px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 self-start md:self-auto cursor-pointer ${
+                className={`group px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center gap-2 self-start md:self-auto cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400'

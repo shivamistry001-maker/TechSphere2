@@ -153,7 +153,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
 
   return (
     <div
-      className={`rounded-3xl border p-6 sm:p-10 transition-all ${
+      className={`rounded-3xl border p-6 sm:p-10 transition-colors ${
         isDark
           ? 'bg-[#171717] border-[#303030] shadow-2xl shadow-black/60'
           : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
@@ -245,7 +245,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
                     onClick={() =>
                       handleSelectOption(questions[currentStep].id as keyof QuizState, option.value)
                     }
-                    className={`p-4 rounded-xl text-left border transition-all flex items-start justify-between group cursor-pointer ${
+                    className={`p-4 rounded-xl text-left border transition-colors flex items-start justify-between group cursor-pointer ${
                       isSelected
                         ? isDark
                           ? 'bg-[#1D1D1D] border-white text-white shadow-md'
@@ -363,7 +363,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={handleBookConsultationWithPrefill}
-                className={`group w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`group w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-600/30'

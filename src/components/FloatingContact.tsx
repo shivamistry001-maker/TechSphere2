@@ -157,7 +157,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
         className={`group relative flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-colors cursor-pointer focus:outline-none focus-visible:ring-4 ${
           isDark
             ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] shadow-black/70 border border-[#303030] focus-visible:ring-white/40'
-            : 'bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white shadow-sky-600/35 hover:shadow-sky-500/50 focus-visible:ring-sky-400/50'
+            : 'bg-[#0284C7] bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 text-white shadow-sky-600/35 hover:shadow-sky-500/50 focus-visible:ring-sky-400/50'
         }`}
         aria-label={isOpen ? 'Close Quick Contact' : 'Open Quick Contact Options'}
         aria-expanded={isOpen}

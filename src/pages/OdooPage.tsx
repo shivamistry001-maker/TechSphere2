@@ -101,7 +101,7 @@ export const OdooPage: React.FC<OdooPageProps> = ({
             whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             onClick={handleConsult}
-            className={`group px-7 py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer ${
+            className={`group px-7 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer ${
               isDark
                 ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                 : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 shadow-lg shadow-sky-600/30'
@@ -129,7 +129,7 @@ export const OdooPage: React.FC<OdooPageProps> = ({
                   variants={scrollCardItemVariants}
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-all ${
+                className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-colors ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
                     : 'bg-white border-slate-200 shadow-md shadow-slate-200/40 hover:border-sky-300'

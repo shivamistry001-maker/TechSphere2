@@ -15,20 +15,33 @@ import {
   updateCardGlareCoordinates,
 } from '../components/motion/MotionPrimitives.tsx';
 import { EASE_PREMIUM, scrollCardItemVariants } from '../utils/motion.ts';
+import { useSectionDataLoader } from '../utils/sectionLoader.ts';
+import { ServiceCatalogListSkeleton } from '../components/skeletons/SectionSkeletons.tsx';
 
 interface ServicesPageProps {
   onNavigate: (page: PageId) => void;
   theme: ThemeMode;
   onSelectServiceForConsultation?: (serviceName: string) => void;
+  isLoading?: boolean;
 }
 
 export const ServicesPage: React.FC<ServicesPageProps> = ({
   onNavigate,
   theme,
   onSelectServiceForConsultation,
+  isLoading: externalLoading = false,
 }) => {
   const isDark = theme === 'dark';
   const prefersReducedMotion = useReducedMotion();
+
+  const { items: services, isLoading } = useSectionDataLoader(
+    SERVICES_DATA,
+    'services-catalog-page',
+    {
+      externalLoading,
+      prefersReducedMotion: Boolean(prefersReducedMotion),
+    }
+  );
 
   const iconMap: { [key: string]: React.ElementType } = {
     'erp-consulting': Database,
@@ -71,8 +84,11 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
 
       {/* Services Detailed Breakdown */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {isLoading ? (
+          <ServiceCatalogListSkeleton theme={theme} count={3} />
+        ) : (
         <ScrollSectionContainer className="space-y-10">
-          {SERVICES_DATA.map((service, idx) => {
+          {services.map((service, idx) => {
             const IconComp = iconMap[service.id] || Database;
             return (
               <motion.div
@@ -147,7 +163,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
                       whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                       onClick={() => handleConsultService(service.title)}
-                      className={`group/btn px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
+                      className={`group/btn px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center gap-2 cursor-pointer ${
                         isDark
                           ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                           : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400'
@@ -213,6 +229,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
           );
         })}
         </ScrollSectionContainer>
+        )}
       </section>
     </div>
   );

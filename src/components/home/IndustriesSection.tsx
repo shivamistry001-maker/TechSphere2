@@ -166,7 +166,7 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-5">
                       <div
-                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:-rotate-3 ${
+                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3 ${
                           isDark
                             ? 'bg-[#1D1D1D] border border-[#303030] text-white group-hover:bg-white group-hover:text-[#090909]'
                             : 'bg-[#F5FAFE] border border-[#38BDF8]/25 text-[#0284C7]'

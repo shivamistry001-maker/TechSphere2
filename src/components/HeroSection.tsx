@@ -48,34 +48,75 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
   return (
     <section
       ref={heroRef}
-      className={`relative min-h-[calc(100vh-12px)] flex items-center pt-28 sm:pt-32 lg:pt-32 pb-16 sm:pb-20 overflow-x-clip border-b transition-colors duration-300 ${
+      className={`relative min-h-[calc(100vh-12px)] flex items-center pt-28 sm:pt-32 lg:pt-32 pb-16 sm:pb-20 overflow-x-clip border-b ${
         isDark
-          ? 'bg-gradient-to-br from-[#090909] via-[#111111] to-[#090909] text-[#F5F5F5] border-[#303030]'
-          : 'bg-gradient-to-br from-white via-[#F5FAFE] to-[#EDF7FD] text-[#172033] border-[#101B35]/[0.07]'
+          ? 'bg-[#090909] text-[#F5F5F5] border-[#303030]'
+          : 'bg-white text-[#172033] border-[#101B35]/[0.07]'
       }`}
       aria-label="TechSphere Hero"
     >
-      {/* Subtle Animated Architectural Grid */}
+      {/* Crossfading Light / Dark Atmospheric Gradient Layers (prevents 0ms background-image snap) */}
       <div
-        className={`absolute inset-0 pointer-events-none opacity-60 ${
-          prefersReducedMotion ? '' : 'animate-grid-drift'
+        className={`absolute inset-0 pointer-events-none transition-opacity ${
+          isDark ? 'opacity-0' : 'opacity-100'
         }`}
         style={{
-          backgroundImage: isDark
-            ? 'linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px)'
-            : 'linear-gradient(to right, rgba(16, 27, 53, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 27, 53, 0.03) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #f5fafe 52%, #edf7fd 100%)',
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity ${
+          isDark ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          backgroundImage: 'linear-gradient(135deg, #090909 0%, #111111 52%, #090909 100%)',
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Subtle Animated Architectural Grid */}
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity ${
+          prefersReducedMotion ? '' : 'animate-grid-drift'
+        } ${isDark ? 'opacity-60' : 'opacity-0'}`}
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity ${
+          prefersReducedMotion ? '' : 'animate-grid-drift'
+        } ${isDark ? 'opacity-0' : 'opacity-60'}`}
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(16, 27, 53, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 27, 53, 0.03) 1px, transparent 1px)',
           backgroundSize: '64px 64px',
         }}
         aria-hidden="true"
       />
 
-      {/* Ambient Radial Glow */}
+      {/* Ambient Radial Glow (GPU opacity crossfade) */}
       <div
-        className="absolute -top-24 right-0 w-[680px] h-[680px] rounded-full pointer-events-none"
+        className={`absolute -top-24 right-0 w-[680px] h-[680px] rounded-full pointer-events-none transition-opacity ${
+          isDark ? 'opacity-100' : 'opacity-0'
+        }`}
         style={{
-          background: isDark
-            ? 'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 45%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.04) 45%, transparent 70%)',
+          background:
+            'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 45%, transparent 70%)',
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute -top-24 right-0 w-[680px] h-[680px] rounded-full pointer-events-none transition-opacity ${
+          isDark ? 'opacity-0' : 'opacity-100'
+        }`}
+        style={{
+          background:
+            'radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.04) 45%, transparent 70%)',
         }}
         aria-hidden="true"
       />

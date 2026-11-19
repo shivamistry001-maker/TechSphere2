@@ -18,13 +18,20 @@ import {
   useIsDesktop,
 } from '../components/motion/MotionPrimitives.tsx';
 import { EASE_PREMIUM } from '../utils/motion.ts';
+import { useSectionDataLoader } from '../utils/sectionLoader.ts';
+import { PortfolioGridSkeleton } from '../components/skeletons/SectionSkeletons.tsx';
 
 interface PortfolioPageProps {
   onNavigate: (page: PageId) => void;
   theme: ThemeMode;
+  isLoading?: boolean;
 }
 
-export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme }) => {
+export const PortfolioPage: React.FC<PortfolioPageProps> = ({
+  onNavigate,
+  theme,
+  isLoading: externalLoading = false,
+}) => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const isDark = theme === 'dark';
   const prefersReducedMotion = useReducedMotion();
@@ -42,6 +49,16 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
     activeCategory === 'All'
       ? PORTFOLIO_DATA
       : PORTFOLIO_DATA.filter((item) => item.category === activeCategory);
+
+  const { items: visibleItems, isLoading } = useSectionDataLoader(
+    filteredItems,
+    `portfolio-catalog-${activeCategory}`,
+    {
+      externalLoading,
+      prefersReducedMotion: Boolean(prefersReducedMotion),
+      isFilterTransition: activeCategory !== 'All',
+    }
+  );
 
   return (
     <div className="space-y-14 sm:space-y-20 pt-8 sm:pt-14 pb-16 overflow-x-clip">
@@ -114,7 +131,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
                 whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors border cursor-pointer ${
                   activeCategory === cat
                     ? isDark
                       ? 'bg-white text-[#090909] border-white shadow-md'
@@ -129,16 +146,19 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
             ))}
           </ScrollCascadeBlock>
 
-          {/* Portfolio Cards Grid */}
+          {/* Portfolio Cards Grid with Lightweight Skeleton Fallback */}
           <ScrollCascadeBlock>
             <ScrollParallaxLayer
               scrollYProgress={scrollYProgress}
               yRange={[10, -10]}
               enabled={isDesktop}
             >
+              {isLoading ? (
+                <PortfolioGridSkeleton theme={theme} count={filteredItems.length || 3} />
+              ) : (
               <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <AnimatePresence mode="popLayout">
-                  {filteredItems.map((item, idx) => (
+                  {visibleItems.map((item, idx) => (
                     <motion.div
                       key={item.id}
                       layout
@@ -148,7 +168,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
                       transition={{ duration: 0.44, delay: Math.min(idx * 0.04, 0.24), ease: EASE_PREMIUM }}
                       whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                       onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                      className={`group relative overflow-hidden rounded-3xl p-6 sm:p-7 border transition-all flex flex-col justify-between ${
+                      className={`group relative overflow-hidden rounded-3xl p-6 sm:p-7 border transition-colors flex flex-col justify-between ${
                         isDark
                           ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
                           : 'bg-white border-slate-200 shadow-lg shadow-slate-200/40 hover:border-sky-300'
@@ -216,7 +236,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
                           type="button"
                           whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                           onClick={() => onNavigate('request-consultation')}
-                          className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                          className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                             isDark
                               ? 'bg-[#1D1D1D] hover:bg-white hover:text-[#090909] text-white border-[#303030]'
                               : 'bg-sky-500/10 hover:bg-sky-500 hover:text-white text-[#0284C7] border-sky-500/20'
@@ -230,6 +250,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({ onNavigate, theme 
                   ))}
                 </AnimatePresence>
               </motion.div>
+              )}
             </ScrollParallaxLayer>
           </ScrollCascadeBlock>
         </ScrollSectionContainer>

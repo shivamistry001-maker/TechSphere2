@@ -409,7 +409,7 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                         ease: 'easeInOut',
                       }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
-                      className={`group flex items-center gap-2 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-2xl transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      className={`group flex items-center gap-2 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-2xl transition-transform duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                         isDark
                           ? isActive
                             ? 'bg-[#1D1D1D] ring-2 ring-white shadow-[0_14px_32px_rgba(0,0,0,0.65)] scale-105 focus-visible:ring-white'

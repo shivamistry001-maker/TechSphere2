@@ -50,10 +50,8 @@ export const PreviewImage: React.FC<PreviewImageProps> = ({
       {status === 'loading' && (
         <div
           aria-hidden="true"
-          className={`absolute inset-0 animate-pulse ${
-            isDark
-              ? 'bg-gradient-to-br from-[#171717] via-[#202020] to-[#171717]'
-              : 'bg-gradient-to-br from-slate-100 via-sky-50 to-slate-100'
+          className={`absolute inset-0 ts-skeleton-block ${
+            isDark ? 'ts-skeleton-dark bg-[#1D1D1D]' : 'ts-skeleton-light bg-[#E8EEF5]'
           }`}
         />
       )}

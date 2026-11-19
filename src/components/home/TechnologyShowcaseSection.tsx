@@ -309,7 +309,7 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                     </div>
 
                     <ArrowRight
-                      className={`w-4 h-4 transition-all duration-200 ${
+                      className={`w-4 h-4 transition-[transform,opacity,color] duration-200 ${
                         isActive
                           ? isDark
                             ? 'text-white translate-x-0 opacity-100'
@@ -370,7 +370,7 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                       type="button"
                       onClick={() => setActiveIndex(idx)}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                      className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border text-center transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border text-center transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                         isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                       } ${
                         isActive

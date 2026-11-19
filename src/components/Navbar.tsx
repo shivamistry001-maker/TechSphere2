@@ -120,7 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow,padding] duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isScrolled
             ? isDark
               ? 'bg-[#090909]/88 backdrop-blur-xl border-b border-[#303030] shadow-[0_8px_30px_rgba(0,0,0,0.65)] py-3'
@@ -213,7 +213,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       role="menu"
                     >
                       <div
-                        className={`rounded-2xl p-2 shadow-2xl ring-1 transition-all ${
+                        className={`rounded-2xl p-2 shadow-2xl ring-1 transition-colors ${
                           isDark
                             ? 'bg-[#171717]/95 backdrop-blur-xl border border-[#303030] shadow-black/80 ring-white/5'
                             : 'bg-white/95 backdrop-blur-xl border border-[#101B35]/10 shadow-[0_20px_45px_rgba(16,27,53,0.12)] ring-black/5'
@@ -352,41 +352,56 @@ export const Navbar: React.FC<NavbarProps> = ({
               <motion.button
                 type="button"
                 onClick={onToggleTheme}
-                whileHover={prefersReducedMotion ? undefined : { scale: 1.06 }}
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
-                className={`p-2 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
+                data-testid="theme-toggle-button"
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
+                className={`relative p-2.5 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] focus-visible:ring-white'
-                    : 'bg-white/80 border-[#101B35]/10 text-[#101B35] hover:bg-[#F5FAFE] focus-visible:ring-[#38BDF8]'
+                    ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] hover:border-white/35 focus-visible:ring-white'
+                    : 'bg-white/90 border-[#101B35]/12 text-[#101B35] hover:bg-[#F5FAFE] hover:border-[#38BDF8]/60 focus-visible:ring-[#38BDF8]'
                 }`}
                 aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                aria-pressed={isDark}
                 title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
               >
-                <AnimatePresence mode="wait" initial={false}>
-                  {isDark ? (
-                    <motion.span
-                      key="sun"
-                      initial={prefersReducedMotion ? false : { rotate: -45, opacity: 0, scale: 0.7 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={prefersReducedMotion ? undefined : { rotate: 45, opacity: 0, scale: 0.7 }}
-                      transition={{ duration: 0.16, ease: EASE_PREMIUM }}
-                      className="block"
-                    >
-                      <Sun className="w-4 h-4" />
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="moon"
-                      initial={prefersReducedMotion ? false : { rotate: 45, opacity: 0, scale: 0.7 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={prefersReducedMotion ? undefined : { rotate: -45, opacity: 0, scale: 0.7 }}
-                      transition={{ duration: 0.16, ease: EASE_PREMIUM }}
-                      className="block"
-                    >
-                      <Moon className="w-4 h-4" />
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+                {/* Subtle GPU-friendly icon crossfade & spring rotation (non-blocking for rapid clicks) */}
+                <span className="relative block w-4 h-4">
+                  <motion.span
+                    aria-hidden="true"
+                    initial={false}
+                    animate={{
+                      opacity: isDark ? 1 : 0,
+                      scale: isDark ? 1 : 0.55,
+                      rotate: isDark ? 0 : -65,
+                    }}
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0.01 }
+                        : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
+                    }
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <Sun className="w-4 h-4" />
+                  </motion.span>
+                  <motion.span
+                    aria-hidden="true"
+                    initial={false}
+                    animate={{
+                      opacity: isDark ? 0 : 1,
+                      scale: isDark ? 0.55 : 1,
+                      rotate: isDark ? 65 : 0,
+                    }}
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0.01 }
+                        : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
+                    }
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <Moon className="w-4 h-4" />
+                  </motion.span>
+                </span>
               </motion.button>
 
               <MagneticButton
@@ -440,7 +455,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <div className="max-w-md mx-auto flex flex-col space-y-1.5">
               <div
-                className={`border-b pb-3 mb-2 ${
+                className={`border-b pb-3 mb-2 flex items-center justify-between gap-3 ${
                   isDark ? 'border-[#303030]' : 'border-[#101B35]/10'
                 }`}
               >
@@ -451,6 +466,58 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   Navigation
                 </span>
+                <motion.button
+                  type="button"
+                  onClick={onToggleTheme}
+                  data-testid="mobile-drawer-theme-toggle"
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
+                  aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                  aria-pressed={isDark}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-colors cursor-pointer ${
+                    isDark
+                      ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
+                      : 'bg-[#F5FAFE] border-[#101B35]/12 text-[#101B35] hover:bg-[#E0F2FE]'
+                  }`}
+                >
+                  <span className="relative block w-3.5 h-3.5 shrink-0">
+                    <motion.span
+                      aria-hidden="true"
+                      initial={false}
+                      animate={{
+                        opacity: isDark ? 1 : 0,
+                        scale: isDark ? 1 : 0.55,
+                        rotate: isDark ? 0 : -65,
+                      }}
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0.01 }
+                          : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
+                      }
+                      className="absolute inset-0 flex items-center justify-center"
+                    >
+                      <Sun className="w-3.5 h-3.5" />
+                    </motion.span>
+                    <motion.span
+                      aria-hidden="true"
+                      initial={false}
+                      animate={{
+                        opacity: isDark ? 0 : 1,
+                        scale: isDark ? 0.55 : 1,
+                        rotate: isDark ? 65 : 0,
+                      }}
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0.01 }
+                          : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
+                      }
+                      className="absolute inset-0 flex items-center justify-center"
+                    >
+                      <Moon className="w-3.5 h-3.5" />
+                    </motion.span>
+                  </span>
+                  <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+                </motion.button>
               </div>
 
               {[
