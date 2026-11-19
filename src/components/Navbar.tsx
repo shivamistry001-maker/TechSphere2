@@ -161,15 +161,27 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,box-shadow,padding] duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isScrolled
-            ? isDark
-              ? 'bg-[#090909]/88 backdrop-blur-xl border-b border-[#303030] shadow-[0_8px_30px_rgba(0,0,0,0.65)] py-3'
-              : 'bg-white/88 backdrop-blur-xl border-b border-[#101B35]/[0.08] shadow-[0_6px_24px_rgba(16,27,53,0.06)] py-3'
-            : 'bg-transparent py-4 sm:py-5'
+        className={`fixed top-0 left-0 right-0 z-50 transition-[padding] duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isScrolled ? 'py-3' : 'py-3.5 sm:py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Sibling Liquid Glass Backdrop Plate (prevents nested backdrop-filter on child dropdowns) */}
+        <div
+          aria-hidden="true"
+          data-glass-layer="navbar"
+          data-scrolled={isScrolled ? 'true' : 'false'}
+          className="ts-glass-nav-plate absolute inset-0 pointer-events-none"
+        >
+          <span
+            className={`absolute inset-x-0 bottom-0 h-px pointer-events-none ${
+              isDark
+                ? 'bg-gradient-to-r from-transparent via-white/18 to-transparent'
+                : 'bg-gradient-to-r from-transparent via-[#38BDF8]/35 to-transparent'
+            }`}
+          />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             {/* Left: TechSphere Logo & Company Name */}
             <motion.button
@@ -254,11 +266,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                       role="menu"
                     >
                       <div
-                        className={`rounded-2xl p-2 shadow-2xl ring-1 transition-colors ${
-                          isDark
-                            ? 'bg-[#171717]/95 backdrop-blur-xl border border-[#303030] shadow-black/80 ring-white/5'
-                            : 'bg-white/95 backdrop-blur-xl border border-[#101B35]/10 shadow-[0_20px_45px_rgba(16,27,53,0.12)] ring-black/5'
-                        }`}
+                        data-glass-layer="dropdown"
+                        className="ts-glass-popover rounded-2xl p-2"
                       >
                         <button
                           type="button"
@@ -397,10 +406,10 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                className={`relative w-11 h-11 flex items-center justify-center rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
+                className={`ts-glass-control relative w-11 h-11 flex items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] hover:border-white/35 focus-visible:ring-white'
-                    : 'bg-white/90 border-[#101B35]/12 text-[#101B35] hover:bg-[#F5FAFE] hover:border-[#38BDF8]/60 focus-visible:ring-[#38BDF8]'
+                    ? 'text-[#F5F5F5] focus-visible:ring-white'
+                    : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                 }`}
                 aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                 aria-pressed={isDark}
@@ -436,10 +445,10 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
-                className={`xl:hidden w-11 h-11 flex items-center justify-center rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`ts-glass-control xl:hidden w-11 h-11 flex items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] focus-visible:ring-white'
-                    : 'bg-white/90 border-[#101B35]/10 text-[#101B35] hover:bg-[#F5FAFE] focus-visible:ring-[#38BDF8]'
+                    ? 'text-[#F5F5F5] focus-visible:ring-white'
+                    : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                 }`}
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 aria-expanded={mobileMenuOpen}
@@ -459,8 +468,9 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -18 }}
             transition={{ duration: 0.22, ease: EASE_PREMIUM }}
-            className={`fixed inset-0 z-40 xl:hidden overflow-y-auto pt-24 pb-8 px-6 backdrop-blur-xl ${
-              isDark ? 'bg-[#090909]/98 text-[#F5F5F5]' : 'bg-white/98 text-[#172033]'
+            data-glass-layer="mobile-drawer"
+            className={`ts-glass-drawer fixed inset-0 z-40 xl:hidden overflow-y-auto pt-24 pb-8 px-6 ${
+              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
             }`}
           >
             <div className="max-w-md mx-auto flex flex-col space-y-1.5">
@@ -484,10 +494,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                   transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
                   aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                   aria-pressed={isDark}
-                  className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full border text-xs font-semibold transition-colors cursor-pointer ${
-                    isDark
-                      ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
-                      : 'bg-[#F5FAFE] border-[#101B35]/12 text-[#101B35] hover:bg-[#E0F2FE]'
+                  className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                    isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
                   }`}
                 >
                   <ThemeToggleIcons

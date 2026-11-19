@@ -60,8 +60,9 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
         <div
           role="group"
           data-testid="website-demo-filters"
+          data-glass-layer="showcase-filter-tray"
           aria-label="Filter website demonstrations by industry"
-          className="flex flex-wrap items-center gap-2"
+          className="ts-glass-accent inline-flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl sm:rounded-full"
         >
           {WEBSITE_DEMO_CATEGORIES.map((category) => {
             const active = selectedCategory === category;
@@ -81,8 +82,8 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                       ? 'bg-white text-[#090909] shadow-sm'
                       : 'bg-[#101B35] text-white shadow-sm'
                     : isDark
-                    ? 'bg-[#171717] text-[#A3A3A3] border border-[#303030] hover:text-white hover:border-white/40'
-                    : 'bg-white text-slate-600 border border-[#101B35]/[0.08] hover:text-[#101B35] hover:border-[#38BDF8]'
+                    ? 'bg-transparent text-[#D4D4D4] hover:text-white hover:bg-white/[0.08]'
+                    : 'bg-transparent text-slate-700 hover:text-[#101B35] hover:bg-[#101B35]/[0.05]'
                 }`}
               >
                 {category}
@@ -125,10 +126,10 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                   }}
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`group relative h-full rounded-2xl border overflow-hidden transition-colors duration-300 flex flex-col justify-between ${
+                  className={`ts-showcase-card-rim group relative h-full rounded-2xl border overflow-hidden transition-colors duration-300 flex flex-col justify-between ${
                     isDark
-                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45 shadow-[0_14px_34px_rgba(0,0,0,0.45)]'
-                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 shadow-[0_12px_32px_rgba(16,27,53,0.04)] hover:shadow-[0_22px_48px_rgba(16,27,53,0.09)]'
+                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
+                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 hover:shadow-[0_22px_48px_rgba(16,27,53,0.09)]'
                   }`}
                 >
                   <CardGlareOverlay theme={theme} subtle />
@@ -155,10 +156,9 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                       />
                     </div>
                     <span
-                      className={`absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold backdrop-blur-md border transition-opacity duration-200 opacity-0 group-hover:opacity-100 ${
-                        isDark
-                          ? 'bg-[#090909]/85 text-white border-[#303030]'
-                          : 'bg-[#101B35]/85 text-white border-white/15'
+                      data-glass-layer="showcase-badge"
+                      className={`ts-glass-float-btn absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold transition-opacity duration-200 opacity-0 group-hover:opacity-100 ${
+                        isDark ? 'text-white' : 'text-[#101B35]'
                       }`}
                     >
                       <span>Live Site</span>

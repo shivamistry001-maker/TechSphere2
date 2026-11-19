@@ -210,10 +210,11 @@ export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
           transition={{ duration: 0.2, ease: EASE_PREMIUM }}
           aria-label="Back to top"
           title="Back to top"
-          className={`fixed bottom-24 right-6 z-30 w-11 h-11 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+          data-glass-layer="back-to-top"
+          className={`ts-glass-float-btn fixed bottom-24 right-6 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
             isDark
-              ? 'bg-[#1D1D1D]/95 border-[#303030] text-[#F5F5F5] hover:bg-[#252525] hover:border-[#D4D4D4]/50 shadow-black/60 focus-visible:ring-white'
-              : 'bg-white/95 border-[#101B35]/15 text-[#101B35] hover:bg-[#F5FAFE] hover:border-[#0284C7] shadow-slate-900/10 focus-visible:ring-[#38BDF8]'
+              ? 'text-[#F5F5F5] focus-visible:ring-white'
+              : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
           }`}
         >
           <ArrowUp className="w-4 h-4" />

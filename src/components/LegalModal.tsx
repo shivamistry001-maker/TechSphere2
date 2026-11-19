@@ -135,7 +135,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, theme = '
           animate="visible"
           exit={prefersReducedMotion ? undefined : 'exit'}
           onClick={onClose}
-          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          className="ts-glass-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="legal-modal-title"

@@ -186,12 +186,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
               <motion.button
                 type="button"
                 onClick={() => onNavigate('request-consultation')}
+                data-glass-layer="hero-cta"
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 border transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`ts-glass-accent ts-glass-accent-interactive inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
-                    ? 'bg-[#171717] hover:bg-[#252525] text-[#F5F5F5] border-[#303030] hover:border-[#D4D4D4]/50 focus-visible:ring-white'
-                    : 'bg-white hover:bg-[#F5FAFE] text-[#101B35] border-[#101B35]/15 hover:border-[#38BDF8] shadow-[0_6px_18px_rgba(16,27,53,0.04)] focus-visible:ring-[#38BDF8]'
+                    ? 'text-[#F5F5F5] focus-visible:ring-white'
+                    : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                 }`}
               >
                 <Calendar className={`w-4 h-4 ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`} />
@@ -206,14 +207,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
               className="mt-10 sm:mt-12 w-full max-w-md"
             >
               <motion.div
+                data-glass-layer="hero-preview-card"
                 animate={prefersReducedMotion ? undefined : { y: [0, -6, 0] }}
                 transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
-                className={`relative rounded-2xl p-5 sm:p-6 border transition-colors overflow-hidden ${
-                  isDark
-                    ? 'bg-[#171717]/95 border-[#303030] hover:border-[#D4D4D4]/45 shadow-[0_24px_50px_rgba(0,0,0,0.6)]'
-                    : 'bg-white border-[#101B35]/[0.07] hover:border-[#38BDF8]/50 shadow-[0_24px_50px_rgba(16,27,53,0.08)]'
-                }`}
+                className="ts-glass-accent ts-glass-accent-interactive relative rounded-2xl p-5 sm:p-6 transition-colors overflow-hidden"
               >
                 {/* Subtle animated top border highlight */}
                 <motion.span
@@ -273,19 +271,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                     </p>
 
                     <div
-                      className={`pt-2 border-t flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.1em] uppercase ${
+                      className={`pt-2.5 border-t flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-semibold tracking-[0.09em] uppercase ${
                         isDark
-                          ? 'border-[#303030] text-[#D4D4D4]'
-                          : 'border-[#101B35]/[0.06] text-[#0284C7]'
+                          ? 'border-white/10 text-[#D4D4D4]'
+                          : 'border-[#101B35]/[0.07] text-[#0284C7]'
                       }`}
                     >
-                      <span>ERPNext</span>
+                      <span className="whitespace-nowrap">ERPNext</span>
                       <span className="opacity-30" aria-hidden="true">·</span>
-                      <span>Odoo</span>
+                      <span className="whitespace-nowrap">Odoo</span>
                       <span className="opacity-30" aria-hidden="true">·</span>
-                      <span>Automation</span>
+                      <span className="whitespace-nowrap">Automation</span>
                       <span className="opacity-30" aria-hidden="true">·</span>
-                      <span>Web Apps</span>
+                      <span className="whitespace-nowrap">Web Apps</span>
                     </div>
                   </div>
                 </div>

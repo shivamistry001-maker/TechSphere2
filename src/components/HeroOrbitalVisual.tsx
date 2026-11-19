@@ -301,12 +301,11 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
 
           {/* Floating Mini ERP Analytics Widget (Top Right of Orbital Frame) */}
           <motion.div
+            data-glass-layer="hero-pulse-widget"
             animate={prefersReducedMotion ? undefined : { y: [-3, 3, -3] }}
             transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
-            className={`hidden sm:flex absolute -top-2 right-0 sm:right-2 z-20 items-center gap-2.5 px-3.5 py-2 rounded-xl border backdrop-blur-md shadow-lg ${
-              isDark
-                ? 'bg-[#171717]/95 border-[#303030] text-[#F5F5F5]'
-                : 'bg-white/95 border-[#101B35]/[0.08] text-[#172033] shadow-[0_14px_30px_rgba(16,27,53,0.08)]'
+            className={`ts-glass-accent hidden sm:flex absolute -top-2 right-0 sm:right-2 z-20 items-center gap-2.5 px-3.5 py-2 rounded-xl ${
+              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
             }`}
           >
             <div className="flex items-end gap-0.5 h-5" aria-hidden="true">
@@ -409,14 +408,15 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                         ease: 'easeInOut',
                       }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
-                      className={`group flex items-center gap-2 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-2xl transition-transform duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      data-glass-layer={`orbital-node-${node.id}`}
+                      className={`ts-glass-accent ts-glass-accent-interactive group flex items-center gap-2 px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-2xl transition-transform duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                         isDark
                           ? isActive
-                            ? 'bg-[#1D1D1D] ring-2 ring-white shadow-[0_14px_32px_rgba(0,0,0,0.65)] scale-105 focus-visible:ring-white'
-                            : 'bg-[#171717]/95 border border-[#303030] shadow-lg hover:border-[#D4D4D4]/60 hover:scale-105 focus-visible:ring-white'
+                            ? 'ring-2 ring-white scale-105 focus-visible:ring-white'
+                            : 'hover:scale-105 focus-visible:ring-white'
                           : isActive
-                          ? 'bg-white ring-2 ring-[#38BDF8] shadow-[0_14px_32px_rgba(56,189,248,0.24)] scale-105 focus-visible:ring-[#38BDF8]'
-                          : 'bg-white border border-[#101B35]/[0.08] shadow-[0_12px_28px_rgba(16,27,53,0.1)] hover:border-[#38BDF8]/50 hover:scale-105 focus-visible:ring-[#38BDF8]'
+                          ? 'ring-2 ring-[#38BDF8] scale-105 focus-visible:ring-[#38BDF8]'
+                          : 'hover:scale-105 focus-visible:ring-[#38BDF8]'
                       }`}
                       aria-label={`Inspect ${node.label} — ${node.sublabel}`}
                     >

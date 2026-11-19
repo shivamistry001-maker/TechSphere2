@@ -188,10 +188,10 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                   data-testid={`erp-showcase-card-${platform.id}`}
                   whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`group relative h-full rounded-3xl border overflow-hidden flex flex-col justify-between ${
+                  className={`ts-showcase-card-rim group relative h-full rounded-3xl border overflow-hidden flex flex-col justify-between ${
                     isDark
-                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45 shadow-[0_16px_40px_rgba(0,0,0,0.45)]'
-                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 shadow-[0_14px_34px_rgba(16,27,53,0.05)] hover:shadow-[0_24px_50px_rgba(16,27,53,0.09)]'
+                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
+                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 hover:shadow-[0_24px_50px_rgba(16,27,53,0.09)]'
                   }`}
                 >
                   <CardGlareOverlay theme={theme} subtle />
@@ -269,10 +269,11 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                             handleCardSlide(platform.id, totalShots, 'prev');
                           }}
                           aria-label={`Previous ${platform.name} screenshot`}
-                          className={`pointer-events-auto w-11 h-11 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                          data-glass-layer="gallery-prev"
+                          className={`ts-glass-float-btn pointer-events-auto w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                             isDark
-                              ? 'bg-[#090909]/85 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
-                              : 'bg-white/90 border-[#101B35]/15 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
+                              ? 'text-white focus-visible:ring-white'
+                              : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                           }`}
                         >
                           <ChevronLeft className="w-4 h-4" />
@@ -286,10 +287,11 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                             handleCardSlide(platform.id, totalShots, 'next');
                           }}
                           aria-label={`Next ${platform.name} screenshot`}
-                          className={`pointer-events-auto w-11 h-11 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                          data-glass-layer="gallery-next"
+                          className={`ts-glass-float-btn pointer-events-auto w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                             isDark
-                              ? 'bg-[#090909]/85 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
-                              : 'bg-white/90 border-[#101B35]/15 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
+                              ? 'text-white focus-visible:ring-white'
+                              : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                           }`}
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -301,10 +303,11 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                         type="button"
                         onClick={() => openLightbox(platform.id, currentIdx)}
                         aria-label={`Open full preview of ${currentShot.title}`}
-                        className={`absolute bottom-2 right-2 z-20 w-11 h-11 rounded-xl border flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer ${
+                        data-glass-layer="gallery-maximize"
+                        className={`ts-glass-float-btn absolute bottom-2 right-2 z-20 w-11 h-11 rounded-xl flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                           isDark
-                            ? 'bg-[#090909]/80 border-[#303030] text-white hover:bg-white hover:text-[#090909]'
-                            : 'bg-[#101B35]/80 border-white/15 text-white hover:bg-[#0284C7]'
+                            ? 'text-white focus-visible:ring-white'
+                            : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                         }`}
                       >
                         <Maximize2 className="w-4 h-4" />
@@ -425,9 +428,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
             aria-modal="true"
             aria-label={`${activeLightboxPlatform.name} screenshot gallery preview`}
             data-testid="erp-lightbox-modal"
-            className={`fixed inset-0 z-[70] backdrop-blur-md flex items-center justify-center p-3 sm:p-6 ${
-              isDark ? 'bg-black/90' : 'bg-[#101B35]/80'
-            }`}
+            className="ts-glass-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6"
           >
             <motion.div
               variants={modalContentVariants}
@@ -472,10 +473,10 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
                   onClick={() => setLightbox(null)}
                   aria-label="Close screenshot preview"
-                  className={`w-11 h-11 rounded-full border flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`ts-glass-control w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
-                      ? 'bg-[#1D1D1D] border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
-                      : 'bg-white border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
+                      ? 'text-white focus-visible:ring-white'
+                      : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                   }`}
                 >
                   <X className="w-5 h-5" />
@@ -528,10 +529,10 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Previous screenshot"
-                  className={`absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`ts-glass-control absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
-                      ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
-                      : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
+                      ? 'text-white focus-visible:ring-white'
+                      : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                   }`}
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -555,10 +556,10 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Next screenshot"
-                  className={`absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`ts-glass-control absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
-                      ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
-                      : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
+                      ? 'text-white focus-visible:ring-white'
+                      : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
                   }`}
                 >
                   <ChevronRight className="w-5 h-5" />

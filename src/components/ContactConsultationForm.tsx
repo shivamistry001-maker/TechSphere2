@@ -151,7 +151,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       className={`rounded-3xl border p-6 sm:p-10 transition-colors ${
         isDark
           ? 'bg-[#171717] border-[#303030] shadow-2xl shadow-black/60'
-          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50 backdrop-blur-xl'
+          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
       }`}
     >
       <div className="mb-8">
