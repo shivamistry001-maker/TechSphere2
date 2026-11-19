@@ -130,7 +130,7 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
             whileHover={prefersReducedMotion ? undefined : { x: 2 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             onClick={() => onNavigate('industries')}
-            className={`group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold hover:underline cursor-pointer shrink-0 ${
+            className={`group inline-flex items-center gap-2 min-h-[44px] py-2.5 text-xs sm:text-sm font-semibold hover:underline cursor-pointer shrink-0 ${
               isDark ? 'text-white' : 'text-[#0284C7]'
             }`}
           >

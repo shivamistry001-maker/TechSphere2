@@ -42,8 +42,9 @@ export const ITSolutionsPage: React.FC<ITSolutionsPageProps> = ({
   const handleConsult = () => {
     if (onBookConsultation) {
       onBookConsultation('Custom IT & Cloud Architecture');
+    } else {
+      onNavigate('request-consultation');
     }
-    onNavigate('request-consultation');
   };
 
   const capabilities = [
@@ -106,7 +107,7 @@ export const ITSolutionsPage: React.FC<ITSolutionsPageProps> = ({
             whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
             onClick={handleConsult}
-            className={`group px-7 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer ${
+            className={`group min-h-[44px] px-7 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer ${
               isDark
                 ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                 : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 shadow-lg shadow-sky-600/30'

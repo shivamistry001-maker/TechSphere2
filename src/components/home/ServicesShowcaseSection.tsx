@@ -238,14 +238,14 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
                   </div>
 
                   <div
-                    className={`relative z-10 pt-4 border-t flex items-center justify-between ${
+                    className={`relative z-10 pt-2 border-t flex items-center justify-between gap-2 ${
                       isDark ? 'border-[#303030]' : 'border-[#101B35]/[0.06]'
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => onNavigate(service.targetPage)}
-                      className={`inline-flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 rounded-md ${
+                      className={`inline-flex items-center gap-1.5 min-h-[44px] py-2.5 text-xs font-semibold transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 rounded-md ${
                         isDark
                           ? 'text-white hover:text-[#D4D4D4] focus-visible:ring-white'
                           : 'text-[#0284C7] hover:text-[#101B35] focus-visible:ring-[#38BDF8]'
@@ -259,10 +259,10 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
                       <button
                         type="button"
                         onClick={() => onSelectService(service.title)}
-                        className={`text-[11px] font-medium transition-colors cursor-pointer ${
+                        className={`inline-flex items-center min-h-[44px] py-2.5 text-[11px] font-medium transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 rounded-md ${
                           isDark
-                            ? 'text-[#A3A3A3] hover:text-white'
-                            : 'text-slate-500 hover:text-[#101B35]'
+                            ? 'text-[#A3A3A3] hover:text-white focus-visible:ring-white'
+                            : 'text-slate-500 hover:text-[#101B35] focus-visible:ring-[#38BDF8]'
                         }`}
                       >
                         Request Quote

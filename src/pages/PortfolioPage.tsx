@@ -96,7 +96,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('demo-websites')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
               isDark
                 ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
                 : 'bg-white border-[#101B35]/10 text-[#101B35] hover:border-[#38BDF8]'
@@ -108,7 +108,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('erp-showcase')}
-            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+            className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
               isDark
                 ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
                 : 'bg-white border-[#101B35]/10 text-[#101B35] hover:border-[#38BDF8]'
@@ -131,7 +131,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors border cursor-pointer ${
+                className={`inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors border cursor-pointer ${
                   activeCategory === cat
                     ? isDark
                       ? 'bg-white text-[#090909] border-white shadow-md'
@@ -236,7 +236,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                           type="button"
                           whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                           onClick={() => onNavigate('request-consultation')}
-                          className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                          className={`w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                             isDark
                               ? 'bg-[#1D1D1D] hover:bg-white hover:text-[#090909] text-white border-[#303030]'
                               : 'bg-sky-500/10 hover:bg-sky-500 hover:text-white text-[#0284C7] border-sky-500/20'

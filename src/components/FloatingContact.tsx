@@ -14,7 +14,7 @@ interface FloatingContactProps {
   theme?: ThemeMode;
 }
 
-export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light' }) => {
+export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ theme = 'light' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const isDark = theme === 'dark';
@@ -52,7 +52,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+              className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'
                   : 'text-emerald-300 hover:bg-emerald-950/40 hover:text-emerald-200 border-emerald-500/20'
@@ -76,7 +76,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
             {/* Phone 1 */}
             <a
               href={`tel:${COMPANY_INFO.phones[0].raw}`}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+              className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'
                   : 'text-sky-200 hover:bg-sky-950/40 hover:text-white border-sky-500/15'
@@ -100,7 +100,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
             {/* Phone 2 */}
             <a
               href={`tel:${COMPANY_INFO.phones[1].raw}`}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+              className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'
                   : 'text-sky-200 hover:bg-sky-950/40 hover:text-white border-sky-500/15'
@@ -124,7 +124,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
             {/* Email */}
             <a
               href={`mailto:${COMPANY_INFO.email}`}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+              className={`flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 isDark
                   ? 'text-[#F5F5F5] hover:bg-[#252525] border-[#303030]'
                   : 'text-slate-200 hover:bg-slate-800 border-slate-700/60'
@@ -166,4 +166,4 @@ export const FloatingContact: React.FC<FloatingContactProps> = ({ theme = 'light
       </motion.button>
     </div>
   );
-};
+});

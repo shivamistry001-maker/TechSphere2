@@ -143,7 +143,7 @@ export const ERPSolutionsPage: React.FC<ERPSolutionsPageProps> = ({
                     else if (plat.id === 'zoho') onNavigate('zoho');
                     else onNavigate('it-solutions');
                   }}
-                  className={`relative z-10 w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`relative z-10 w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                     isDark
                       ? 'bg-[#1D1D1D] hover:bg-white hover:text-[#090909] text-white border-[#303030]'
                       : 'bg-sky-500/10 hover:bg-sky-500 hover:text-white text-sky-600 border-sky-500/20'

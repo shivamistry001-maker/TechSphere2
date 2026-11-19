@@ -3,20 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type { Variants, Transition } from 'motion/react';
+import type { Variants } from 'motion/react';
 
 export const EASE_PREMIUM = [0.16, 1, 0.3, 1] as const;
-
-export const VIEWPORT_ONCE = {
-  once: true,
-  amount: 0.12,
-} as const;
-
-export const FAST_SPRING: Transition = {
-  type: 'spring',
-  stiffness: 420,
-  damping: 32,
-};
 
 export const SCROLL_SPRING_CONFIG = {
   stiffness: 115,
@@ -121,30 +110,6 @@ export const scrollCardItemVariants: Variants = {
   },
 };
 
-export const sectionRevealVariants: Variants = {
-  hidden: { opacity: 0, y: 28, scale: 0.985 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.58,
-      ease: EASE_PREMIUM,
-    },
-  },
-};
-
-export const staggerContainerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.04,
-    },
-  },
-};
-
 export const cardRevealVariants: Variants = {
   hidden: { opacity: 0, y: 30, scale: 0.96 },
   visible: (index: number = 0) => ({
@@ -157,18 +122,6 @@ export const cardRevealVariants: Variants = {
       ease: EASE_PREMIUM,
     },
   }),
-};
-
-export const imageRevealVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.96 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.55,
-      ease: EASE_PREMIUM,
-    },
-  },
 };
 
 export const dropdownVariants: Variants = {
@@ -212,20 +165,6 @@ export const modalContentVariants: Variants = {
     scale: 0.96,
     y: 10,
     transition: { duration: 0.16, ease: 'easeIn' },
-  },
-};
-
-export const pageTransitionVariants: Variants = {
-  initial: { opacity: 0, y: 10 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.28, ease: EASE_PREMIUM },
-  },
-  exit: {
-    opacity: 0,
-    y: -8,
-    transition: { duration: 0.18, ease: 'easeIn' },
   },
 };
 

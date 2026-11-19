@@ -128,6 +128,13 @@ export function getPageFromPathname(pathname: string): PageId {
   return 'home';
 }
 
+export const SITE_ORIGIN = 'https://techsphere.consulting';
+
 export function getPathForPage(page: PageId): string {
   return PAGE_PATHS[page] ?? '/';
+}
+
+export function getCanonicalUrl(page: PageId): string {
+  const path = getPathForPage(page);
+  return path === '/' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;
 }

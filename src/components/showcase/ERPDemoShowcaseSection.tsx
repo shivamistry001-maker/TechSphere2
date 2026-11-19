@@ -254,14 +254,13 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                               fallbackTitle={currentShot.title}
                               fallbackSubtitle={platform.name}
                               theme={theme}
-                              eager
                             />
                           </motion.div>
                         </AnimatePresence>
                       </button>
 
                       {/* Gallery Prev / Next Controls */}
-                      <div className="absolute inset-x-2.5 top-1/2 -translate-y-1/2 z-20 flex items-center justify-between pointer-events-none">
+                      <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-between pointer-events-none">
                         <motion.button
                           type="button"
                           whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
@@ -270,7 +269,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                             handleCardSlide(platform.id, totalShots, 'prev');
                           }}
                           aria-label={`Previous ${platform.name} screenshot`}
-                          className={`pointer-events-auto w-8 h-8 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                          className={`pointer-events-auto w-11 h-11 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                             isDark
                               ? 'bg-[#090909]/85 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                               : 'bg-white/90 border-[#101B35]/15 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -287,7 +286,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                             handleCardSlide(platform.id, totalShots, 'next');
                           }}
                           aria-label={`Next ${platform.name} screenshot`}
-                          className={`pointer-events-auto w-8 h-8 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                          className={`pointer-events-auto w-11 h-11 rounded-full border flex items-center justify-center backdrop-blur-md shadow-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                             isDark
                               ? 'bg-[#090909]/85 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                               : 'bg-white/90 border-[#101B35]/15 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -302,13 +301,13 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                         type="button"
                         onClick={() => openLightbox(platform.id, currentIdx)}
                         aria-label={`Open full preview of ${currentShot.title}`}
-                        className={`absolute bottom-2.5 right-2.5 z-20 w-7 h-7 rounded-lg border flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer ${
+                        className={`absolute bottom-2 right-2 z-20 w-11 h-11 rounded-xl border flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer ${
                           isDark
                             ? 'bg-[#090909]/80 border-[#303030] text-white hover:bg-white hover:text-[#090909]'
                             : 'bg-[#101B35]/80 border-white/15 text-white hover:bg-[#0284C7]'
                         }`}
                       >
-                        <Maximize2 className="w-3.5 h-3.5" />
+                        <Maximize2 className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -348,7 +347,6 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                               alt={shot.title}
                               fallbackTitle={shot.title}
                               theme={theme}
-                              eager
                             />
                           </button>
                         );
@@ -396,7 +394,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                         whileHover={prefersReducedMotion ? undefined : { scale: 1.015 }}
                         whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                         onClick={() => openLightbox(platform.id, currentIdx)}
-                        className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                        className={`w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
                           isDark
                             ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] focus-visible:ring-white'
                             : 'bg-[#101B35] text-white hover:bg-[#0284C7] focus-visible:ring-[#38BDF8]'
@@ -474,13 +472,13 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
                   onClick={() => setLightbox(null)}
                   aria-label="Close screenshot preview"
-                  className={`w-9 h-9 rounded-full border flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`w-11 h-11 rounded-full border flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'bg-[#1D1D1D] border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                       : 'bg-white border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
                   }`}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </motion.button>
               </div>
 
@@ -530,7 +528,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Previous screenshot"
-                  className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                       : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -557,7 +555,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                     )
                   }
                   aria-label="Next screenshot"
-                  className={`absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                  className={`absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full border flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                     isDark
                       ? 'bg-[#171717]/95 border-[#303030] text-white hover:bg-white hover:text-[#090909] focus-visible:ring-white'
                       : 'bg-white/95 border-slate-200 text-[#101B35] hover:bg-[#101B35] hover:text-white focus-visible:ring-[#38BDF8]'
@@ -573,11 +571,11 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                   isDark ? 'border-[#303030] bg-[#171717]' : 'border-slate-200 bg-white'
                 }`}
               >
-                <div className="space-y-2 max-w-2xl">
+                <div className="space-y-1 max-w-2xl">
                   <p className={`text-xs sm:text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
                     {activeLightboxScreenshot.caption}
                   </p>
-                  <div className="flex items-center gap-1.5" role="group" aria-label="Image navigation indicators">
+                  <div className="flex items-center -ml-2" role="group" aria-label="Image navigation indicators">
                     {activeLightboxPlatform.screenshots.map((shot, dotIdx) => {
                       const active = dotIdx === lightbox.index;
                       return (
@@ -589,16 +587,21 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                           }
                           aria-label={`View slide ${dotIdx + 1} of ${activeLightboxPlatform.screenshots.length}`}
                           aria-current={active ? 'true' : undefined}
-                          className={`h-2 rounded-full transition-[width,background-color] duration-200 cursor-pointer ${
-                            active
-                              ? isDark
-                                ? 'w-6 bg-white'
-                                : 'w-6 bg-[#0284C7]'
-                              : isDark
-                              ? 'w-2 bg-[#404040] hover:bg-[#737373]'
-                              : 'w-2 bg-slate-300 hover:bg-slate-400'
-                          }`}
-                        />
+                          className="min-w-[44px] min-h-[44px] inline-flex items-center justify-center cursor-pointer focus:outline-none focus-visible:ring-2 rounded-full"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`h-2 rounded-full transition-[width,background-color] duration-200 ${
+                              active
+                                ? isDark
+                                  ? 'w-6 bg-white'
+                                  : 'w-6 bg-[#0284C7]'
+                                : isDark
+                                ? 'w-2 bg-[#404040] hover:bg-[#737373]'
+                                : 'w-2 bg-slate-300 hover:bg-slate-400'
+                            }`}
+                          />
+                        </button>
                       );
                     })}
                   </div>
@@ -615,7 +618,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                           setLightbox((prev) => (prev ? { ...prev, index: sIdx } : null))
                         }
                         aria-label={`Jump to screenshot ${sIdx + 1}: ${shot.title}`}
-                        className={`w-16 h-10 rounded-lg overflow-hidden border transition-opacity cursor-pointer ${
+                        className={`w-16 h-11 rounded-lg overflow-hidden border transition-opacity cursor-pointer ${
                           isSelected
                             ? isDark
                               ? 'border-white ring-2 ring-white/60 opacity-100'

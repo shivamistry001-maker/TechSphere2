@@ -152,7 +152,7 @@ export const WhyTechSphereSection: React.FC<WhyTechSphereSectionProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('about')}
-              className={`group mt-4 inline-flex items-center gap-1.5 text-xs font-semibold hover:underline cursor-pointer ${
+              className={`group mt-2 inline-flex items-center gap-1.5 min-h-[44px] py-2.5 text-xs font-semibold hover:underline cursor-pointer ${
                 isDark ? 'text-white' : 'text-[#0284C7]'
               }`}
             >

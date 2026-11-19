@@ -41,7 +41,9 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, theme = '
   }, [type]);
 
   const headingAccent = isDark ? 'font-bold text-white' : 'font-bold text-sky-600';
-  const linkAccent = isDark ? 'text-white underline hover:text-[#D4D4D4]' : 'text-sky-600 underline';
+  const linkAccent = isDark
+    ? 'inline-flex items-center min-h-[44px] sm:min-h-0 text-white underline hover:text-[#D4D4D4]'
+    : 'inline-flex items-center min-h-[44px] sm:min-h-0 text-sky-600 underline';
 
   const contentMap = type
     ? {
@@ -175,7 +177,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, theme = '
               <button
                 type="button"
                 onClick={onClose}
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
                   isDark
                     ? 'text-[#A3A3A3] hover:text-white hover:bg-[#252525]'
                     : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
@@ -196,7 +198,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, theme = '
               <button
                 type="button"
                 onClick={onClose}
-                className={`px-5 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                className={`inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-6 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                   isDark
                     ? 'bg-white hover:bg-[#D4D4D4] text-[#090909]'
                     : 'bg-sky-500 hover:bg-sky-600 text-white'

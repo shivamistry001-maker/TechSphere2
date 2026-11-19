@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Calendar, Layers } from 'lucide-react';
 import { PageId, ThemeMode } from '../types.ts';
@@ -13,8 +13,9 @@ import {
   ScanningLine,
   ScrollSectionContainer,
   SubtleTechParticles,
+  useIsDesktop,
 } from './motion/MotionPrimitives.tsx';
-import { EASE_PREMIUM, scrollBlockItemVariants } from '../utils/motion.ts';
+import { scrollBlockItemVariants } from '../utils/motion.ts';
 
 interface HeroSectionProps {
   onNavigate: (page: PageId) => void;
@@ -24,17 +25,8 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'light' }) => {
   const heroRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktop = useIsDesktop(1024);
   const isDark = theme === 'dark';
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const update = () => setIsDesktop(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -177,7 +169,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
               <MagneticButton
                 type="button"
                 onClick={() => onNavigate('services')}
-                className={`group inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`group inline-flex items-center justify-center gap-2.5 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
                     ? 'bg-white hover:bg-[#D4D4D4] text-[#090909] shadow-[0_14px_30px_rgba(0,0,0,0.45)] focus-visible:ring-white'
                     : 'bg-[#101B35] hover:bg-[#192A52] text-white shadow-[0_14px_30px_rgba(16,27,53,0.18)] focus-visible:ring-[#38BDF8]'
@@ -196,7 +188,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                 onClick={() => onNavigate('request-consultation')}
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 border transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 border transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
                     ? 'bg-[#171717] hover:bg-[#252525] text-[#F5F5F5] border-[#303030] hover:border-[#D4D4D4]/50 focus-visible:ring-white'
                     : 'bg-white hover:bg-[#F5FAFE] text-[#101B35] border-[#101B35]/15 hover:border-[#38BDF8] shadow-[0_6px_18px_rgba(16,27,53,0.04)] focus-visible:ring-[#38BDF8]'

@@ -14,7 +14,7 @@ import {
   LifeBuoy,
 } from 'lucide-react';
 import { ThemeMode } from '../../types.ts';
-import { EASE_PREMIUM, computeColumnParallax, scrollCardItemVariants } from '../../utils/motion.ts';
+import { computeColumnParallax, scrollCardItemVariants } from '../../utils/motion.ts';
 import {
   CardGlareOverlay,
   ScrollCascadeBlock,

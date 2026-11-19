@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Suspense, lazy, useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from './types.ts';
 import { Navbar } from './components/Navbar.tsx';
@@ -19,6 +19,7 @@ import {
 import { EASE_PREMIUM } from './utils/motion.ts';
 import {
   PAGE_SEO_META,
+  getCanonicalUrl,
   getPageFromPathname,
   getPathForPage,
 } from './utils/routing.ts';
@@ -32,22 +33,75 @@ import {
 } from './utils/theme.ts';
 import { playThemeToggleClickSound } from './utils/themeSound.ts';
 
-// Pages
+// Eager HomePage for instant initial paint (LCP)
 import { HomePage } from './pages/HomePage.tsx';
-import { AboutPage } from './pages/AboutPage.tsx';
-import { ServicesPage } from './pages/ServicesPage.tsx';
-import { ERPSolutionsPage } from './pages/ERPSolutionsPage.tsx';
-import { ERPNextPage } from './pages/ERPNextPage.tsx';
-import { OdooPage } from './pages/OdooPage.tsx';
-import { ZohoPage } from './pages/ZohoPage.tsx';
-import { ITSolutionsPage } from './pages/ITSolutionsPage.tsx';
-import { DemoWebsitesPage } from './pages/DemoWebsitesPage.tsx';
-import { ERPShowcasePage } from './pages/ERPShowcasePage.tsx';
-import { IndustriesPage } from './pages/IndustriesPage.tsx';
-import { CaseStudiesPage } from './pages/CaseStudiesPage.tsx';
-import { PortfolioPage } from './pages/PortfolioPage.tsx';
-import { InsightsPage } from './pages/InsightsPage.tsx';
-import { ContactPage } from './pages/ContactPage.tsx';
+
+// Route-level code splitting for secondary pages
+const AboutPage = lazy(() =>
+  import('./pages/AboutPage.tsx').then((m) => ({ default: m.AboutPage }))
+);
+const ServicesPage = lazy(() =>
+  import('./pages/ServicesPage.tsx').then((m) => ({ default: m.ServicesPage }))
+);
+const ERPSolutionsPage = lazy(() =>
+  import('./pages/ERPSolutionsPage.tsx').then((m) => ({ default: m.ERPSolutionsPage }))
+);
+const ERPNextPage = lazy(() =>
+  import('./pages/ERPNextPage.tsx').then((m) => ({ default: m.ERPNextPage }))
+);
+const OdooPage = lazy(() =>
+  import('./pages/OdooPage.tsx').then((m) => ({ default: m.OdooPage }))
+);
+const ZohoPage = lazy(() =>
+  import('./pages/ZohoPage.tsx').then((m) => ({ default: m.ZohoPage }))
+);
+const ITSolutionsPage = lazy(() =>
+  import('./pages/ITSolutionsPage.tsx').then((m) => ({ default: m.ITSolutionsPage }))
+);
+const DemoWebsitesPage = lazy(() =>
+  import('./pages/DemoWebsitesPage.tsx').then((m) => ({ default: m.DemoWebsitesPage }))
+);
+const ERPShowcasePage = lazy(() =>
+  import('./pages/ERPShowcasePage.tsx').then((m) => ({ default: m.ERPShowcasePage }))
+);
+const IndustriesPage = lazy(() =>
+  import('./pages/IndustriesPage.tsx').then((m) => ({ default: m.IndustriesPage }))
+);
+const CaseStudiesPage = lazy(() =>
+  import('./pages/CaseStudiesPage.tsx').then((m) => ({ default: m.CaseStudiesPage }))
+);
+const PortfolioPage = lazy(() =>
+  import('./pages/PortfolioPage.tsx').then((m) => ({ default: m.PortfolioPage }))
+);
+const InsightsPage = lazy(() =>
+  import('./pages/InsightsPage.tsx').then((m) => ({ default: m.InsightsPage }))
+);
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage.tsx').then((m) => ({ default: m.ContactPage }))
+);
+
+function RouteLoadingFallback({ isDark }: { isDark: boolean }) {
+  return (
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label="Loading page"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-6"
+    >
+      <div
+        className={`h-8 w-64 mx-auto rounded-xl ts-skeleton-block ${
+          isDark ? 'bg-[#1D1D1D] ts-skeleton-dark' : 'bg-slate-200/80 ts-skeleton-light'
+        }`}
+      />
+      <div
+        className={`h-4 w-96 max-w-full mx-auto rounded-lg ts-skeleton-block ${
+          isDark ? 'bg-[#171717] ts-skeleton-dark' : 'bg-slate-100 ts-skeleton-light'
+        }`}
+      />
+      <span className="sr-only">Loading page content...</span>
+    </div>
+  );
+}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>(() =>
@@ -90,9 +144,10 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // Update document title & meta description per active route for SEO
+  // Update document title, meta description, OpenGraph, and canonical URL per active route
   useEffect(() => {
     const seo = PAGE_SEO_META[currentPage] ?? PAGE_SEO_META.home;
+    const canonicalUrl = getCanonicalUrl(currentPage);
     document.title = seo.title;
 
     const descMeta = document.querySelector('meta[name="description"]');
@@ -108,6 +163,16 @@ export default function App() {
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) {
       ogDesc.setAttribute('content', seo.description);
+    }
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', canonicalUrl);
+    }
+
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', canonicalUrl);
     }
   }, [currentPage]);
 
@@ -189,6 +254,21 @@ export default function App() {
     [handleNavigate]
   );
 
+  const handleServiceConsultation = useCallback(
+    (serviceName: string) => {
+      handleConsultationSelect(serviceName);
+    },
+    [handleConsultationSelect]
+  );
+
+  const handleOpenLegal = useCallback((type: 'privacy' | 'terms' | 'cookies') => {
+    setLegalModalType(type);
+  }, []);
+
+  const handleCloseLegal = useCallback(() => {
+    setLegalModalType(null);
+  }, []);
+
   const isDark = theme === 'dark';
 
   return (
@@ -228,11 +308,12 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: EASE_PREMIUM }}
         >
+          <Suspense fallback={<RouteLoadingFallback isDark={isDark} />}>
             {currentPage === 'home' && (
               <HomePage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onSelectServiceForConsultation={(svc) => handleConsultationSelect(svc)}
+                onSelectServiceForConsultation={handleServiceConsultation}
               />
             )}
 
@@ -244,7 +325,7 @@ export default function App() {
               <ServicesPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onSelectServiceForConsultation={(svc) => handleConsultationSelect(svc)}
+                onSelectServiceForConsultation={handleServiceConsultation}
               />
             )}
 
@@ -260,7 +341,7 @@ export default function App() {
               <ERPNextPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
               />
             )}
 
@@ -268,7 +349,7 @@ export default function App() {
               <OdooPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
               />
             )}
 
@@ -276,7 +357,7 @@ export default function App() {
               <ZohoPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
               />
             )}
 
@@ -284,14 +365,14 @@ export default function App() {
               <ITSolutionsPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
               />
             )}
 
             {currentPage === 'demo-websites' && (
               <DemoWebsitesPage
                 onNavigate={handleNavigate}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
                 theme={theme}
               />
             )}
@@ -299,7 +380,7 @@ export default function App() {
             {currentPage === 'erp-showcase' && (
               <ERPShowcasePage
                 onNavigate={handleNavigate}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
                 theme={theme}
               />
             )}
@@ -308,7 +389,7 @@ export default function App() {
               <IndustriesPage
                 onNavigate={handleNavigate}
                 theme={theme}
-                onBookConsultation={(svc) => handleConsultationSelect(svc)}
+                onBookConsultation={handleServiceConsultation}
               />
             )}
 
@@ -332,6 +413,7 @@ export default function App() {
                 initialMessage={selectedMessage}
               />
             )}
+          </Suspense>
         </motion.div>
       </main>
 
@@ -339,7 +421,7 @@ export default function App() {
       <Footer
         onNavigate={handleNavigate}
         theme={theme}
-        onOpenLegal={(type) => setLegalModalType(type)}
+        onOpenLegal={handleOpenLegal}
       />
 
       {/* Floating Back-to-Top Control */}
@@ -351,7 +433,7 @@ export default function App() {
       {/* Legal & Policy Modals (Privacy, Terms, Cookies) */}
       <LegalModal
         type={legalModalType}
-        onClose={() => setLegalModalType(null)}
+        onClose={handleCloseLegal}
         theme={theme}
       />
     </div>

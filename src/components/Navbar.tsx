@@ -31,7 +31,48 @@ interface NavbarProps {
   onToggleTheme: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
+const ThemeToggleIcons: React.FC<{
+  isDark: boolean;
+  prefersReducedMotion: boolean;
+  sizeClass: string;
+}> = ({ isDark, prefersReducedMotion, sizeClass }) => {
+  const iconTransition = prefersReducedMotion
+    ? { duration: 0.01 }
+    : { type: 'spring' as const, stiffness: 360, damping: 24, mass: 0.75 };
+
+  return (
+    <span className={`relative block shrink-0 ${sizeClass}`}>
+      <motion.span
+        aria-hidden="true"
+        initial={false}
+        animate={{
+          opacity: isDark ? 1 : 0,
+          scale: isDark ? 1 : 0.55,
+          rotate: isDark ? 0 : -65,
+        }}
+        transition={iconTransition}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <Sun className={sizeClass} />
+      </motion.span>
+      <motion.span
+        aria-hidden="true"
+        initial={false}
+        animate={{
+          opacity: isDark ? 0 : 1,
+          scale: isDark ? 0.55 : 1,
+          rotate: isDark ? 65 : 0,
+        }}
+        transition={iconTransition}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <Moon className={sizeClass} />
+      </motion.span>
+    </span>
+  );
+};
+
+export const Navbar: React.FC<NavbarProps> = React.memo(({
   currentPage,
   onNavigate,
   theme,
@@ -136,7 +177,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => handleNavClick('home')}
               whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-              className={`flex items-center text-left group shrink-0 focus:outline-none focus-visible:ring-2 rounded-xl cursor-pointer ${
+              className={`flex items-center min-h-[44px] py-0.5 text-left group shrink-0 focus:outline-none focus-visible:ring-2 rounded-xl cursor-pointer ${
                 isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
               }`}
               aria-label="TechSphere Home"
@@ -356,7 +397,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                className={`relative p-2.5 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
+                className={`relative w-11 h-11 flex items-center justify-center rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] hover:border-white/35 focus-visible:ring-white'
                     : 'bg-white/90 border-[#101B35]/12 text-[#101B35] hover:bg-[#F5FAFE] hover:border-[#38BDF8]/60 focus-visible:ring-[#38BDF8]'
@@ -366,42 +407,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
               >
                 {/* Subtle GPU-friendly icon crossfade & spring rotation (non-blocking for rapid clicks) */}
-                <span className="relative block w-4 h-4">
-                  <motion.span
-                    aria-hidden="true"
-                    initial={false}
-                    animate={{
-                      opacity: isDark ? 1 : 0,
-                      scale: isDark ? 1 : 0.55,
-                      rotate: isDark ? 0 : -65,
-                    }}
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0.01 }
-                        : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
-                    }
-                    className="absolute inset-0 flex items-center justify-center"
-                  >
-                    <Sun className="w-4 h-4" />
-                  </motion.span>
-                  <motion.span
-                    aria-hidden="true"
-                    initial={false}
-                    animate={{
-                      opacity: isDark ? 0 : 1,
-                      scale: isDark ? 0.55 : 1,
-                      rotate: isDark ? 65 : 0,
-                    }}
-                    transition={
-                      prefersReducedMotion
-                        ? { duration: 0.01 }
-                        : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
-                    }
-                    className="absolute inset-0 flex items-center justify-center"
-                  >
-                    <Moon className="w-4 h-4" />
-                  </motion.span>
-                </span>
+                <ThemeToggleIcons
+                  isDark={isDark}
+                  prefersReducedMotion={Boolean(prefersReducedMotion)}
+                  sizeClass="w-[18px] h-[18px]"
+                />
               </motion.button>
 
               <MagneticButton
@@ -426,7 +436,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
-                className={`xl:hidden p-2.5 rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`xl:hidden w-11 h-11 flex items-center justify-center rounded-full border transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
                     ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525] focus-visible:ring-white'
                     : 'bg-white/90 border-[#101B35]/10 text-[#101B35] hover:bg-[#F5FAFE] focus-visible:ring-[#38BDF8]'
@@ -434,7 +444,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.button>
             </div>
           </div>
@@ -474,48 +484,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                   transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
                   aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                   aria-pressed={isDark}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-colors cursor-pointer ${
+                  className={`inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full border text-xs font-semibold transition-colors cursor-pointer ${
                     isDark
                       ? 'bg-[#171717] border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
                       : 'bg-[#F5FAFE] border-[#101B35]/12 text-[#101B35] hover:bg-[#E0F2FE]'
                   }`}
                 >
-                  <span className="relative block w-3.5 h-3.5 shrink-0">
-                    <motion.span
-                      aria-hidden="true"
-                      initial={false}
-                      animate={{
-                        opacity: isDark ? 1 : 0,
-                        scale: isDark ? 1 : 0.55,
-                        rotate: isDark ? 0 : -65,
-                      }}
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0.01 }
-                          : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
-                      }
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <Sun className="w-3.5 h-3.5" />
-                    </motion.span>
-                    <motion.span
-                      aria-hidden="true"
-                      initial={false}
-                      animate={{
-                        opacity: isDark ? 0 : 1,
-                        scale: isDark ? 0.55 : 1,
-                        rotate: isDark ? 65 : 0,
-                      }}
-                      transition={
-                        prefersReducedMotion
-                          ? { duration: 0.01 }
-                          : { type: 'spring', stiffness: 360, damping: 24, mass: 0.75 }
-                      }
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <Moon className="w-3.5 h-3.5" />
-                    </motion.span>
-                  </span>
+                  <ThemeToggleIcons
+                    isDark={isDark}
+                    prefersReducedMotion={Boolean(prefersReducedMotion)}
+                    sizeClass="w-4 h-4"
+                  />
                   <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
                 </motion.button>
               </div>
@@ -557,7 +536,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.18, delay: Math.min(idx * 0.02, 0.2) }}
                     onClick={() => handleNavClick(item.page)}
-                    className={`flex items-center gap-2.5 text-left py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
+                    className={`flex items-center gap-2.5 text-left min-h-[44px] py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
                       isItemActive
                         ? isDark
                           ? 'text-white bg-[#1D1D1D] border border-[#303030] font-semibold'
@@ -599,26 +578,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
 
                 <div
-                  className={`flex flex-col space-y-2 pt-2 text-xs ${
+                  className={`flex flex-col pt-1 text-xs ${
                     isDark ? 'text-[#A3A3A3]' : 'text-slate-500'
                   }`}
                 >
                   <a
                     href={`tel:${COMPANY_INFO.phones[0].raw}`}
-                    className={`flex items-center gap-2 transition-colors ${
+                    className={`flex items-center gap-2.5 min-h-[44px] py-2 transition-colors ${
                       isDark ? 'hover:text-white' : 'hover:text-[#0284C7]'
                     }`}
                   >
-                    <Phone className={`w-3.5 h-3.5 ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`} />
+                    <Phone className={`w-4 h-4 shrink-0 ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`} />
                     <span>{COMPANY_INFO.phones[0].display}</span>
                   </a>
                   <a
                     href={`mailto:${COMPANY_INFO.email}`}
-                    className={`flex items-center gap-2 transition-colors ${
+                    className={`flex items-center gap-2.5 min-h-[44px] py-2 transition-colors ${
                       isDark ? 'hover:text-white' : 'hover:text-[#0284C7]'
                     }`}
                   >
-                    <Mail className={`w-3.5 h-3.5 ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`} />
+                    <Mail className={`w-4 h-4 shrink-0 ${isDark ? 'text-[#D4D4D4]' : 'text-[#0284C7]'}`} />
                     <span>{COMPANY_INFO.email}</span>
                   </a>
                 </div>
@@ -629,4 +608,4 @@ export const Navbar: React.FC<NavbarProps> = ({
       </AnimatePresence>
     </>
   );
-};
+});

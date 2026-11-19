@@ -73,12 +73,12 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
   };
 
   const inputClass = isDark
-    ? 'w-full px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] placeholder-[#737373] focus:border-white focus:ring-1 focus:ring-white/40'
-    : 'w-full px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30';
+    ? 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] placeholder-[#737373] focus:border-white focus:ring-1 focus:ring-white/40'
+    : 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30';
 
   const selectClass = isDark
-    ? 'w-full px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] focus:border-white focus:ring-1 focus:ring-white/40'
-    : 'w-full px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 focus:border-sky-500';
+    ? 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] focus:border-white focus:ring-1 focus:ring-white/40'
+    : 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 focus:border-sky-500';
 
   return (
     <div
@@ -159,7 +159,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               <button
                 type="button"
                 onClick={handleReset}
-                className={`px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                className={`inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                   isDark
                     ? 'border-[#303030] hover:bg-[#252525] text-[#D4D4D4]'
                     : 'border-slate-300 hover:bg-slate-100 text-slate-700'
@@ -173,7 +173,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                className={`inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white'
@@ -416,7 +416,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                 disabled={state.submitting}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
+                className={`w-full sm:w-auto min-h-[44px] px-8 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] shadow-lg shadow-black/40'
                     : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:via-sky-500 hover:to-blue-500 shadow-lg shadow-sky-600/30'

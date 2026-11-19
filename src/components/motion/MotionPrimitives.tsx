@@ -27,7 +27,6 @@ import {
   scrollSectionContainerVariants,
   scrollBlockItemVariants,
   scrollCascadeGridVariants,
-  scrollCardItemVariants,
 } from '../../utils/motion.ts';
 
 /* -------------------------------------------------------------------------- */
@@ -567,25 +566,6 @@ export const ScrollParallaxLayer: React.FC<{
     <motion.div
       variants={PASSTHROUGH_VARIANTS}
       style={prefersReducedMotion || !enabled ? undefined : { y: smoothY }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-export const RevealCard: React.FC<{
-  children: React.ReactNode;
-  index?: number;
-  className?: string;
-  onClick?: () => void;
-}> = ({ children, className = '', onClick }) => {
-  const prefersReducedMotion = useReducedMotion();
-  return (
-    <motion.div
-      variants={scrollCardItemVariants}
-      whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01, transition: { duration: 0.22, ease: EASE_PREMIUM } }}
-      onClick={onClick}
       className={className}
     >
       {children}

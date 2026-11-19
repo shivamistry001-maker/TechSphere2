@@ -270,7 +270,7 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                     type="button"
                     onClick={() => setActiveIndex(idx)}
                     onMouseEnter={() => setActiveIndex(idx)}
-                    className={`w-full py-3.5 px-2 flex items-center justify-between text-left transition-colors cursor-pointer group focus:outline-none focus-visible:ring-2 rounded-lg ${
+                    className={`w-full min-h-[44px] py-3.5 px-2 flex items-center justify-between text-left transition-colors cursor-pointer group focus:outline-none focus-visible:ring-2 rounded-lg ${
                       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                     } ${
                       isActive
@@ -328,7 +328,7 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
               <button
                 type="button"
                 onClick={() => onNavigate('erp-solutions')}
-                className={`group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+                className={`group inline-flex items-center gap-2 min-h-[44px] py-2.5 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                   isDark
                     ? 'text-white hover:text-[#D4D4D4]'
                     : 'text-[#38BDF8] hover:text-sky-300'
@@ -370,7 +370,7 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                       type="button"
                       onClick={() => setActiveIndex(idx)}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                      className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl border text-center transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      className={`flex flex-col items-center justify-center min-h-[44px] min-w-[44px] py-2.5 px-1.5 rounded-xl border text-center transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                         isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                       } ${
                         isActive

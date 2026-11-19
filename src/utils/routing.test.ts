@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   PAGE_PATHS,
   PAGE_SEO_META,
+  getCanonicalUrl,
   getPageFromPathname,
   getPathForPage,
   normalizePathname,
@@ -37,4 +38,10 @@ test('getPathForPage and PAGE_SEO_META define dedicated routes and titles for sh
     assert.ok(PAGE_SEO_META[pageId].title.length > 10);
     assert.ok(PAGE_SEO_META[pageId].description.length > 20);
   }
+});
+
+test('getCanonicalUrl builds clean absolute canonical URLs for every page', () => {
+  assert.equal(getCanonicalUrl('home'), 'https://techsphere.consulting/');
+  assert.equal(getCanonicalUrl('demo-websites'), 'https://techsphere.consulting/demo-websites');
+  assert.equal(getCanonicalUrl('odoo'), 'https://techsphere.consulting/erp-solutions/odoo');
 });

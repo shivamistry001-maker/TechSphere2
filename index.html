@@ -20,13 +20,21 @@
           root.classList.toggle('light', theme === 'light');
           root.setAttribute('data-theme', theme);
           root.style.colorScheme = theme;
+          if (window.sessionStorage.getItem('techsphere_fonts_loaded_v1') === '1') {
+            root.classList.add('ts-fonts-loaded');
+            root.setAttribute('data-fonts-status', 'loaded');
+          } else {
+            root.setAttribute('data-fonts-status', 'system');
+          }
         } catch (e) {}
       })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="canonical" href="https://techsphere.consulting/" />
     
     <!-- OpenGraph Social Metadata -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://techsphere.consulting/" />
     <meta property="og:site_name" content="TechSphere IT &amp; ERP Consultancy" />
     <meta property="og:title" content="TechSphere IT &amp; ERP Consultancy | Empowering Businesses Through Tech" />
     <meta
@@ -44,13 +52,27 @@
     />
     <meta name="twitter:image" content="/logo.svg" />
 
-    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+    <!-- Async Non-Render-Blocking Google Fonts: Plus Jakarta Sans & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
     />
+    <link
+      data-ts-fonts="google"
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      />
+    </noscript>
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">

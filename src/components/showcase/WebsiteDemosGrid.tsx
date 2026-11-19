@@ -73,7 +73,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                 } ${
                   active
@@ -152,7 +152,6 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                         fallbackTitle={demo.title}
                         fallbackSubtitle={demo.categoryLabel}
                         theme={theme}
-                        eager
                       />
                     </div>
                     <span
@@ -235,7 +234,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                         rel="noopener noreferrer"
                         whileHover={prefersReducedMotion ? undefined : { scale: 1.015 }}
                         whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                        className={`group/btn w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                        className={`group/btn w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
                           isDark
                             ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] focus-visible:ring-white'
                             : 'bg-[#101B35] text-white hover:bg-[#0284C7] focus-visible:ring-[#38BDF8]'

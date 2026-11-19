@@ -104,7 +104,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                 <button
                   type="button"
                   onClick={() => setActiveArticleId(null)}
-                  className={`text-xs hover:underline font-semibold cursor-pointer ${
+                  className={`inline-flex items-center min-h-[44px] px-2 text-xs hover:underline font-semibold cursor-pointer ${
                     isDark ? 'text-white' : 'text-[#0284C7]'
                   }`}
                 >
@@ -130,7 +130,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                 <button
                   type="button"
                   onClick={() => setActiveArticleId(null)}
-                  className={`text-xs cursor-pointer ${
+                  className={`inline-flex items-center min-h-[44px] px-2 text-xs cursor-pointer ${
                     isDark ? 'text-[#A3A3A3] hover:text-white' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -141,7 +141,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                   whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                   onClick={() => onNavigate('request-consultation')}
-                  className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                  className={`inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                     isDark
                       ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                       : 'bg-sky-500 hover:bg-sky-400 text-white'
@@ -205,7 +205,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                 </div>
 
                 <div
-                  className={`relative z-10 pt-4 border-t flex items-center justify-between ${
+                  className={`relative z-10 pt-2 border-t flex items-center justify-between ${
                     isDark ? 'border-[#303030]' : 'border-slate-200'
                   }`}
                 >
@@ -218,7 +218,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ onNavigate, theme })
                       setActiveArticleId(article.id);
                       window.scrollTo({ top: 320, behavior: 'smooth' });
                     }}
-                    className={`text-xs font-semibold flex items-center gap-1 cursor-pointer ${
+                    className={`inline-flex items-center gap-1 min-h-[44px] py-2.5 text-xs font-semibold cursor-pointer ${
                       isDark ? 'text-white hover:text-[#D4D4D4]' : 'text-[#0284C7] hover:text-sky-500'
                     }`}
                   >

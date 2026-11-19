@@ -48,7 +48,7 @@ export const DemoWebsitesPage: React.FC<DemoWebsitesPageProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('home')}
-            className={`transition-colors cursor-pointer ${
+            className={`inline-flex items-center justify-center min-h-[44px] min-w-[44px] px-2 -ml-2 transition-colors cursor-pointer ${
               isDark ? 'text-[#A3A3A3] hover:text-white' : 'text-slate-500 hover:text-[#0284C7]'
             }`}
           >
@@ -139,7 +139,7 @@ export const DemoWebsitesPage: React.FC<DemoWebsitesPageProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
                 onClick={() => onBookConsultation('Website Development')}
-                className={`group inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-colors cursor-pointer ${
+                className={`group inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold transition-colors cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'bg-[#101B35] text-white hover:bg-[#0284C7]'
@@ -152,7 +152,7 @@ export const DemoWebsitesPage: React.FC<DemoWebsitesPageProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('contact')}
-                className={`px-4 py-3 rounded-full text-sm font-semibold border transition-colors cursor-pointer ${
+                className={`inline-flex items-center justify-center min-h-[44px] px-5 py-3 rounded-full text-sm font-semibold border transition-colors cursor-pointer ${
                   isDark
                     ? 'border-[#303030] text-[#F5F5F5] hover:bg-[#252525]'
                     : 'border-[#101B35]/15 text-[#101B35] bg-white hover:border-[#38BDF8]'
@@ -168,7 +168,7 @@ export const DemoWebsitesPage: React.FC<DemoWebsitesPageProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('erp-showcase')}
-              className={`group inline-flex items-center gap-2 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+              className={`group inline-flex items-center justify-center gap-2 min-h-[44px] px-3 py-2 text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
                 isDark
                   ? 'text-[#D4D4D4] hover:text-white'
                   : 'text-[#0284C7] hover:text-[#101B35]'

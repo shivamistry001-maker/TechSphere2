@@ -119,7 +119,3 @@ export const COMPANY_INFO = {
     Integrations: ['REST APIs', 'Webhooks', 'Payment Gateways', 'CRM Systems', 'Accounting Sync', 'E-commerce Connectors'],
   },
 };
-
-export const COMPANY_STATS = COMPANY_INFO.stats;
-export const COMPANY_PILLARS = COMPANY_INFO.whyUs;
-export const IMPLEMENTATION_PROCESS = COMPANY_INFO.processSteps;

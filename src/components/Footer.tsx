@@ -57,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             <button
               type="button"
               onClick={() => handleNav('home')}
-              className={`text-left group focus:outline-none focus-visible:ring-2 rounded-xl cursor-pointer ${
+              className={`inline-flex items-center min-h-[44px] py-0.5 text-left group focus:outline-none focus-visible:ring-2 rounded-xl cursor-pointer ${
                 isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
               }`}
             >
@@ -78,17 +78,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className={`w-4 h-4 flex-shrink-0 ${isDark ? 'text-[#D4D4D4]' : 'text-[#38BDF8]'}`} />
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap items-center gap-x-2">
                   <a
                     href={`tel:${COMPANY_INFO.phones[0].raw}`}
-                    className={`transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
+                    className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
                   >
                     {COMPANY_INFO.phones[0].display}
                   </a>
                   <span className={isDark ? 'text-[#737373]' : 'text-slate-600'}>·</span>
                   <a
                     href={`tel:${COMPANY_INFO.phones[1].raw}`}
-                    className={`transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
+                    className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
                   >
                     {COMPANY_INFO.phones[1].display}
                   </a>
@@ -98,7 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                 <Mail className={`w-4 h-4 flex-shrink-0 ${isDark ? 'text-[#D4D4D4]' : 'text-[#38BDF8]'}`} />
                 <a
                   href={`mailto:${COMPANY_INFO.email}`}
-                  className={`transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
+                  className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'}`}
                 >
                   {COMPANY_INFO.email}
                 </a>
@@ -123,13 +123,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                     whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.05 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
                     aria-label={`TechSphere on ${social.label}`}
-                    className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors ${
+                    className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors ${
                       isDark
                         ? 'bg-[#171717] border-[#303030] hover:border-white/50 hover:bg-[#252525] text-[#D4D4D4] hover:text-white'
                         : 'bg-white/[0.06] border-white/10 hover:border-[#38BDF8]/50 hover:bg-[#38BDF8]/15 text-slate-300 hover:text-[#38BDF8]'
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-[18px] h-[18px]" />
                   </motion.a>
                 );
               })}
@@ -141,7 +141,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             <h4 className={`text-xs font-semibold uppercase tracking-[0.16em] ${isDark ? 'text-[#F5F5F5]' : 'text-white'}`}>
               Navigation
             </h4>
-            <ul className={`space-y-2.5 text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
+            <ul className={`space-y-0 lg:space-y-2.5 text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
               {[
                 { key: 'home', label: 'Home', page: 'home' as PageId },
                 { key: 'about', label: 'About', page: 'about' as PageId },
@@ -157,7 +157,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                   <button
                     type="button"
                     onClick={() => handleNav(item.page)}
-                    className={`transition-colors text-left cursor-pointer ${
+                    className={`inline-flex items-center min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 transition-colors text-left cursor-pointer ${
                       isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'
                     }`}
                   >
@@ -173,7 +173,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             <h4 className={`text-xs font-semibold uppercase tracking-[0.16em] ${isDark ? 'text-[#F5F5F5]' : 'text-white'}`}>
               Services &amp; Solutions
             </h4>
-            <ul className={`space-y-2.5 text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
+            <ul className={`space-y-0 lg:space-y-2.5 text-sm ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
               {[
                 { label: 'ERP Consultancy', page: 'erp-solutions' as PageId },
                 { label: 'Odoo ERP Solutions', page: 'odoo' as PageId },
@@ -187,7 +187,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                   <button
                     type="button"
                     onClick={() => handleNav(item.page)}
-                    className={`transition-colors text-left cursor-pointer ${
+                    className={`inline-flex items-center min-h-[44px] min-w-[44px] lg:min-h-0 lg:min-w-0 transition-colors text-left cursor-pointer ${
                       isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'
                     }`}
                   >
@@ -218,7 +218,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                 onClick={() => handleNav('request-consultation')}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`group w-full py-3 px-4 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
+                className={`group w-full min-h-[44px] py-3 px-4 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'text-[#101B35] bg-[#38BDF8] hover:bg-[#7DD3FC]'
@@ -240,11 +240,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
           <p>
             &copy; {new Date().getFullYear()} {COMPANY_INFO.name}. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
             <button
               type="button"
               onClick={() => onOpenLegal('privacy')}
-              className={`transition-colors flex items-center gap-1.5 cursor-pointer ${
+              className={`min-h-[44px] lg:min-h-0 transition-colors flex items-center gap-1.5 cursor-pointer ${
                 isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'
               }`}
             >
@@ -254,7 +254,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             <button
               type="button"
               onClick={() => onOpenLegal('terms')}
-              className={`transition-colors flex items-center gap-1.5 cursor-pointer ${
+              className={`min-h-[44px] lg:min-h-0 transition-colors flex items-center gap-1.5 cursor-pointer ${
                 isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'
               }`}
             >
@@ -264,7 +264,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
             <button
               type="button"
               onClick={() => onOpenLegal('cookies')}
-              className={`transition-colors flex items-center gap-1.5 cursor-pointer ${
+              className={`min-h-[44px] lg:min-h-0 transition-colors flex items-center gap-1.5 cursor-pointer ${
                 isDark ? 'hover:text-white' : 'hover:text-[#38BDF8]'
               }`}
             >

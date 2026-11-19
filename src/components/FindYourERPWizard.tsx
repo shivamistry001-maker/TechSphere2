@@ -202,7 +202,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
             whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
             onClick={handleRestart}
-            className={`flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 min-h-[44px] px-2 text-xs font-medium transition-colors cursor-pointer ${
               isDark ? 'text-white hover:text-[#D4D4D4]' : 'text-sky-600 hover:text-sky-500'
             }`}
           >
@@ -245,7 +245,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
                     onClick={() =>
                       handleSelectOption(questions[currentStep].id as keyof QuizState, option.value)
                     }
-                    className={`p-4 rounded-xl text-left border transition-colors flex items-start justify-between group cursor-pointer ${
+                    className={`min-h-[44px] p-4 rounded-xl text-left border transition-colors flex items-start justify-between group cursor-pointer ${
                       isSelected
                         ? isDark
                           ? 'bg-[#1D1D1D] border-white text-white shadow-md'
@@ -281,7 +281,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
                 <button
                   type="button"
                   onClick={() => setCurrentStep(currentStep - 1)}
-                  className={`inline-flex items-center gap-1.5 text-xs transition-colors cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 min-h-[44px] py-2 text-xs transition-colors cursor-pointer ${
                     isDark ? 'text-[#A3A3A3] hover:text-white' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -363,7 +363,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={handleBookConsultationWithPrefill}
-                className={`group w-full sm:w-auto px-6 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer ${
+                className={`group w-full sm:w-auto min-h-[44px] px-6 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:to-blue-500 shadow-lg shadow-sky-600/30'
@@ -376,7 +376,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
               <button
                 type="button"
                 onClick={handleRestart}
-                className={`w-full sm:w-auto px-6 py-3.5 rounded-xl font-medium text-sm border transition-colors cursor-pointer ${
+                className={`w-full sm:w-auto min-h-[44px] px-6 py-3.5 rounded-xl font-medium text-sm border transition-colors cursor-pointer ${
                   isDark
                     ? 'border-[#303030] text-[#D4D4D4] hover:bg-[#252525] hover:text-white'
                     : 'border-slate-300 text-slate-700 hover:bg-slate-100'

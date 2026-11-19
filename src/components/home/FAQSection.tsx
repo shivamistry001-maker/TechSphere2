@@ -147,7 +147,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                           : HOME_FAQS.find((f) => f.category === category);
                       if (first) setOpenId(first.id);
                     }}
-                    className={`text-left px-3.5 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
+                    className={`inline-flex items-center text-left min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
                       isActive
                         ? isDark
                           ? 'bg-[#171717] text-white font-semibold border border-[#303030]'
@@ -182,7 +182,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => onNavigate('contact')}
-                className={`group inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                className={`group inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'bg-[#101B35] text-white hover:bg-[#192A52]'

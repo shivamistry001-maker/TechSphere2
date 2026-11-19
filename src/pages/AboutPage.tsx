@@ -257,7 +257,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, theme }) => {
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => onNavigate('request-consultation')}
-                className={`group px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer ${
+                className={`group min-h-[44px] px-6 py-3 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer ${
                   isDark
                     ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
                     : 'text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400'

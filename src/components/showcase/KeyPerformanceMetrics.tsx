@@ -148,7 +148,7 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
                     type="button"
                     aria-pressed={isSelected}
                     onClick={() => setSelectedScope(option.id)}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                    className={`min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                     } ${
                       isSelected

@@ -3,11 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Monitor } from 'lucide-react';
 import { ThemeMode } from '../../types.ts';
+import {
+  DEFAULT_LAZY_ROOT_MARGIN,
+  DEFAULT_LAZY_THRESHOLD,
+  useLazyImage,
+} from '../../utils/lazyImage.ts';
 
-interface PreviewImageProps {
+export interface PreviewImageProps {
   src: string;
   alt: string;
   fallbackTitle: string;
@@ -15,7 +20,12 @@ interface PreviewImageProps {
   theme: ThemeMode;
   className?: string;
   imgClassName?: string;
+  /** Set true only for critical or user-opened interactive images (e.g., open lightbox). */
   eager?: boolean;
+  /** Viewport preload margin passed to the shared IntersectionObserver pool. */
+  rootMargin?: string;
+  /** Visibility threshold passed to the shared IntersectionObserver pool. */
+  threshold?: number;
 }
 
 export const PreviewImage: React.FC<PreviewImageProps> = ({
@@ -27,27 +37,28 @@ export const PreviewImage: React.FC<PreviewImageProps> = ({
   className = '',
   imgClassName = 'w-full h-full object-cover object-top',
   eager = false,
+  rootMargin = DEFAULT_LAZY_ROOT_MARGIN,
+  threshold = DEFAULT_LAZY_THRESHOLD,
 }) => {
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const { containerRef, imgRef, shouldLoad, status, handleLoad, handleError } = useLazyImage(src, {
+    eager,
+    rootMargin,
+    threshold,
+  });
   const isDark = theme === 'dark';
-
-  useEffect(() => {
-    const el = imgRef.current;
-    if (el && el.complete && el.naturalWidth > 0) {
-      setStatus('loaded');
-    } else {
-      setStatus('loading');
-    }
-  }, [src]);
+  const showSkeleton = status === 'idle' || status === 'loading';
 
   return (
     <div
+      ref={containerRef}
+      data-lazy-image="true"
+      data-lazy-state={status}
+      data-lazy-loaded={status === 'loaded' ? 'true' : 'false'}
       className={`relative w-full h-full overflow-hidden ${
         isDark ? 'bg-[#111111]' : 'bg-slate-100'
       } ${className}`}
     >
-      {status === 'loading' && (
+      {showSkeleton && (
         <div
           aria-hidden="true"
           className={`absolute inset-0 ts-skeleton-block ${
@@ -72,21 +83,22 @@ export const PreviewImage: React.FC<PreviewImageProps> = ({
             <p className="text-[11px] mt-0.5 opacity-80">{fallbackSubtitle}</p>
           )}
         </div>
-      ) : (
+      ) : shouldLoad ? (
         <img
           ref={imgRef}
           src={src}
           alt={alt}
-          loading={eager ? 'eager' : 'lazy'}
+          loading="eager"
           decoding={eager ? 'sync' : 'async'}
+          fetchPriority={eager ? 'high' : 'auto'}
           referrerPolicy="no-referrer"
-          onLoad={() => setStatus('loaded')}
-          onError={() => setStatus('error')}
-          className={`relative z-[1] ${imgClassName} transition-opacity duration-150 ${
-            eager || status === 'loaded' ? 'opacity-100' : 'opacity-0'
+          onLoad={handleLoad}
+          onError={handleError}
+          className={`relative z-[1] ${imgClassName} transition-opacity duration-300 motion-reduce:transition-none ${
+            status === 'loaded' ? 'opacity-100' : 'opacity-0'
           }`}
         />
-      )}
+      ) : null}
     </div>
   );
 };

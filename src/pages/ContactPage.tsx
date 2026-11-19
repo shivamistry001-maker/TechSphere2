@@ -87,10 +87,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     <span className={`text-xs block font-medium ${isDark ? 'text-[#A3A3A3]' : 'text-slate-500'}`}>
                       Direct Telephone
                     </span>
-                    <div className="flex flex-col space-y-1 font-semibold text-sm sm:text-base mt-0.5">
+                    <div className="flex flex-col space-y-0 lg:space-y-1 font-semibold text-sm sm:text-base mt-0.5">
                       <a
                         href={`tel:${COMPANY_INFO.phones[0].raw}`}
-                        className={`transition-colors ${
+                        className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${
                           isDark ? 'text-[#F5F5F5] hover:text-[#D4D4D4]' : 'text-slate-800 hover:text-[#0284C7]'
                         }`}
                       >
@@ -98,7 +98,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                       </a>
                       <a
                         href={`tel:${COMPANY_INFO.phones[1].raw}`}
-                        className={`transition-colors ${
+                        className={`inline-flex items-center min-h-[44px] lg:min-h-0 transition-colors ${
                           isDark ? 'text-[#F5F5F5] hover:text-[#D4D4D4]' : 'text-slate-800 hover:text-[#0284C7]'
                         }`}
                       >
@@ -125,7 +125,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                     </span>
                     <a
                       href={`mailto:${COMPANY_INFO.email}`}
-                      className={`font-semibold transition-colors block mt-0.5 ${
+                      className={`inline-flex items-center min-h-[44px] lg:min-h-0 font-semibold transition-colors mt-0.5 break-all ${
                         isDark ? 'text-[#F5F5F5] hover:text-[#D4D4D4]' : 'text-slate-800 hover:text-[#0284C7]'
                       }`}
                     >
@@ -153,7 +153,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                       href={whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`font-semibold transition-colors block mt-0.5 ${
+                      className={`inline-flex items-center min-h-[44px] lg:min-h-0 font-semibold transition-colors mt-0.5 ${
                         isDark ? 'text-white hover:text-[#D4D4D4]' : 'text-emerald-600 hover:text-emerald-500'
                       }`}
                     >
