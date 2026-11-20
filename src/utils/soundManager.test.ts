@@ -154,9 +154,9 @@ function createMockElement(spec: MockElSpec): MockEl {
   return el;
 }
 
-test('sound preferences default to OFF at 70% volume with safe parsing and clamping', () => {
+test('sound preferences default to ON at 70% volume with safe parsing and clamping', () => {
   assert.equal(SOUND_PREFS_STORAGE_KEY, 'techsphere_sound_prefs_v2');
-  assert.equal(DEFAULT_SOUND_PREFERENCES.enabled, false);
+  assert.equal(DEFAULT_SOUND_PREFERENCES.enabled, true);
   assert.equal(DEFAULT_SOUND_PREFERENCES.volume, 0.7);
 
   assert.deepEqual(resolveSoundPreferences(null), DEFAULT_SOUND_PREFERENCES);

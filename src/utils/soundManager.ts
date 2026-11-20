@@ -46,8 +46,8 @@ export interface SoundPreferences {
 }
 
 export const DEFAULT_SOUND_PREFERENCES: SoundPreferences = {
-  enabled: false,
-  volume: 0.7, // 70% balanced default level when enabled
+  enabled: true,
+  volume: 0.7, // 70% balanced default level
 };
 
 export interface ToneStep {

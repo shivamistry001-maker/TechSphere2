@@ -16,8 +16,6 @@ import {
   Mail,
   Globe,
   Layers,
-  Volume2,
-  VolumeX,
 } from 'lucide-react';
 import { TechSphereLogo } from './TechSphereLogo.tsx';
 import { GlassNavbar, GlassDropdown } from './glass/GlassPrimitives.tsx';
@@ -26,7 +24,7 @@ import { dropdownVariants, EASE_PREMIUM } from '../utils/motion.ts';
 import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { SHOWCASE_NAV_TARGETS, isShowcaseNavActive } from '../utils/showcaseLogic.ts';
-import { playSound, soundManager } from '../utils/soundManager.ts';
+import { playSound } from '../utils/soundManager.ts';
 
 interface NavbarProps {
   currentPage: PageId;
@@ -85,16 +83,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => soundManager.isEnabled());
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
-
-  // Keep UI audio toggle synchronized with centralized soundManager preferences
-  useEffect(() => soundManager.subscribe((prefs) => setSoundEnabled(prefs.enabled)), []);
-
-  const handleToggleSound = () => {
-    soundManager.toggleEnabled();
-  };
 
   // Monitor scroll for smooth transparent-to-glass navbar transition
   useEffect(() => {
@@ -426,32 +416,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
               </button>
             </nav>
 
-            {/* Right: Sound Toggle, Theme Toggle & Book a Consultation CTA */}
+            {/* Right: Theme Toggle & Book a Consultation CTA */}
             <div className="flex items-center gap-2 shrink-0">
-              <motion.button
-                type="button"
-                onClick={handleToggleSound}
-                data-testid="sound-toggle-button"
-                data-sound="none"
-                whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
-                transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                className={`ts-glass-control relative hidden sm:flex w-11 h-11 items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
-                  isDark
-                    ? 'text-[#F5F5F5] focus-visible:ring-white'
-                    : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
-                }`}
-                aria-label={soundEnabled ? 'Mute interface sound effects' : 'Enable interface sound effects'}
-                aria-pressed={soundEnabled}
-                title={soundEnabled ? 'UI Sound: On (Click to mute)' : 'UI Sound: Off (Click to enable)'}
-              >
-                {soundEnabled ? (
-                  <Volume2 className="w-[18px] h-[18px]" aria-hidden="true" />
-                ) : (
-                  <VolumeX className="w-[18px] h-[18px] opacity-70" aria-hidden="true" />
-                )}
-              </motion.button>
-
               <motion.button
                 type="button"
                 onClick={onToggleTheme}
@@ -541,47 +507,26 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 >
                   Navigation
                 </span>
-                <div className="flex items-center gap-2">
-                  <motion.button
-                    type="button"
-                    onClick={handleToggleSound}
-                    data-testid="mobile-drawer-sound-toggle"
-                    data-sound="none"
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                    aria-label={soundEnabled ? 'Mute interface sound effects' : 'Enable interface sound effects'}
-                    aria-pressed={soundEnabled}
-                    className={`ts-glass-control inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                      isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
-                    }`}
-                  >
-                    {soundEnabled ? (
-                      <Volume2 className="w-4 h-4" aria-hidden="true" />
-                    ) : (
-                      <VolumeX className="w-4 h-4 opacity-70" aria-hidden="true" />
-                    )}
-                    <span>{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
-                  </motion.button>
-                  <motion.button
-                    type="button"
-                    onClick={onToggleTheme}
-                    data-testid="mobile-drawer-theme-toggle"
-                    data-sound="none"
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                    transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                    aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                    aria-pressed={isDark}
-                    className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                      isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
-                    }`}
-                  >
-                    <ThemeToggleIcons
-                      isDark={isDark}
-                      prefersReducedMotion={Boolean(prefersReducedMotion)}
-                      sizeClass="w-4 h-4"
-                    />
-                    <span>{isDark ? 'Light' : 'Dark'}</span>
-                  </motion.button>
-                </div>
+                <motion.button
+                  type="button"
+                  onClick={onToggleTheme}
+                  data-testid="mobile-drawer-theme-toggle"
+                  data-sound="none"
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
+                  aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                  aria-pressed={isDark}
+                  className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                    isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
+                  }`}
+                >
+                  <ThemeToggleIcons
+                    isDark={isDark}
+                    prefersReducedMotion={Boolean(prefersReducedMotion)}
+                    sizeClass="w-4 h-4"
+                  />
+                  <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+                </motion.button>
               </div>
 
               {[
