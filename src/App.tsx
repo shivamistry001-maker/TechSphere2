@@ -325,7 +325,11 @@ export default function App() {
       />
 
       {/* Main Page Body with Instant Mount + Smooth Entrance Transition */}
-      <main className={`flex-1 ${currentPage === 'home' ? '' : 'pt-24 pb-16'}`}>
+      <main
+        className={`flex-1 ${
+          currentPage === 'home' ? '' : 'ts-glass-canvas-primary pt-[74px] sm:pt-24 pb-16'
+        }`}
+      >
         <motion.div
           key={currentPage}
           initial={prefersReducedMotion ? false : { opacity: 0.88, y: 6 }}

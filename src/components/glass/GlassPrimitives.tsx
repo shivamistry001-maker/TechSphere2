@@ -168,7 +168,7 @@ export function getGlassInputClass(
 ): string {
   const isDark = theme === 'dark';
   return joinClasses(
-    'ts-glass-input w-full rounded-xl px-4 py-3 text-sm',
+    'ts-glass-input w-full rounded-xl px-4 py-3 text-base sm:text-sm',
     isDark
       ? 'text-[#F5F5F5] placeholder:text-[#737373]'
       : 'text-[#101B35] placeholder:text-[#6B7C93]',

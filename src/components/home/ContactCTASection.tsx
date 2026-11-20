@@ -181,10 +181,10 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
 
   const getInputClass = (hasError?: boolean) =>
     isDark
-      ? `ts-glass-input w-full min-h-[44px] px-4 py-3 rounded-xl text-sm text-[#F5F5F5] placeholder-[#737373] ${
+      ? `ts-glass-input w-full min-h-[44px] px-4 py-3 rounded-xl text-base sm:text-sm text-[#F5F5F5] placeholder-[#737373] ${
           hasError ? 'border-red-400' : ''
         }`
-      : `w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.10] border text-sm text-white placeholder-slate-300/80 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] transition-all duration-200 ${
+      : `w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.10] border text-base sm:text-sm text-white placeholder-slate-300/80 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] transition-[color,background-color,border-color,box-shadow] duration-200 ${
           hasError
             ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/40'
             : 'border-white/20 focus:bg-white/[0.15] focus:border-[#7DD3FC] focus:ring-2 focus:ring-[#38BDF8]/35'
@@ -410,6 +410,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           id="home-name"
                           name="fullName"
                           type="text"
+                          autoComplete="name"
                           required
                           aria-invalid={Boolean(fieldErrors.fullName)}
                           aria-describedby={fieldErrors.fullName ? 'home-name-error' : undefined}
@@ -448,6 +449,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           id="home-company"
                           name="companyName"
                           type="text"
+                          autoComplete="organization"
                           value={company}
                           onChange={(e) => setCompany(e.target.value)}
                           placeholder="Acme Industries"
@@ -470,6 +472,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           id="home-email"
                           name="email"
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
                           required
                           aria-invalid={Boolean(fieldErrors.email)}
                           aria-describedby={fieldErrors.email ? 'home-email-error' : undefined}
@@ -508,6 +512,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                           id="home-phone"
                           name="phone"
                           type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
                           required
                           aria-invalid={Boolean(fieldErrors.phone)}
                           aria-describedby={fieldErrors.phone ? 'home-phone-error' : undefined}
@@ -548,7 +554,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                         name="interestedService"
                         value={service}
                         onChange={(e) => setService(e.target.value)}
-                        className={`w-full min-h-[44px] px-4 py-3 rounded-xl border text-sm text-white outline-none transition-colors duration-200 ${
+                        className={`w-full min-h-[44px] px-4 py-3 rounded-xl border text-base sm:text-sm text-white outline-none transition-colors duration-200 ${
                           isDark
                             ? 'bg-[#1D1D1D] border-[#303030] focus:border-white focus:ring-1 focus:ring-white'
                             : 'bg-[#101B35] border-white/15 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]'

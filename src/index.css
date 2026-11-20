@@ -956,3 +956,65 @@ html.dark .ts-glass-nav-active {
     translate: 0 0 0 !important;
   }
 }
+
+/* Hidden-scrollbar utility for single-row horizontally scrollable mobile pill bars */
+.ts-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ts-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile GPU & Touch Performance Optimizations (preserves visible frosted glass in Light & Dark modes) */
+@media (max-width: 767px) {
+  .animate-grid-drift {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  .ts-glass-nav-plate {
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(125%);
+    backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(125%);
+  }
+
+  .ts-glass-card {
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur-card)) saturate(125%);
+    backdrop-filter: blur(var(--ts-glass-blur-card)) saturate(125%);
+  }
+
+  /* Avoid expensive per-card mix-blend-mode compositing on mobile GPUs while keeping subtle grain */
+  .ts-glass-card::before {
+    mix-blend-mode: normal;
+  }
+
+  .ts-glass-panel,
+  .ts-glass-footer-card {
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur-panel)) saturate(125%);
+    backdrop-filter: blur(var(--ts-glass-blur-panel)) saturate(125%);
+  }
+
+  .ts-glass-accent,
+  .ts-glass-btn-secondary,
+  .ts-glass-float-btn,
+  .ts-glass-badge {
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(120%);
+    backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(120%);
+  }
+
+  .ts-glass-drawer {
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(125%);
+    backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(125%);
+  }
+}
+
+/* Prevent sticky hover highlights on coarse touch devices */
+@media (hover: none) {
+  .ts-glass-card-interactive:hover {
+    background-color: var(--ts-glass-card-bg);
+    border-color: var(--ts-glass-card-border);
+    box-shadow: var(--ts-glass-inner-highlight), var(--ts-glass-outer-shadow);
+  }
+}
+

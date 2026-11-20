@@ -40,7 +40,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
   return (
     <section
       ref={heroRef}
-      className={`relative min-h-[calc(100vh-12px)] flex items-center pt-28 sm:pt-32 lg:pt-32 pb-16 sm:pb-20 overflow-x-clip border-b ${
+      className={`relative min-h-[calc(100vh-12px)] flex items-center pt-24 sm:pt-32 lg:pt-32 pb-16 sm:pb-20 overflow-x-clip border-b ${
         isDark
           ? 'bg-[#090909] text-[#F5F5F5] border-[#303030]'
           : 'bg-white text-[#172033] border-[#101B35]/[0.07]'
@@ -115,8 +115,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
         aria-hidden="true"
       />
 
-      {/* Subtle Scanning Line & Low-Density Particles */}
-      <ScanningLine theme={theme} />
+      {/* Subtle Scanning Line & Low-Density Particles (desktop-only for smooth mobile scrolling) */}
+      <ScanningLine theme={theme} className="hidden md:block" />
       <SubtleTechParticles theme={theme} />
 
       <ScrollSectionContainer className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -210,18 +210,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
             >
               <motion.div
                 data-glass-layer="hero-preview-card"
-                animate={prefersReducedMotion ? undefined : { y: [0, -6, 0] }}
+                animate={enableParallax ? { y: [0, -6, 0] } : undefined}
                 transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
-                whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
+                whileHover={enableParallax ? { scale: 1.01 } : undefined}
                 className="ts-glass-card ts-glass-card-interactive relative rounded-2xl p-5 sm:p-6 overflow-hidden"
               >
                 {/* Subtle animated top border highlight */}
                 <motion.span
                   aria-hidden="true"
                   animate={
-                    prefersReducedMotion
-                      ? undefined
-                      : { x: ['-100%', '200%'] }
+                    enableParallax
+                      ? { x: ['-100%', '200%'] }
+                      : undefined
                   }
                   transition={{ repeat: Infinity, duration: 5, ease: 'linear' }}
                   className={`absolute top-0 left-0 w-1/2 h-[1.5px] pointer-events-none ${

@@ -356,8 +356,8 @@ export const TechnologyShowcaseSection: React.FC<TechnologyShowcaseSectionProps>
                   : 'bg-[#0B1429]/95 border-sky-400/20'
               }`}
             >
-              {/* Subtle Scanning Line Effect */}
-              <ScanningLine theme={theme} />
+              {/* Subtle Scanning Line Effect (desktop-only for smooth mobile performance) */}
+              <ScanningLine theme={theme} className="hidden md:block" />
 
               {/* Top Interactive 8-Node Pipeline Bar */}
               <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 relative z-10">

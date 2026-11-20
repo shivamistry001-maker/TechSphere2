@@ -71,7 +71,7 @@ export const TechSphereLogo: React.FC<TechSphereLogoProps> = ({
       };
 
   return (
-    <div className={`flex items-center gap-3 select-none ${className}`}>
+    <div className={`flex items-center ${size === 'sm' ? 'gap-2.5 sm:gap-3' : 'gap-3'} select-none ${className}`}>
       {/* Visual Logo Mark */}
       <div
         className={`relative flex-shrink-0 ${iconDimensions} rounded-xl p-0.5 transition-transform duration-300 group-hover:scale-105 ${
@@ -183,9 +183,9 @@ export const TechSphereLogo: React.FC<TechSphereLogoProps> = ({
         <div className="flex flex-col justify-center">
           <div className="flex items-baseline gap-1">
             <span
-              className={`font-display font-extrabold tracking-tight ${
+              className={`font-display font-extrabold tracking-tight leading-none ${
                 size === 'sm'
-                  ? 'text-lg'
+                  ? 'text-[17px] sm:text-lg'
                   : size === 'md'
                   ? 'text-xl sm:text-2xl'
                   : size === 'lg'

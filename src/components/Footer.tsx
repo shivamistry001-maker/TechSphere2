@@ -28,7 +28,7 @@ interface FooterProps {
   onOpenLegal: (type: 'privacy' | 'terms' | 'cookies') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }) => {
+export const Footer: React.FC<FooterProps> = React.memo(({ onNavigate, theme, onOpenLegal }) => {
   const prefersReducedMotion = useReducedMotion();
   const isDark = theme === 'dark';
 
@@ -134,7 +134,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                       whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.05 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
                       aria-label={`TechSphere on ${social.label}`}
-                      className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all ${
+                      className={`w-11 h-11 rounded-full border flex items-center justify-center transition-[color,background-color,border-color,transform] duration-200 ${
                         isDark
                           ? 'ts-glass-control text-[#D4D4D4] hover:text-white'
                           : 'bg-white/[0.08] border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)] hover:border-[#38BDF8]/60 hover:bg-[#38BDF8]/20 text-slate-200 hover:text-white'
@@ -231,7 +231,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                 onClick={() => handleNav('request-consultation')}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`group w-full min-h-[44px] py-3 px-4 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                className={`group w-full min-h-[44px] py-3 px-4 rounded-full text-xs font-bold transition-[color,background-color,box-shadow,transform] duration-200 flex items-center justify-center gap-2 cursor-pointer ${
                   isDark
                     ? 'ts-glass-btn-primary text-[#090909]'
                     : 'text-[#101B35] bg-gradient-to-b from-[#7DD3FC] to-[#38BDF8] hover:from-[#BAE6FD] hover:to-[#38BDF8] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_10px_24px_rgba(56,189,248,0.28)]'
@@ -289,4 +289,4 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
       </div>
     </footer>
   );
-};
+});

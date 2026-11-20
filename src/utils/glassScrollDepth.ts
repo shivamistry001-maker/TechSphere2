@@ -138,9 +138,17 @@ export function installGlassScrollDepthListener(
 
   const appliedOffsets = new WeakMap<HTMLElement, number>();
   const trackedCards = new Set<HTMLElement>();
+  let cachedCards: HTMLElement[] | null = null;
   let frameId: number | null = null;
   let scheduled = false;
   let disposed = false;
+
+  const getCards = (): HTMLElement[] => {
+    if (cachedCards === null) {
+      cachedCards = Array.from(doc.querySelectorAll<HTMLElement>(GLASS_DEPTH_CARD_SELECTOR));
+    }
+    return cachedCards;
+  };
 
   const resetCard = (card: HTMLElement) => {
     card.style.removeProperty(GLASS_DEPTH_CSS_VAR);
@@ -173,7 +181,8 @@ export function installGlassScrollDepthListener(
     if (viewportHeight <= 0) return;
 
     const maxOffsetPx = resolveMaxDepthOffsetPx(viewportWidth);
-    const cards = Array.from(doc.querySelectorAll<HTMLElement>(GLASS_DEPTH_CARD_SELECTOR));
+    const cards = getCards();
+    if (cards.length === 0) return;
 
     // Phase 1: Batched geometry reads (zero interleaved writes -> zero layout thrashing)
     const measurements: Array<{
@@ -226,12 +235,18 @@ export function installGlassScrollDepthListener(
     }
   };
 
-  // Re-evaluate automatically when lazy-loaded routes or filter tabs mount new .ts-glass-card nodes
+  const handleResize = () => {
+    cachedCards = null;
+    requestUpdate();
+  };
+
+  // Re-evaluate automatically when lazy-loaded routes or filter tabs mount/unmount .ts-glass-card nodes
   let observer: MutationObserver | null = null;
   if (typeof MutationObserver !== 'undefined' && doc.body) {
     observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
-        if (mutation.addedNodes.length > 0) {
+        if (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0) {
+          cachedCards = null;
           requestUpdate();
           break;
         }
@@ -241,19 +256,20 @@ export function installGlassScrollDepthListener(
   }
 
   win.addEventListener('scroll', requestUpdate, { passive: true });
-  win.addEventListener('resize', requestUpdate, { passive: true });
+  win.addEventListener('resize', handleResize, { passive: true });
 
   // Initial pass so cards in the initial viewport start on the correct depth plane
   requestUpdate();
 
   return () => {
     disposed = true;
+    cachedCards = null;
     if (frameId !== null) {
       cancel(frameId);
       frameId = null;
     }
     win.removeEventListener('scroll', requestUpdate);
-    win.removeEventListener('resize', requestUpdate);
+    win.removeEventListener('resize', handleResize);
     if (observer) {
       observer.disconnect();
       observer = null;

@@ -131,7 +131,7 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
               role="group"
               aria-label="Filter KPI benchmarks by ERP platform"
               data-testid="kpi-scope-selector"
-              className="ts-glass-control inline-flex flex-wrap items-center gap-1 p-1 rounded-xl self-start lg:self-auto"
+              className="ts-glass-control ts-no-scrollbar max-w-full inline-flex flex-nowrap overflow-x-auto overscroll-x-contain touch-pan-x items-center gap-1 p-1 rounded-xl self-start lg:self-auto"
             >
               {ERP_SCOPE_OPTIONS.map((option) => {
                 const isSelected = selectedScope === option.id;
@@ -178,7 +178,7 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                 transition={{ duration: 0.18, ease: EASE_PREMIUM }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden rounded-2xl border p-6 flex flex-col justify-between transition-all ${
+                className={`group relative overflow-hidden rounded-2xl border p-6 flex flex-col justify-between transition-[color,background-color,border-color,box-shadow] duration-200 ${
                   isDark
                     ? 'bg-white/[0.04] border-white/12 hover:bg-white/[0.07] hover:border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]'
                     : 'bg-white/65 border-white/90 hover:bg-white/85 hover:border-[#38BDF8]/55 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.96),0_12px_28px_-6px_rgba(15,55,96,0.10)]'

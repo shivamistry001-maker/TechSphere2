@@ -20,7 +20,7 @@ import {
 import { TechSphereLogo } from './TechSphereLogo.tsx';
 import { GlassNavbar, GlassDropdown } from './glass/GlassPrimitives.tsx';
 import { MagneticButton } from './motion/MotionPrimitives.tsx';
-import { dropdownVariants, EASE_PREMIUM } from '../utils/motion.ts';
+import { dropdownVariants } from '../utils/motion.ts';
 import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { SHOWCASE_NAV_TARGETS, isShowcaseNavActive } from '../utils/showcaseLogic.ts';
@@ -82,9 +82,16 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [drawerMounted, setDrawerMounted] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
   const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  const mobileToggleRef = useRef<HTMLButtonElement | null>(null);
+  const wasMobileMenuOpenRef = useRef(false);
+  const lockedScrollYRef = useRef(0);
+  const didNavigateFromDrawerRef = useRef(false);
 
   // Monitor scroll for smooth transparent-to-glass navbar transition
   useEffect(() => {
@@ -96,12 +103,72 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent background scrolling when mobile drawer is open
+  // Deterministic GPU-accelerated mount/unmount lifecycle for the mobile drawer
+  // Avoids AnimatePresence stuck-exit overlays during rapid taps, Escape key, or body-lock reflows.
   useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    if (mobileMenuOpen) {
+      setDrawerMounted(true);
+      if (prefersReducedMotion) {
+        setDrawerVisible(true);
+        return undefined;
+      }
+      const rafId = window.requestAnimationFrame(() => {
+        setDrawerVisible(true);
+      });
+      return () => window.cancelAnimationFrame(rafId);
+    }
+
+    setDrawerVisible(false);
+    if (!drawerMounted) return undefined;
+
+    if (prefersReducedMotion) {
+      setDrawerMounted(false);
+      return undefined;
+    }
+
+    const unmountTimer = window.setTimeout(() => {
+      setDrawerMounted(false);
+    }, 210);
+    return () => window.clearTimeout(unmountTimer);
+  }, [mobileMenuOpen, prefersReducedMotion, drawerMounted]);
+
+  // Robust cross-browser body scroll lock (iOS Safari + Android Chrome) with exact scrollY restoration
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (mobileMenuOpen) {
+      wasMobileMenuOpenRef.current = true;
+      didNavigateFromDrawerRef.current = false;
+      lockedScrollYRef.current = window.scrollY;
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      body.style.position = 'fixed';
+      body.style.top = `-${lockedScrollYRef.current}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      return () => {
+        html.style.overflow = '';
+        body.style.overflow = '';
+        body.style.position = '';
+        body.style.top = '';
+        body.style.left = '';
+        body.style.right = '';
+        body.style.width = '';
+        const targetScrollY = didNavigateFromDrawerRef.current ? 0 : lockedScrollYRef.current;
+        window.scrollTo({ top: targetScrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+      };
+    }
+
+    if (wasMobileMenuOpenRef.current) {
+      wasMobileMenuOpenRef.current = false;
+      if (!didNavigateFromDrawerRef.current) {
+        mobileToggleRef.current?.focus({ preventScroll: true });
+      }
+      didNavigateFromDrawerRef.current = false;
+    }
+    return undefined;
   }, [mobileMenuOpen]);
 
   const setDropdownWithSound = (nextOpen: boolean) => {
@@ -144,6 +211,9 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   }, [mobileMenuOpen, solutionsDropdownOpen]);
 
   const handleNavClick = (page: PageId) => {
+    if (mobileMenuOpen) {
+      didNavigateFromDrawerRef.current = true;
+    }
     onNavigate(page);
     setMobileMenuOpen(false);
     setSolutionsDropdownOpen(false);
@@ -152,7 +222,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   const isDark = theme === 'dark';
 
   const navLinkClass = (active: boolean) =>
-    `relative px-2.5 2xl:px-3 py-2 text-[12.5px] 2xl:text-[13px] font-medium whitespace-nowrap shrink-0 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-xl ${
+    `relative px-2.5 2xl:px-3 py-2 text-[12.5px] 2xl:text-[13px] font-medium whitespace-nowrap shrink-0 transition-[color,background-color,border-color,box-shadow] duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-xl ${
       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
     } ${
       active
@@ -186,8 +256,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-[padding] duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isScrolled ? 'py-3' : 'py-3.5 sm:py-4'
+        className={`fixed top-0 left-0 right-0 z-50 transition-[padding] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isScrolled ? 'py-2.5 sm:py-3' : 'py-3 sm:py-4'
         }`}
       >
         {/* Sibling Liquid Glass Backdrop Plate (prevents nested backdrop-filter on child dropdowns) */}
@@ -201,8 +271,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
           }`}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
+        <div className="relative z-10 max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Left: TechSphere Logo & Company Name */}
             <motion.button
               type="button"
@@ -279,6 +349,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 <AnimatePresence>
                   {solutionsDropdownOpen && (
                     <motion.div
+                      key="erp-solutions-dropdown"
                       variants={prefersReducedMotion ? undefined : dropdownVariants}
                       initial={prefersReducedMotion ? false : 'hidden'}
                       animate="visible"
@@ -462,8 +533,10 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
 
               {/* Mobile & Tablet Hamburger Toggle */}
               <motion.button
+                ref={mobileToggleRef}
                 type="button"
                 data-sound="none"
+                data-testid="mobile-menu-toggle"
                 onClick={() => setMobileMenuWithSound(!mobileMenuOpen)}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
                 className={`ts-glass-control xl:hidden w-11 h-11 flex items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
@@ -473,6 +546,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 }`}
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
                 aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation-drawer"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.button>
@@ -482,52 +556,51 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
       </header>
 
       {/* ANIMATED MOBILE & TABLET NAVIGATION DRAWER */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -18 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -18 }}
-            transition={{ duration: 0.22, ease: EASE_PREMIUM }}
-            data-glass-layer="mobile-drawer"
-            className={`ts-glass-drawer fixed inset-0 z-40 xl:hidden overflow-y-auto pt-24 pb-8 px-6 ${
-              isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
-            }`}
-          >
-            <div className="max-w-md mx-auto flex flex-col space-y-1.5">
-              <div
-                className={`border-b pb-3 mb-2 flex items-center justify-between gap-3 ${
-                  isDark ? 'border-[#303030]' : 'border-[#101B35]/10'
+      {drawerMounted && (
+        <div
+          id="mobile-navigation-drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile Navigation"
+          data-glass-layer="mobile-drawer"
+          className={`ts-glass-drawer fixed inset-0 z-40 xl:hidden h-[100dvh] overflow-y-auto overscroll-contain pt-[82px] pb-[max(2rem,env(safe-area-inset-bottom))] px-5 sm:px-6 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] ${
+            drawerVisible
+              ? 'opacity-100 translate-y-0 pointer-events-auto'
+              : 'opacity-0 -translate-y-3 pointer-events-none'
+          } ${isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'}`}
+        >
+          <div className="max-w-md mx-auto flex flex-col space-y-1">
+            <div
+              className={`border-b pb-3 mb-2 flex items-center justify-between gap-3 ${
+                isDark ? 'border-[#303030]' : 'border-[#101B35]/10'
+              }`}
+            >
+              <span
+                className={`text-xs uppercase tracking-widest font-semibold ${
+                  isDark ? 'text-[#A3A3A3]' : 'text-[#0284C7]'
                 }`}
               >
-                <span
-                  className={`text-xs uppercase tracking-widest font-semibold ${
-                    isDark ? 'text-[#A3A3A3]' : 'text-[#0284C7]'
-                  }`}
-                >
-                  Navigation
-                </span>
-                <motion.button
-                  type="button"
-                  onClick={onToggleTheme}
-                  data-testid="mobile-drawer-theme-toggle"
-                  data-sound="none"
-                  whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                  aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                  aria-pressed={isDark}
-                  className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                    isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
-                  }`}
-                >
-                  <ThemeToggleIcons
-                    isDark={isDark}
-                    prefersReducedMotion={Boolean(prefersReducedMotion)}
-                    sizeClass="w-4 h-4"
-                  />
-                  <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-                </motion.button>
-              </div>
+                Navigation
+              </span>
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                data-testid="mobile-drawer-theme-toggle"
+                data-sound="none"
+                aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                aria-pressed={isDark}
+                className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-[color,background-color,transform] duration-150 active:scale-95 cursor-pointer ${
+                  isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
+                }`}
+              >
+                <ThemeToggleIcons
+                  isDark={isDark}
+                  prefersReducedMotion={Boolean(prefersReducedMotion)}
+                  sizeClass="w-4 h-4"
+                />
+                <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+            </div>
 
               {[
                 { key: 'home', label: 'Home', page: 'home' as PageId },
@@ -554,18 +627,18 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 { key: 'portfolio', label: 'Portfolio', page: 'portfolio' as PageId },
                 { key: 'case-studies', label: 'Case Studies', page: 'case-studies' as PageId },
                 { key: 'contact', label: 'Contact', page: 'contact' as PageId },
-              ].map((item, idx) => {
+              ].map((item) => {
                 const isItemActive = currentPage === item.page;
 
                 return (
-                  <motion.button
+                  <button
                     key={item.key}
                     type="button"
-                    initial={prefersReducedMotion ? false : { opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.18, delay: Math.min(idx * 0.02, 0.2) }}
+                    aria-current={isItemActive ? 'page' : undefined}
                     onClick={() => handleNavClick(item.page)}
-                    className={`flex items-center gap-2.5 text-left min-h-[44px] py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
+                    className={`flex items-center gap-2.5 text-left min-h-[44px] py-2.5 px-3.5 rounded-xl text-[15px] sm:text-base font-medium transition-colors active:scale-[0.99] cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
+                    } ${
                       isItemActive
                         ? isDark
                           ? 'ts-glass-drawer-item text-white font-semibold'
@@ -582,7 +655,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                       <Layers className="w-4 h-4 shrink-0 opacity-80" aria-hidden="true" />
                     )}
                     <span>{item.label}</span>
-                  </motion.button>
+                  </button>
                 );
               })}
 
@@ -630,10 +703,9 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                   </a>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </>
   );
 });

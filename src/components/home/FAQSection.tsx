@@ -130,14 +130,18 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Left Category Sidebar */}
           <ScrollCascadeBlock className="lg:col-span-4 space-y-8">
-            <div className="flex flex-row lg:flex-col flex-wrap gap-1.5">
+            <div
+              role="group"
+              aria-label="Filter frequently asked questions by topic"
+              className="ts-no-scrollbar flex flex-row flex-nowrap overflow-x-auto overscroll-x-contain touch-pan-x lg:flex-col lg:overflow-visible gap-1.5 pb-1 lg:pb-0"
+            >
               {FAQ_CATEGORIES.map((category) => {
                 const isActive = selectedCategory === category;
                 return (
-                  <motion.button
+                  <button
                     key={category}
                     type="button"
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                    aria-pressed={isActive}
                     onClick={() => {
                       setSelectedCategory(category);
                       const first =
@@ -146,7 +150,9 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                           : HOME_FAQS.find((f) => f.category === category);
                       if (first) setOpenId(first.id);
                     }}
-                    className={`inline-flex items-center text-left min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
+                    className={`inline-flex items-center shrink-0 whitespace-nowrap text-left min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-sm transition-[color,background-color,border-color] duration-150 active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                      isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
+                    } ${
                       isActive
                         ? isDark
                           ? 'ts-glass-accent text-white font-semibold'
@@ -157,7 +163,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                     }`}
                   >
                     {category}
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>

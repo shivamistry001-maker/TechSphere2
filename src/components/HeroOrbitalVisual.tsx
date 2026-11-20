@@ -6,7 +6,7 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { ThemeMode } from '../types.ts';
-import { AnimatedCounter } from './motion/MotionPrimitives.tsx';
+import { AnimatedCounter, useIsDesktop } from './motion/MotionPrimitives.tsx';
 import { EASE_PREMIUM } from '../utils/motion.ts';
 import { playSound, soundManager, stopAllSounds } from '../utils/soundManager.ts';
 import {
@@ -235,11 +235,14 @@ interface HeroOrbitalVisualProps {
 
 export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'light' }) => {
   const prefersReducedMotion = useReducedMotion();
+  const isDesktop = useIsDesktop(768);
   const [activeNodeId, setActiveNodeId] = useState<string>('erp');
   const [wheelPhase, setWheelPhase] = useState<WheelAnimationPhase>('idle');
   const gradId = useId().replace(/:/g, '');
   const isDark = theme === 'dark';
 
+  const wheelContainerRef = useRef<HTMLDivElement | null>(null);
+  const isWheelInViewRef = useRef<boolean>(true);
   const orbitRingRef = useRef<HTMLDivElement | null>(null);
   const nodeCounterRefs = useRef<(HTMLDivElement | null)[]>([]);
   const wheelAngleRef = useRef<number>(0);
@@ -293,7 +296,21 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
     });
   }, []);
 
-  // Gentle ambient slow orbit (paused automatically during active user wheel spin or reduced motion)
+  // Pause ambient orbit when the hero wheel is scrolled out of view to save mobile CPU/battery
+  useEffect(() => {
+    const el = wheelContainerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isWheelInViewRef.current = Boolean(entries[0]?.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Gentle ambient slow orbit (paused automatically during active user spin, off-screen, or reduced motion)
   useEffect(() => {
     if (prefersReducedMotion) return;
     let ambientRaf: number | null = null;
@@ -301,7 +318,7 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
     const degPerMs = 360 / 40000;
 
     const tickAmbient = (ts: number) => {
-      if (!isSpinningRef.current && lastTs !== null) {
+      if (!isSpinningRef.current && isWheelInViewRef.current && lastTs !== null) {
         const dt = Math.min(ts - lastTs, 64);
         applyWheelRotation(wheelAngleRef.current + dt * degPerMs);
       }
@@ -416,8 +433,11 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
   return (
     <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-4 xl:gap-6">
       {/* Orbital Architecture + Sweeping Curved Track */}
-      <div className="relative flex-1 flex items-center justify-center w-full py-4 sm:py-6">
-        <div className="relative w-[300px] h-[300px] sm:w-[390px] sm:h-[390px] lg:w-[410px] lg:h-[410px] xl:w-[450px] xl:h-[450px] flex items-center justify-center select-none">
+      <div
+        ref={wheelContainerRef}
+        className="relative flex-1 flex items-center justify-center w-full py-4 sm:py-6"
+      >
+        <div className="relative w-[min(272px,calc(100vw-48px))] h-[min(272px,calc(100vw-48px))] sm:w-[390px] sm:h-[390px] lg:w-[410px] lg:h-[410px] xl:w-[450px] xl:h-[450px] flex items-center justify-center select-none">
           {/* Soft Ambient Aura */}
           <div
             className="absolute inset-4 rounded-full pointer-events-none"
@@ -514,7 +534,7 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
             data-spinning={wheelPhase === 'spinning' ? 'true' : 'false'}
             data-wheel-state={wheelPhase}
             onClick={handleSpinWheel}
-            animate={prefersReducedMotion ? undefined : { y: [-4, 4, -4] }}
+            animate={prefersReducedMotion || !isDesktop ? undefined : { y: [-4, 4, -4] }}
             transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
             whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
             whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
@@ -604,7 +624,7 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                         }
                       }}
                       animate={
-                        prefersReducedMotion
+                        prefersReducedMotion || !isDesktop
                           ? undefined
                           : { y: index % 2 === 0 ? [-3, 3, -3] : [3, -3, 3] }
                       }

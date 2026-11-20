@@ -112,7 +112,7 @@ export const CardGlareOverlay: React.FC<{
 /* -------------------------------------------------------------------------- */
 /* 1. Top Scroll Progress Indicator                                           */
 /* -------------------------------------------------------------------------- */
-export const ScrollProgressBar: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
+export const ScrollProgressBar: React.FC<{ theme: ThemeMode }> = React.memo(({ theme }) => {
   const { scrollYProgress } = useScroll();
   const prefersReducedMotion = useReducedMotion();
   const scaleX = useSpring(scrollYProgress, {
@@ -134,7 +134,7 @@ export const ScrollProgressBar: React.FC<{ theme: ThemeMode }> = ({ theme }) => 
       }`}
     />
   );
-};
+});
 
 /* -------------------------------------------------------------------------- */
 /* 1b. Global Theme Transition Top Progress Indicator                         */
@@ -175,7 +175,7 @@ export const ThemeTransitionProgressBar: React.FC<{
 /* -------------------------------------------------------------------------- */
 /* 2. Floating Back-to-Top Button                                             */
 /* -------------------------------------------------------------------------- */
-export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
+export const BackToTopButton: React.FC<{ theme: ThemeMode }> = React.memo(({ theme }) => {
   const [visible, setVisible] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const isDark = theme === 'dark';
@@ -212,7 +212,7 @@ export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
           title="Back to top"
           data-glass-layer="back-to-top"
           data-sound="icon"
-          className={`ts-glass-float-btn fixed bottom-24 right-6 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
+          className={`ts-glass-float-btn fixed bottom-[76px] right-4 sm:bottom-24 sm:right-6 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
             isDark
               ? 'text-[#F5F5F5] focus-visible:ring-white'
               : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
@@ -223,7 +223,7 @@ export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
       )}
     </AnimatePresence>
   );
-};
+});
 
 /* -------------------------------------------------------------------------- */
 /* 3. Magnetic Desktop Button Wrapper                                         */
@@ -297,7 +297,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
 export const PageTransitionOverlay: React.FC<{
   transitionKey: string;
   theme: ThemeMode;
-}> = ({ transitionKey, theme }) => {
+}> = React.memo(({ transitionKey, theme }) => {
   const prefersReducedMotion = useReducedMotion();
   const [showSweep, setShowSweep] = useState(false);
   const isFirstMount = useRef(true);
@@ -351,7 +351,7 @@ export const PageTransitionOverlay: React.FC<{
       )}
     </AnimatePresence>
   );
-};
+});
 
 /* -------------------------------------------------------------------------- */
 /* 5. Reusable Scroll-Triggered Counter                                       */

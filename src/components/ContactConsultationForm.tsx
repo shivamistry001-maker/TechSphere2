@@ -309,6 +309,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                     id="fullName"
                     name="fullName"
                     type="text"
+                    autoComplete="name"
                     required
                     aria-invalid={Boolean(fieldErrors.fullName)}
                     aria-describedby={fieldErrors.fullName ? 'fullName-error' : undefined}
@@ -336,6 +337,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   id="companyName"
                   name="companyName"
                   type="text"
+                  autoComplete="organization"
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                   placeholder="e.g. Acme Industrial Corp"
@@ -355,6 +357,8 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   id="email"
                   name="email"
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
                   required
                   aria-invalid={Boolean(fieldErrors.email)}
                   aria-describedby={fieldErrors.email ? 'email-error' : undefined}
@@ -380,6 +384,8 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
                   id="phone"
                   name="phone"
                   type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
                   required
                   aria-invalid={Boolean(fieldErrors.phone)}
                   aria-describedby={fieldErrors.phone ? 'phone-error' : undefined}

@@ -25,7 +25,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
   )}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex flex-col items-end">
       {/* Expanded Quick Options Menu */}
       <AnimatePresence>
         {isOpen && (
@@ -35,7 +35,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 10 }}
             transition={{ duration: 0.2, ease: EASE_PREMIUM }}
-            className="ts-glass-popover mb-3 p-3 rounded-2xl flex flex-col space-y-2 min-w-[252px]"
+            className="ts-glass-popover mb-3 p-3 rounded-2xl flex flex-col space-y-2 w-[min(264px,calc(100vw-2rem))]"
           >
             <div
               className={`px-2 py-1.5 border-b text-[11px] font-semibold uppercase tracking-wider ${
@@ -157,7 +157,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
         }}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-        className={`group relative flex items-center justify-center w-14 h-14 rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-4 ${
+        className={`group relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-4 ${
           isDark
             ? 'bg-white text-[#090909] hover:bg-[#E5E5E5] shadow-[0_14px_30px_rgba(0,0,0,0.68),inset_0_1px_0_rgba(255,255,255,0.6)] border border-white/25 focus-visible:ring-white/40'
             : 'bg-[#0284C7] bg-gradient-to-br from-[#38BDF8] via-[#0284C7] to-[#0369A1] text-white shadow-[0_14px_30px_rgba(2,132,199,0.34),inset_0_1px_0_rgba(255,255,255,0.45)] border border-white/25 focus-visible:ring-sky-400/50'
@@ -165,7 +165,7 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
         aria-label={isOpen ? 'Close Quick Contact' : 'Open Quick Contact Options'}
         aria-expanded={isOpen}
       >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+        {isOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />}
       </motion.button>
     </div>
   );
