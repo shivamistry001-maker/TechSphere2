@@ -66,43 +66,43 @@ export const CardGlareOverlay: React.FC<{
       aria-hidden="true"
       className="absolute inset-0 overflow-hidden rounded-[inherit] pointer-events-none z-0"
     >
-      {/* Interactive pointer-tracking radial glare */}
+      {/* Interactive pointer-tracking radial light refraction */}
       <div
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           background: isDark
-            ? `radial-gradient(380px circle at var(--glare-x, 50%) var(--glare-y, 35%), rgba(255, 255, 255, ${
-                subtle ? '0.07' : '0.11'
-              }), transparent 65%)`
-            : `radial-gradient(380px circle at var(--glare-x, 50%) var(--glare-y, 35%), rgba(56, 189, 248, ${
-                subtle ? '0.09' : '0.15'
-              }), transparent 65%)`,
+            ? `radial-gradient(400px circle at var(--glare-x, 50%) var(--glare-y, 35%), rgba(255, 255, 255, ${
+                subtle ? '0.08' : '0.13'
+              }), transparent 66%)`
+            : `radial-gradient(400px circle at var(--glare-x, 50%) var(--glare-y, 35%), rgba(255, 255, 255, ${
+                subtle ? '0.52' : '0.72'
+              }), rgba(56, 189, 248, ${subtle ? '0.11' : '0.18'}) 38%, transparent 70%)`,
         }}
       />
 
-      {/* Futuristic diagonal shine sweep beam triggered on hover */}
+      {/* Glossy diagonal refraction sweep triggered on hover */}
       <div
         className="ts-shine-beam absolute -top-12 -bottom-12 left-0 w-1/2"
         style={{
           background: isDark
-            ? `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.03) 26%, rgba(255, 255, 255, ${
-                subtle ? '0.12' : '0.2'
-              }) 50%, rgba(255, 255, 255, 0.03) 74%, transparent 100%)`
-            : `linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.06) 24%, rgba(255, 255, 255, ${
-                subtle ? '0.45' : '0.72'
-              }) 48%, rgba(56, 189, 248, ${
-                subtle ? '0.1' : '0.16'
-              }) 56%, transparent 78%, transparent 100%)`,
+            ? `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 26%, rgba(255, 255, 255, ${
+                subtle ? '0.14' : '0.22'
+              }) 50%, rgba(255, 255, 255, 0.04) 74%, transparent 100%)`
+            : `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.24) 24%, rgba(255, 255, 255, ${
+                subtle ? '0.68' : '0.9'
+              }) 48%, rgba(125, 211, 252, ${
+                subtle ? '0.16' : '0.26'
+              }) 58%, transparent 80%, transparent 100%)`,
         }}
       />
 
       {/* Crisp top-edge specular gleam on hover */}
       <div
-        className="absolute top-0 left-6 right-6 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute top-0 left-5 right-5 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           background: isDark
-            ? 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent)'
-            : 'linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.55), transparent)',
+            ? 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent)'
+            : 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.98) 38%, rgba(56, 189, 248, 0.65) 62%, transparent)',
         }}
       />
     </div>
@@ -211,6 +211,7 @@ export const BackToTopButton: React.FC<{ theme: ThemeMode }> = ({ theme }) => {
           aria-label="Back to top"
           title="Back to top"
           data-glass-layer="back-to-top"
+          data-sound="icon"
           className={`ts-glass-float-btn fixed bottom-24 right-6 z-30 w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
             isDark
               ? 'text-[#F5F5F5] focus-visible:ring-white'
@@ -274,6 +275,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     <motion.button
       ref={ref}
       type={type}
+      data-sound="cta"
       style={prefersReducedMotion || !isPointerFine ? undefined : { x: springX, y: springY }}
       whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
       whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}

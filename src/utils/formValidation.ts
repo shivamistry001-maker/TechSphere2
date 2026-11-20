@@ -19,8 +19,32 @@ export interface ContactValidationResult {
   errors: ContactValidationErrors;
 }
 
+export const DEFAULT_FORMSPREE_FORM_ID = 'xaqrejgl';
+
+export function resolveFormspreeFormId(override?: string | null): string {
+  const fromOverride = override?.trim();
+  if (fromOverride) return fromOverride;
+
+  const metaEnv =
+    typeof import.meta !== 'undefined'
+      ? (import.meta as { env?: Record<string, string | undefined> }).env
+      : undefined;
+  const fromEnv = metaEnv?.VITE_FORMSPREE_FORM_ID?.trim();
+  return fromEnv || DEFAULT_FORMSPREE_FORM_ID;
+}
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+const NAME_ALLOWED_CHARS = /^[\p{L}\s'.-]+$/u;
 const PHONE_ALLOWED_CHARS = /^[+\d\s().-]+$/;
+const REPEATED_DIGITS_PATTERN = /^(\d)\1+$/;
+
+export function sanitizeContactPayload<T extends Record<string, string>>(payload: T): T {
+  const cleaned: Record<string, string> = {};
+  for (const [key, value] of Object.entries(payload)) {
+    cleaned[key] = typeof value === 'string' ? value.trim() : '';
+  }
+  return cleaned as T;
+}
 
 export function validateFullName(value: string): string | null {
   const trimmed = value.trim();
@@ -29,6 +53,10 @@ export function validateFullName(value: string): string | null {
   }
   if (trimmed.length < 2) {
     return 'Name must be at least 2 characters.';
+  }
+  const letterCount = (trimmed.match(/\p{L}/gu) ?? []).length;
+  if (letterCount < 2 || !NAME_ALLOWED_CHARS.test(trimmed)) {
+    return 'Please enter a valid name using letters.';
   }
   return null;
 }
@@ -59,6 +87,13 @@ export function validatePhone(value: string): string | null {
   const digitsOnly = trimmed.replace(/\D/g, '');
   if (digitsOnly.length < 7 || digitsOnly.length > 15) {
     return 'Phone number must contain between 7 and 15 digits.';
+  }
+  if (REPEATED_DIGITS_PATTERN.test(digitsOnly)) {
+    return 'Please enter a real contact phone number.';
+  }
+  // Validate Indian +91 format expects country code (91) + 10 subscriber digits
+  if (trimmed.startsWith('+91') && digitsOnly.length !== 12) {
+    return 'Indian phone numbers with +91 must contain 10 digits after the country code.';
   }
   return null;
 }

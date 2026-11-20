@@ -114,9 +114,7 @@ export const WhyTechSphereSection: React.FC<WhyTechSphereSectionProps> = ({
   return (
     <section
       ref={sectionRef}
-      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#090909]' : 'bg-white'
-      }`}
+      className="ts-glass-canvas-primary py-20 sm:py-28 overflow-x-clip transition-colors duration-300"
       aria-labelledby="why-techsphere-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,17 +172,14 @@ export const WhyTechSphereSection: React.FC<WhyTechSphereSectionProps> = ({
             >
               <motion.div
                 variants={scrollCardItemVariants}
+                data-glass-layer="why-card"
                 whileHover={
                   prefersReducedMotion
                     ? undefined
                     : { y: -5, scale: 1.01, transition: { duration: 0.2, ease: EASE_PREMIUM } }
                 }
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden rounded-2xl p-6 border transition-colors duration-300 ${
-                  isDark
-                    ? 'bg-[#171717] border-[#303030] hover:border-[#D4D4D4]/50 hover:bg-[#1D1D1D]'
-                    : 'bg-[#F5FAFE] border-[#101B35]/[0.07] hover:border-[#38BDF8]/50 shadow-[0_10px_28px_rgba(16,27,53,0.03)]'
-                }`}
+                className="ts-glass-card ts-glass-card-interactive group relative overflow-hidden rounded-2xl p-6"
               >
                 <CardGlareOverlay theme={theme} subtle />
                 <div className="relative z-10">
@@ -216,13 +211,7 @@ export const WhyTechSphereSection: React.FC<WhyTechSphereSectionProps> = ({
         </ScrollCascadeGrid>
 
         {/* 6 Core Consultancy Commitments Grid */}
-        <ScrollCascadeGrid
-          className={`rounded-3xl p-6 sm:p-10 border grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ${
-            isDark
-              ? 'bg-[#111111] border-[#303030]'
-              : 'bg-[#F5FAFE]/70 border-[#101B35]/[0.07]'
-          }`}
-        >
+        <ScrollCascadeGrid className="ts-glass-panel rounded-3xl p-6 sm:p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {VALUE_PILLARS.map((pillar) => {
             const Icon = pillar.icon;
             return (
@@ -232,10 +221,8 @@ export const WhyTechSphereSection: React.FC<WhyTechSphereSectionProps> = ({
                 className="group flex items-start gap-4"
               >
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border transition-transform duration-200 group-hover:scale-105 ${
-                    isDark
-                      ? 'bg-[#1D1D1D] border-[#303030] text-white'
-                      : 'bg-white border-[#101B35]/[0.08] text-[#0284C7] shadow-sm'
+                  className={`ts-glass-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+                    isDark ? 'text-white' : 'text-[#0284C7]'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

@@ -3,11 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { ThemeMode } from '../types.ts';
 import { AnimatedCounter } from './motion/MotionPrimitives.tsx';
 import { EASE_PREMIUM } from '../utils/motion.ts';
+import { playSound, soundManager, stopAllSounds } from '../utils/soundManager.ts';
+import {
+  WHEEL_RESULT_DELAY_MS,
+  WHEEL_SPIN_DURATION_MS,
+  WheelAnimationPhase,
+  computeTargetSpinDelta,
+  evaluateWheelSpinFrame,
+  getCumulativeWheelSegment,
+} from '../utils/wheelPhysics.ts';
 
 interface OrbitalNode {
   id: string;
@@ -227,8 +236,180 @@ interface HeroOrbitalVisualProps {
 export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'light' }) => {
   const prefersReducedMotion = useReducedMotion();
   const [activeNodeId, setActiveNodeId] = useState<string>('erp');
+  const [wheelPhase, setWheelPhase] = useState<WheelAnimationPhase>('idle');
   const gradId = useId().replace(/:/g, '');
   const isDark = theme === 'dark';
+
+  const orbitRingRef = useRef<HTMLDivElement | null>(null);
+  const nodeCounterRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const wheelAngleRef = useRef<number>(0);
+  const spinRafRef = useRef<number | null>(null);
+  const resultTimerRef = useRef<number | null>(null);
+  const settleTimerRef = useRef<number | null>(null);
+  const isSpinningRef = useRef<boolean>(false);
+
+  const applyWheelRotation = useCallback((angleDeg: number) => {
+    wheelAngleRef.current = angleDeg;
+    if (orbitRingRef.current) {
+      orbitRingRef.current.style.transform = `rotate(${angleDeg.toFixed(2)}deg)`;
+    }
+    for (const el of nodeCounterRefs.current) {
+      if (el) {
+        el.style.transform = `rotate(${(-angleDeg).toFixed(2)}deg)`;
+      }
+    }
+  }, []);
+
+  const cancelSpin = useCallback((haltAudio: boolean = false) => {
+    if (spinRafRef.current !== null) {
+      window.cancelAnimationFrame(spinRafRef.current);
+      spinRafRef.current = null;
+    }
+    if (resultTimerRef.current !== null) {
+      window.clearTimeout(resultTimerRef.current);
+      resultTimerRef.current = null;
+    }
+    if (settleTimerRef.current !== null) {
+      window.clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = null;
+    }
+    isSpinningRef.current = false;
+    setWheelPhase('idle');
+    if (haltAudio) {
+      stopAllSounds();
+    }
+  }, []);
+
+  // Immediately silence wheel audio & cancel pending result reveal if user mutes mid-spin
+  useEffect(() => {
+    return soundManager.subscribe((prefs) => {
+      if (!prefs.enabled) {
+        if (resultTimerRef.current !== null) {
+          window.clearTimeout(resultTimerRef.current);
+          resultTimerRef.current = null;
+        }
+        stopAllSounds();
+      }
+    });
+  }, []);
+
+  // Gentle ambient slow orbit (paused automatically during active user wheel spin or reduced motion)
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    let ambientRaf: number | null = null;
+    let lastTs: number | null = null;
+    const degPerMs = 360 / 40000;
+
+    const tickAmbient = (ts: number) => {
+      if (!isSpinningRef.current && lastTs !== null) {
+        const dt = Math.min(ts - lastTs, 64);
+        applyWheelRotation(wheelAngleRef.current + dt * degPerMs);
+      }
+      lastTs = ts;
+      ambientRaf = window.requestAnimationFrame(tickAmbient);
+    };
+
+    ambientRaf = window.requestAnimationFrame(tickAmbient);
+    return () => {
+      if (ambientRaf !== null) {
+        window.cancelAnimationFrame(ambientRaf);
+      }
+    };
+  }, [prefersReducedMotion, applyWheelRotation]);
+
+  // Clean up any active wheel spin animation & audio timers on unmount
+  useEffect(() => {
+    return () => {
+      cancelSpin(true);
+    };
+  }, [cancelSpin]);
+
+  const handleSpinWheel = useCallback(() => {
+    cancelSpin(true);
+
+    const segmentCount = ORBITAL_NODES.length;
+    const currentIdx = Math.max(
+      0,
+      ORBITAL_NODES.findIndex((n) => n.id === activeNodeId)
+    );
+    // Advance by 1..segmentCount-1 segments so every spin lands on a fresh capability
+    const offset = 1 + Math.floor(Math.random() * (segmentCount - 1));
+    const targetIdx = (currentIdx + offset) % segmentCount;
+
+    const startAngle = wheelAngleRef.current;
+    const totalDelta = computeTargetSpinDelta(
+      startAngle,
+      targetIdx,
+      segmentCount,
+      prefersReducedMotion ? 1 : 3
+    );
+    const durationMs = prefersReducedMotion ? 360 : WHEEL_SPIN_DURATION_MS;
+
+    isSpinningRef.current = true;
+    setWheelPhase('spinning');
+
+    // Tactile 'ui-click' engages the spin immediately when global sound is enabled
+    if (soundManager.isEnabled()) {
+      playSound('ui-click', { bypassThrottle: true });
+    }
+
+    let lastSegment = getCumulativeWheelSegment(startAngle, segmentCount);
+    const startTime = performance.now();
+
+    const step = (now: number) => {
+      if (!isSpinningRef.current) return;
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / durationMs);
+
+      const frame = evaluateWheelSpinFrame({
+        startAngleDeg: startAngle,
+        totalDeltaDeg: totalDelta,
+        progress,
+        lastCumulativeSegment: lastSegment,
+        segmentCount,
+        soundEnabled: soundManager.isEnabled(),
+      });
+
+      applyWheelRotation(frame.angleDeg);
+
+      if (frame.crossedSegment) {
+        lastSegment = frame.cumulativeSegment;
+        setActiveNodeId(ORBITAL_NODES[frame.segmentIndex].id);
+      }
+
+      for (const cue of frame.soundCues) {
+        playSound(cue.soundId, {
+          pitchMultiplier: cue.pitchMultiplier,
+          bypassThrottle: cue.bypassThrottle,
+        });
+      }
+
+      if (frame.phase === 'spinning') {
+        spinRafRef.current = window.requestAnimationFrame(step);
+      } else {
+        spinRafRef.current = null;
+        isSpinningRef.current = false;
+        setWheelPhase('completed');
+        setActiveNodeId(ORBITAL_NODES[frame.segmentIndex].id);
+
+        resultTimerRef.current = window.setTimeout(() => {
+          resultTimerRef.current = null;
+          if (soundManager.isEnabled()) {
+            playSound('wheel-result', { bypassThrottle: true });
+          }
+        }, WHEEL_RESULT_DELAY_MS);
+
+        settleTimerRef.current = window.setTimeout(() => {
+          settleTimerRef.current = null;
+          if (!isSpinningRef.current) {
+            setWheelPhase('idle');
+          }
+        }, WHEEL_RESULT_DELAY_MS + 320);
+      }
+    };
+
+    spinRafRef.current = window.requestAnimationFrame(step);
+  }, [activeNodeId, applyWheelRotation, cancelSpin, prefersReducedMotion]);
 
   const activeNode = ORBITAL_NODES.find((n) => n.id === activeNodeId) || ORBITAL_NODES[0];
 
@@ -325,14 +506,24 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
             </div>
           </motion.div>
 
-          {/* Central Abstract 3D TechSphere Core */}
-          <motion.div
+          {/* Central Abstract 3D TechSphere Core (interactive spin trigger) */}
+          <motion.button
+            type="button"
+            data-sound="none"
+            data-testid="hero-wheel-spin-button"
+            data-spinning={wheelPhase === 'spinning' ? 'true' : 'false'}
+            data-wheel-state={wheelPhase}
+            onClick={handleSpinWheel}
             animate={prefersReducedMotion ? undefined : { y: [-4, 4, -4] }}
             transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
-            className={`relative z-10 w-[136px] h-[136px] sm:w-[158px] sm:h-[158px] rounded-full p-4 flex flex-col items-center justify-center text-center border ${
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.03 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.96 }}
+            aria-label={`Spin TechSphere capability wheel — active: ${activeNode.label}`}
+            title="Spin TechSphere capability wheel"
+            className={`relative z-10 w-[136px] h-[136px] sm:w-[158px] sm:h-[158px] rounded-full p-4 flex flex-col items-center justify-center text-center border cursor-pointer focus:outline-none focus-visible:ring-2 ${
               isDark
-                ? 'bg-gradient-to-br from-[#1D1D1D] via-[#171717] to-[#111111] shadow-[0_26px_55px_rgba(0,0,0,0.65)] border-[#303030]'
-                : 'bg-gradient-to-br from-[#101B35] via-[#17294F] to-[#0B1326] shadow-[0_26px_55px_rgba(16,27,53,0.32)] border-sky-400/30'
+                ? 'bg-gradient-to-br from-[#1D1D1D] via-[#171717] to-[#111111] shadow-[0_26px_55px_rgba(0,0,0,0.65)] border-[#303030] focus-visible:ring-white'
+                : 'bg-gradient-to-br from-[#101B35] via-[#17294F] to-[#0B1326] shadow-[0_26px_55px_rgba(16,27,53,0.32)] border-sky-400/30 focus-visible:ring-[#38BDF8]'
             }`}
           >
             <div
@@ -368,13 +559,12 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                 {activeNode.sublabel}
               </span>
             </div>
-          </motion.div>
+          </motion.button>
 
-          {/* Orbiting Application Icon Tiles */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            animate={prefersReducedMotion ? undefined : { rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 40, ease: 'linear' }}
+          {/* Orbiting Application Icon Tiles (rotation driven directly for 1:1 audio-visual sync) */}
+          <div
+            ref={orbitRingRef}
+            className="absolute inset-0 pointer-events-none will-change-transform"
           >
             {ORBITAL_NODES.map((node, index) => {
               const isActive = activeNodeId === node.id;
@@ -389,14 +579,30 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                   style={{ left: `${leftPct}%`, top: `${topPct}%` }}
                   className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
                 >
-                  <motion.div
-                    animate={prefersReducedMotion ? undefined : { rotate: -360 }}
-                    transition={{ repeat: Infinity, duration: 40, ease: 'linear' }}
+                  <div
+                    ref={(el) => {
+                      nodeCounterRefs.current[index] = el;
+                    }}
+                    className="will-change-transform"
                   >
                     <motion.button
                       type="button"
-                      onClick={() => setActiveNodeId(node.id)}
-                      onMouseEnter={() => setActiveNodeId(node.id)}
+                      data-sound="none"
+                      data-sound-hover="true"
+                      onClick={() => {
+                        if (isSpinningRef.current) {
+                          cancelSpin(true);
+                        }
+                        if (soundManager.isEnabled()) {
+                          playSound('ui-click');
+                        }
+                        setActiveNodeId(node.id);
+                      }}
+                      onMouseEnter={() => {
+                        if (!isSpinningRef.current) {
+                          setActiveNodeId(node.id);
+                        }
+                      }}
                       animate={
                         prefersReducedMotion
                           ? undefined
@@ -446,11 +652,11 @@ export const HeroOrbitalVisual: React.FC<HeroOrbitalVisualProps> = ({ theme = 'l
                         </div>
                       </div>
                     </motion.button>
-                  </motion.div>
+                  </div>
                 </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </div>
 

@@ -72,40 +72,101 @@
   --ts-theme-dur-text: 0ms;
   --ts-theme-dur-shadow: 0ms;
 
-  /* Hybrid Liquid Glass Tokens — Light Mode (Clean White + Sky-Blue Refraction) */
+  /* Advanced Liquid Glass UI 2.0 Tokens — Light Mode (Frosted White + Sky-Ice Refraction) */
   --ts-glass-blur-nav: 14px;
   --ts-glass-blur-popover: 16px;
-  --ts-glass-blur-accent: 12px;
-  --ts-glass-nav-bg: rgba(255, 255, 255, 0.64);
-  --ts-glass-nav-bg-scrolled: rgba(255, 255, 255, 0.80);
+  --ts-glass-blur-accent: 14px;
+  --ts-glass-blur-card: 14px;
+  --ts-glass-blur-panel: 16px;
+
+  /* Atmospheric backdrops behind Light Mode glass so translucency & blur are clearly visible */
+  --ts-glass-canvas-primary:
+    radial-gradient(62% 52% at 14% 8%, rgba(56, 189, 248, 0.22) 0%, rgba(186, 230, 253, 0.08) 48%, transparent 78%),
+    radial-gradient(54% 48% at 88% 18%, rgba(14, 165, 233, 0.18) 0%, rgba(125, 211, 252, 0.07) 46%, transparent 76%),
+    radial-gradient(58% 54% at 52% 94%, rgba(186, 230, 253, 0.34) 0%, rgba(224, 242, 254, 0.14) 52%, transparent 80%),
+    linear-gradient(155deg, #eef6fd 0%, #f7fbff 48%, #e4f1fc 100%);
+  --ts-glass-canvas-tinted:
+    radial-gradient(56% 50% at 86% 12%, rgba(56, 189, 248, 0.24) 0%, rgba(186, 230, 253, 0.10) 48%, transparent 78%),
+    radial-gradient(52% 48% at 12% 82%, rgba(14, 165, 233, 0.16) 0%, rgba(224, 242, 254, 0.12) 50%, transparent 78%),
+    linear-gradient(165deg, #e5f2fc 0%, #f1f8fe 52%, #e1effb 100%);
+
+  /* Shared multi-layer glass surface tokens */
+  --ts-glass-card-bg: rgba(255, 255, 255, 0.62);
+  --ts-glass-card-bg-hover: rgba(255, 255, 255, 0.76);
+  --ts-glass-card-fallback: rgba(255, 255, 255, 0.96);
+  --ts-glass-card-border: rgba(255, 255, 255, 0.88);
+  --ts-glass-card-border-hover: rgba(56, 189, 248, 0.58);
+  --ts-glass-inner-highlight: inset 0 1.5px 0 rgba(255, 255, 255, 0.96), inset 0 -1px 0 rgba(14, 165, 233, 0.14);
+  --ts-glass-outer-shadow: 0 18px 42px -12px rgba(15, 55, 96, 0.13), 0 4px 14px -2px rgba(14, 165, 233, 0.09), 0 0 0 1px rgba(14, 116, 174, 0.10);
+  --ts-glass-outer-shadow-hover: 0 26px 56px -12px rgba(15, 55, 96, 0.18), 0 8px 22px -4px rgba(14, 165, 233, 0.16), 0 0 0 1px rgba(2, 132, 199, 0.22);
+  --ts-glass-reflection: linear-gradient(148deg, rgba(255, 255, 255, 0.86) 0%, rgba(240, 249, 255, 0.36) 44%, rgba(186, 230, 253, 0.16) 100%);
+  --ts-glass-noise-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='tsGrain' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23tsGrain)' opacity='0.55'/%3E%3C/svg%3E");
+  --ts-glass-noise-opacity: 0.085;
+  --ts-glass-noise-blend: multiply;
+  --ts-glass-refraction-sheen:
+    radial-gradient(ellipse 72% 66% at 100% 0%, rgba(255, 255, 255, 0.88) 0%, rgba(186, 230, 253, 0.42) 32%, rgba(56, 189, 248, 0.12) 54%, transparent 70%),
+    radial-gradient(circle at 98% 2%, rgba(255, 255, 255, 0.92) 0%, rgba(224, 242, 254, 0.26) 22%, transparent 44%);
+  --ts-glass-refraction-base-opacity: 0.28;
+
+  /* Glass Panels & Form Surfaces (Light Mode) */
+  --ts-glass-panel-bg: rgba(255, 255, 255, 0.68);
+  --ts-glass-panel-fallback: #ffffff;
+  --ts-glass-panel-border: rgba(255, 255, 255, 0.90);
+  --ts-glass-panel-shadow: 0 24px 56px -14px rgba(15, 55, 96, 0.15), 0 6px 18px -4px rgba(14, 165, 233, 0.10), 0 0 0 1px rgba(14, 116, 174, 0.11), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+  --ts-glass-input-bg: rgba(255, 255, 255, 0.78);
+  --ts-glass-input-bg-focus: rgba(255, 255, 255, 0.96);
+  --ts-glass-input-border: rgba(16, 27, 53, 0.14);
+  --ts-glass-input-border-focus: rgba(2, 132, 199, 0.75);
+  --ts-glass-input-shadow: inset 0 1px 2px rgba(16, 27, 53, 0.05), 0 1px 0 rgba(255, 255, 255, 0.92);
+  --ts-glass-input-shadow-focus: 0 0 0 3px rgba(56, 189, 248, 0.24), inset 0 1px 2px rgba(16, 27, 53, 0.03);
+  --ts-glass-icon-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(224, 242, 254, 0.68) 100%);
+  --ts-glass-icon-border: rgba(255, 255, 255, 0.94);
+  --ts-glass-icon-shadow: 0 8px 20px -6px rgba(2, 132, 199, 0.18), 0 0 0 1px rgba(14, 165, 233, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.98);
+
+  /* Glossy Primary & Translucent Secondary Glass Buttons (Light Mode) */
+  --ts-glass-btn-primary-bg: linear-gradient(180deg, #1b2d56 0%, #101b35 100%);
+  --ts-glass-btn-primary-bg-hover: linear-gradient(180deg, #213769 0%, #142243 100%);
+  --ts-glass-btn-primary-border: rgba(125, 211, 252, 0.34);
+  --ts-glass-btn-primary-shadow: 0 14px 28px -8px rgba(16, 27, 53, 0.34), 0 4px 10px rgba(2, 132, 199, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  --ts-glass-btn-primary-shadow-hover: 0 18px 34px -8px rgba(16, 27, 53, 0.42), 0 6px 16px rgba(14, 165, 233, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --ts-glass-btn-secondary-bg: rgba(255, 255, 255, 0.66);
+  --ts-glass-btn-secondary-bg-hover: rgba(255, 255, 255, 0.86);
+  --ts-glass-btn-secondary-border: rgba(255, 255, 255, 0.90);
+  --ts-glass-btn-secondary-shadow: 0 10px 26px -8px rgba(15, 55, 96, 0.13), 0 0 0 1px rgba(14, 116, 174, 0.14), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+
+  /* Navbar, Popover, Accent, Controls & Drawer (Light Mode) */
+  --ts-glass-nav-bg: rgba(255, 255, 255, 0.58);
+  --ts-glass-nav-bg-scrolled: rgba(255, 255, 255, 0.72);
   --ts-glass-nav-fallback: rgba(255, 255, 255, 0.96);
-  --ts-glass-nav-border: rgba(16, 27, 53, 0.07);
-  --ts-glass-nav-border-scrolled: rgba(16, 27, 53, 0.11);
-  --ts-glass-nav-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(245, 250, 254, 0.06) 100%);
-  --ts-glass-nav-shadow: 0 2px 14px rgba(16, 27, 53, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.86);
-  --ts-glass-nav-shadow-scrolled: 0 10px 30px -6px rgba(16, 27, 53, 0.08), 0 1px 0 rgba(56, 189, 248, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --ts-glass-popover-bg: rgba(255, 255, 255, 0.86);
+  --ts-glass-nav-border: rgba(255, 255, 255, 0.85);
+  --ts-glass-nav-border-scrolled: rgba(14, 165, 233, 0.22);
+  --ts-glass-nav-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 249, 255, 0.18) 100%);
+  --ts-glass-nav-shadow: 0 6px 24px -6px rgba(15, 55, 96, 0.08), inset 0 1.5px 0 rgba(255, 255, 255, 0.96), inset 0 -1px 0 rgba(14, 165, 233, 0.12);
+  --ts-glass-nav-shadow-scrolled: 0 14px 36px -8px rgba(15, 55, 96, 0.13), 0 2px 10px rgba(14, 165, 233, 0.10), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+  --ts-glass-popover-bg: rgba(255, 255, 255, 0.76);
   --ts-glass-popover-fallback: #ffffff;
-  --ts-glass-popover-border: rgba(16, 27, 53, 0.11);
-  --ts-glass-popover-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(245, 250, 254, 0.08) 100%);
-  --ts-glass-popover-shadow: 0 22px 46px -10px rgba(16, 27, 53, 0.14), 0 4px 12px rgba(16, 27, 53, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.94);
-  --ts-glass-accent-bg: rgba(255, 255, 255, 0.76);
-  --ts-glass-accent-bg-hover: rgba(255, 255, 255, 0.88);
+  --ts-glass-popover-border: rgba(255, 255, 255, 0.90);
+  --ts-glass-popover-sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.86) 0%, rgba(224, 242, 254, 0.24) 100%);
+  --ts-glass-popover-shadow: 0 26px 56px -12px rgba(15, 55, 96, 0.18), 0 6px 18px rgba(14, 165, 233, 0.10), 0 0 0 1px rgba(14, 116, 174, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+  --ts-glass-accent-bg: rgba(255, 255, 255, 0.64);
+  --ts-glass-accent-bg-hover: rgba(255, 255, 255, 0.80);
   --ts-glass-accent-fallback: #ffffff;
-  --ts-glass-accent-border: rgba(16, 27, 53, 0.09);
-  --ts-glass-accent-border-hover: rgba(56, 189, 248, 0.48);
-  --ts-glass-accent-sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.56) 0%, rgba(245, 250, 254, 0.14) 55%, rgba(56, 189, 248, 0.04) 100%);
-  --ts-glass-accent-shadow: 0 18px 38px -10px rgba(16, 27, 53, 0.08), 0 2px 8px rgba(16, 27, 53, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.94);
-  --ts-glass-control-bg: rgba(255, 255, 255, 0.76);
-  --ts-glass-control-bg-hover: rgba(245, 250, 254, 0.96);
-  --ts-glass-control-border: rgba(16, 27, 53, 0.12);
-  --ts-glass-control-border-hover: rgba(56, 189, 248, 0.56);
-  --ts-glass-control-shadow: 0 4px 12px rgba(16, 27, 53, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-  --ts-glass-drawer-bg: rgba(255, 255, 255, 0.92);
-  --ts-glass-drawer-fallback: #ffffff;
-  --ts-glass-backdrop-bg: rgba(16, 27, 53, 0.68);
+  --ts-glass-accent-border: rgba(255, 255, 255, 0.88);
+  --ts-glass-accent-border-hover: rgba(56, 189, 248, 0.62);
+  --ts-glass-accent-sheen: linear-gradient(150deg, rgba(255, 255, 255, 0.86) 0%, rgba(240, 249, 255, 0.34) 50%, rgba(186, 230, 253, 0.18) 100%);
+  --ts-glass-accent-shadow: 0 20px 44px -12px rgba(15, 55, 96, 0.14), 0 4px 14px rgba(14, 165, 233, 0.10), 0 0 0 1px rgba(14, 116, 174, 0.11), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+  --ts-glass-control-bg: rgba(255, 255, 255, 0.72);
+  --ts-glass-control-bg-hover: rgba(255, 255, 255, 0.94);
+  --ts-glass-control-border: rgba(255, 255, 255, 0.90);
+  --ts-glass-control-border-hover: rgba(56, 189, 248, 0.64);
+  --ts-glass-control-shadow: 0 6px 18px -4px rgba(15, 55, 96, 0.12), 0 0 0 1px rgba(14, 116, 174, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+  --ts-glass-drawer-bg: rgba(244, 250, 255, 0.89);
+  --ts-glass-drawer-fallback: #f5fafe;
+  --ts-glass-backdrop-bg: rgba(16, 27, 53, 0.62);
   --ts-glass-backdrop-fallback: rgba(16, 27, 53, 0.88);
-  --ts-glass-card-rim: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  --ts-glass-card-rim: inset 0 1.5px 0 rgba(255, 255, 255, 0.96);
+  --ts-glass-active-bg: rgba(255, 255, 255, 0.84);
+  --ts-glass-active-border: rgba(14, 165, 233, 0.34);
   color-scheme: light;
 }
 
@@ -127,37 +188,92 @@ html.dark {
   --ts-selection-bg: #ffffff;
   --ts-selection-text: #090909;
 
-  /* Hybrid Liquid Glass Tokens — Dark Mode (Strict Deep Black & Charcoal + White Specular Highlights, Zero Blue) */
-  --ts-glass-nav-bg: rgba(12, 12, 12, 0.66);
-  --ts-glass-nav-bg-scrolled: rgba(11, 11, 11, 0.82);
+  /* Advanced Liquid Glass UI 2.0 Tokens — Dark Mode (Strict Deep Black & Charcoal + White Specular Rim, ZERO Blue) */
+  --ts-glass-canvas-primary:
+    radial-gradient(58% 48% at 16% 10%, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.015) 48%, transparent 78%),
+    radial-gradient(52% 46% at 86% 20%, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.01) 46%, transparent 76%),
+    linear-gradient(160deg, #080808 0%, #0e0e0e 50%, #080808 100%);
+  --ts-glass-canvas-tinted:
+    radial-gradient(56% 50% at 84% 12%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 48%, transparent 78%),
+    radial-gradient(50% 48% at 14% 84%, rgba(255, 255, 255, 0.04) 0%, transparent 76%),
+    linear-gradient(165deg, #0d0d0d 0%, #131313 52%, #0a0a0a 100%);
+
+  /* Shared multi-layer charcoal glass surface tokens */
+  --ts-glass-card-bg: rgba(22, 22, 22, 0.68);
+  --ts-glass-card-bg-hover: rgba(31, 31, 31, 0.80);
+  --ts-glass-card-fallback: #171717;
+  --ts-glass-card-border: rgba(255, 255, 255, 0.13);
+  --ts-glass-card-border-hover: rgba(255, 255, 255, 0.30);
+  --ts-glass-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  --ts-glass-outer-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.72), 0 4px 14px rgba(0, 0, 0, 0.45);
+  --ts-glass-outer-shadow-hover: 0 28px 60px -12px rgba(0, 0, 0, 0.84), 0 6px 20px rgba(0, 0, 0, 0.56);
+  --ts-glass-reflection: linear-gradient(150deg, rgba(255, 255, 255, 0.105) 0%, rgba(255, 255, 255, 0.025) 44%, rgba(255, 255, 255, 0.005) 100%);
+  --ts-glass-noise-opacity: 0.12;
+  --ts-glass-noise-blend: screen;
+  --ts-glass-refraction-sheen:
+    radial-gradient(ellipse 72% 66% at 100% 0%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 32%, rgba(255, 255, 255, 0.02) 52%, transparent 68%),
+    radial-gradient(circle at 98% 2%, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.06) 22%, transparent 42%);
+  --ts-glass-refraction-base-opacity: 0.26;
+
+  /* Glass Panels & Form Surfaces (Dark Mode) */
+  --ts-glass-panel-bg: rgba(20, 20, 20, 0.74);
+  --ts-glass-panel-fallback: #171717;
+  --ts-glass-panel-border: rgba(255, 255, 255, 0.14);
+  --ts-glass-panel-shadow: 0 28px 64px -14px rgba(0, 0, 0, 0.82), 0 6px 18px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --ts-glass-input-bg: rgba(12, 12, 12, 0.72);
+  --ts-glass-input-bg-focus: rgba(20, 20, 20, 0.92);
+  --ts-glass-input-border: rgba(255, 255, 255, 0.14);
+  --ts-glass-input-border-focus: rgba(255, 255, 255, 0.62);
+  --ts-glass-input-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.06);
+  --ts-glass-input-shadow-focus: 0 0 0 3px rgba(255, 255, 255, 0.14), inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  --ts-glass-icon-bg: linear-gradient(145deg, rgba(46, 46, 46, 0.88) 0%, rgba(24, 24, 24, 0.78) 100%);
+  --ts-glass-icon-border: rgba(255, 255, 255, 0.18);
+  --ts-glass-icon-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+
+  /* Glossy Primary & Translucent Secondary Glass Buttons (Dark Mode) */
+  --ts-glass-btn-primary-bg: linear-gradient(180deg, #ffffff 0%, #e4e4e4 100%);
+  --ts-glass-btn-primary-bg-hover: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+  --ts-glass-btn-primary-border: rgba(255, 255, 255, 0.85);
+  --ts-glass-btn-primary-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --ts-glass-btn-primary-shadow-hover: 0 18px 36px -8px rgba(0, 0, 0, 0.78), 0 0 22px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 1);
+  --ts-glass-btn-secondary-bg: rgba(26, 26, 26, 0.70);
+  --ts-glass-btn-secondary-bg-hover: rgba(38, 38, 38, 0.86);
+  --ts-glass-btn-secondary-border: rgba(255, 255, 255, 0.18);
+  --ts-glass-btn-secondary-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+
+  /* Navbar, Popover, Accent, Controls & Drawer (Dark Mode) */
+  --ts-glass-nav-bg: rgba(12, 12, 12, 0.64);
+  --ts-glass-nav-bg-scrolled: rgba(10, 10, 10, 0.78);
   --ts-glass-nav-fallback: rgba(12, 12, 12, 0.97);
-  --ts-glass-nav-border: rgba(255, 255, 255, 0.08);
-  --ts-glass-nav-border-scrolled: rgba(255, 255, 255, 0.14);
-  --ts-glass-nav-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0) 100%);
-  --ts-glass-nav-shadow: 0 2px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.11);
-  --ts-glass-nav-shadow-scrolled: 0 12px 32px rgba(0, 0, 0, 0.68), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  --ts-glass-popover-bg: rgba(20, 20, 20, 0.86);
+  --ts-glass-nav-border: rgba(255, 255, 255, 0.10);
+  --ts-glass-nav-border-scrolled: rgba(255, 255, 255, 0.18);
+  --ts-glass-nav-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.085) 0%, rgba(255, 255, 255, 0) 100%);
+  --ts-glass-nav-shadow: 0 4px 18px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --ts-glass-nav-shadow-scrolled: 0 14px 36px rgba(0, 0, 0, 0.74), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --ts-glass-popover-bg: rgba(20, 20, 20, 0.80);
   --ts-glass-popover-fallback: #171717;
-  --ts-glass-popover-border: rgba(255, 255, 255, 0.14);
-  --ts-glass-popover-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 100%);
-  --ts-glass-popover-shadow: 0 24px 52px -10px rgba(0, 0, 0, 0.80), 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  --ts-glass-accent-bg: rgba(22, 22, 22, 0.76);
-  --ts-glass-accent-bg-hover: rgba(30, 30, 30, 0.88);
+  --ts-glass-popover-border: rgba(255, 255, 255, 0.18);
+  --ts-glass-popover-sheen: linear-gradient(160deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.015) 100%);
+  --ts-glass-popover-shadow: 0 26px 56px -10px rgba(0, 0, 0, 0.84), 0 4px 14px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  --ts-glass-accent-bg: rgba(22, 22, 22, 0.70);
+  --ts-glass-accent-bg-hover: rgba(32, 32, 32, 0.84);
   --ts-glass-accent-fallback: #171717;
-  --ts-glass-accent-border: rgba(255, 255, 255, 0.12);
-  --ts-glass-accent-border-hover: rgba(255, 255, 255, 0.28);
-  --ts-glass-accent-sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.015) 55%, rgba(255, 255, 255, 0) 100%);
-  --ts-glass-accent-shadow: 0 22px 46px -10px rgba(0, 0, 0, 0.68), 0 2px 8px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  --ts-glass-control-bg: rgba(28, 28, 28, 0.80);
-  --ts-glass-control-bg-hover: rgba(42, 42, 42, 0.94);
-  --ts-glass-control-border: rgba(255, 255, 255, 0.15);
-  --ts-glass-control-border-hover: rgba(255, 255, 255, 0.34);
-  --ts-glass-control-shadow: 0 4px 14px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.20);
-  --ts-glass-drawer-bg: rgba(11, 11, 11, 0.93);
+  --ts-glass-accent-border: rgba(255, 255, 255, 0.15);
+  --ts-glass-accent-border-hover: rgba(255, 255, 255, 0.32);
+  --ts-glass-accent-sheen: linear-gradient(150deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.025) 52%, rgba(255, 255, 255, 0) 100%);
+  --ts-glass-accent-shadow: 0 24px 48px -10px rgba(0, 0, 0, 0.74), 0 2px 10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --ts-glass-control-bg: rgba(28, 28, 28, 0.78);
+  --ts-glass-control-bg-hover: rgba(44, 44, 44, 0.94);
+  --ts-glass-control-border: rgba(255, 255, 255, 0.18);
+  --ts-glass-control-border-hover: rgba(255, 255, 255, 0.38);
+  --ts-glass-control-shadow: 0 6px 16px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  --ts-glass-drawer-bg: rgba(12, 12, 12, 0.86);
   --ts-glass-drawer-fallback: #090909;
-  --ts-glass-backdrop-bg: rgba(0, 0, 0, 0.78);
+  --ts-glass-backdrop-bg: rgba(0, 0, 0, 0.76);
   --ts-glass-backdrop-fallback: rgba(0, 0, 0, 0.92);
-  --ts-glass-card-rim: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --ts-glass-card-rim: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  --ts-glass-active-bg: rgba(255, 255, 255, 0.12);
+  --ts-glass-active-border: rgba(255, 255, 255, 0.26);
   color-scheme: dark;
 }
 
@@ -205,7 +321,6 @@ html.dark {
     [class*="border"],
     [class*="shadow"],
     [class*="ts-glass-"],
-    .ts-showcase-card-rim,
     hr,
     input,
     textarea,
@@ -391,6 +506,25 @@ html.dark {
   );
 }
 
+.ts-shimmer-d0::after {
+  animation-delay: 0ms;
+}
+.ts-shimmer-d1::after {
+  animation-delay: 75ms;
+}
+.ts-shimmer-d2::after {
+  animation-delay: 150ms;
+}
+.ts-shimmer-d3::after {
+  animation-delay: 225ms;
+}
+.ts-shimmer-d4::after {
+  animation-delay: 300ms;
+}
+.ts-shimmer-d5::after {
+  animation-delay: 375ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ts-skeleton-block::after {
     animation: none !important;
@@ -429,8 +563,10 @@ html.dark {
 }
 
 /* ========================================================================== */
-/* Hybrid Liquid Glass UI Utilities                                           */
-/* - Selective backdrop-filter (single layer only, never nested)              */
+/* Advanced Liquid Glass UI 2.0 Utilities                                     */
+/* - Layered frosted glass surfaces for Light Mode & Monochrome Dark Mode     */
+/* - Single-layer backdrop-filter only (embedded controls/icons/inputs never  */
+/*   declare backdrop-filter to avoid nested blur compositing overhead)       */
 /* - Reduced blur radii on mobile/mid-range Android                           */
 /* - Solid fallbacks via @supports not and prefers-reduced-transparency       */
 /* - Zero SVG displacement filters                                            */
@@ -441,7 +577,20 @@ html.dark {
     --ts-glass-blur-nav: 10px;
     --ts-glass-blur-popover: 12px;
     --ts-glass-blur-accent: 8px;
+    --ts-glass-blur-card: 10px;
+    --ts-glass-blur-panel: 10px;
   }
+}
+
+/* 0. Atmospheric Light-Refraction Canvases Behind Glass Sections */
+.ts-glass-canvas-primary {
+  background-color: var(--ts-bg-main);
+  background-image: var(--ts-glass-canvas-primary);
+}
+
+.ts-glass-canvas-tinted {
+  background-color: var(--ts-bg-secondary);
+  background-image: var(--ts-glass-canvas-tinted);
 }
 
 /* 1. Navbar Background Glass Plate (sibling of nav content so dropdowns are never nested inside backdrop-filter) */
@@ -450,8 +599,8 @@ html.dark {
   background-image: var(--ts-glass-nav-sheen);
   border-bottom: 1px solid var(--ts-glass-nav-border);
   box-shadow: var(--ts-glass-nav-shadow);
-  -webkit-backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(145%);
-  backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(165%);
+  backdrop-filter: blur(var(--ts-glass-blur-nav)) saturate(165%);
 }
 
 .ts-glass-nav-plate[data-scrolled="true"] {
@@ -460,24 +609,112 @@ html.dark {
   box-shadow: var(--ts-glass-nav-shadow-scrolled);
 }
 
-/* 2. Detached Floating Popovers (ERP Solutions Dropdown, FloatingContact Menu) */
-.ts-glass-popover {
+/* Illuminated translucent active indicator inside Navbar (zero nested backdrop-filter) */
+.ts-glass-nav-active {
+  background-color: var(--ts-glass-active-bg);
+  border: 1px solid var(--ts-glass-active-border);
+  box-shadow: var(--ts-glass-card-rim), 0 4px 12px -4px rgba(14, 116, 174, 0.14);
+}
+
+html.dark .ts-glass-nav-active {
+  box-shadow: var(--ts-glass-card-rim), 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* 2. Detached Floating Popovers & Dropdowns (ERP Solutions Dropdown, FloatingContact Menu) */
+.ts-glass-popover,
+.ts-glass-dropdown {
   background-color: var(--ts-glass-popover-bg);
   background-image: var(--ts-glass-popover-sheen);
   border: 1px solid var(--ts-glass-popover-border);
   box-shadow: var(--ts-glass-popover-shadow);
-  -webkit-backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(155%);
-  backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(155%);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(170%);
+  backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(170%);
 }
 
-/* 3. Selective Hero & Showcase Glass Accents (non-nested floating chips, preview cards, segmented trays) */
+/* 3. Primary Liquid Glass Card Surface (Services, Industries, Portfolio, Demos, Why TechSphere, Process) */
+.ts-glass-card {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--ts-glass-card-bg);
+  background-image: var(--ts-glass-reflection);
+  border: 1px solid var(--ts-glass-card-border);
+  box-shadow: var(--ts-glass-inner-highlight), var(--ts-glass-outer-shadow);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-card)) saturate(165%);
+  backdrop-filter: blur(var(--ts-glass-blur-card)) saturate(165%);
+  translate: 0 var(--ts-glass-depth-y, 0px) 0;
+  transform: translate3d(0, 0, 0);
+}
+
+.ts-glass-card[data-glass-depth-active="true"] {
+  will-change: transform, translate;
+}
+
+/* Subtle semi-transparent SVG grain texture overlay for tactile frosted-glass depth */
+.ts-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--ts-glass-noise-pattern);
+  background-repeat: repeat;
+  background-size: 160px 160px;
+  opacity: var(--ts-glass-noise-opacity);
+  mix-blend-mode: var(--ts-glass-noise-blend);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Dynamic top-right corner internal light refraction-sheen driven by pointer-move */
+.ts-glass-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 72%;
+  height: 68%;
+  max-width: 320px;
+  max-height: 260px;
+  border-top-right-radius: inherit;
+  background-image: var(--ts-glass-refraction-sheen);
+  opacity: var(--ts-refraction-sheen-opacity, var(--ts-glass-refraction-base-opacity));
+  transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ts-glass-card-interactive {
+  transition:
+    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ts-glass-card-interactive:hover {
+  background-color: var(--ts-glass-card-bg-hover);
+  border-color: var(--ts-glass-card-border-hover);
+  box-shadow: var(--ts-glass-inner-highlight), var(--ts-glass-outer-shadow-hover);
+}
+
+/* 4. Frosted Glass Panel (Contact Form Container, Commitments Bar, Lightbox Frame, Footer Card) */
+.ts-glass-panel,
+.ts-glass-footer-card {
+  background-color: var(--ts-glass-panel-bg);
+  background-image: var(--ts-glass-reflection);
+  border: 1px solid var(--ts-glass-panel-border);
+  box-shadow: var(--ts-glass-panel-shadow);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-panel)) saturate(170%);
+  backdrop-filter: blur(var(--ts-glass-blur-panel)) saturate(170%);
+}
+
+/* 5. Selective Hero & Showcase Glass Accents (floating preview cards, segmented filter trays, decorative orbs) */
 .ts-glass-accent {
   background-color: var(--ts-glass-accent-bg);
   background-image: var(--ts-glass-accent-sheen);
   border: 1px solid var(--ts-glass-accent-border);
   box-shadow: var(--ts-glass-accent-shadow);
-  -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(145%);
-  backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(160%);
+  backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(160%);
 }
 
 .ts-glass-accent-interactive:hover {
@@ -485,14 +722,50 @@ html.dark {
   border-color: var(--ts-glass-accent-border-hover);
 }
 
-/* 4. Detached Floating Glass Controls (BackToTopButton, Gallery Prev/Next/Maximize, Live Site pill) */
-.ts-glass-float-btn {
+/* 6. Glossy Primary & Translucent Frosted Secondary Glass Buttons */
+.ts-glass-btn-primary {
+  background-image: var(--ts-glass-btn-primary-bg);
+  border: 1px solid var(--ts-glass-btn-primary-border);
+  box-shadow: var(--ts-glass-btn-primary-shadow);
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ts-glass-btn-primary:hover:not(:disabled) {
+  background-image: var(--ts-glass-btn-primary-bg-hover);
+  box-shadow: var(--ts-glass-btn-primary-shadow-hover);
+}
+
+.ts-glass-btn-secondary {
+  background-color: var(--ts-glass-btn-secondary-bg);
+  background-image: var(--ts-glass-nav-sheen);
+  border: 1px solid var(--ts-glass-btn-secondary-border);
+  box-shadow: var(--ts-glass-btn-secondary-shadow);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(155%);
+  backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(155%);
+  transition:
+    background-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ts-glass-btn-secondary:hover:not(:disabled) {
+  background-color: var(--ts-glass-btn-secondary-bg-hover);
+  border-color: var(--ts-glass-card-border-hover);
+}
+
+/* 7. Detached Floating Glass Controls & Image Badges (BackToTopButton, Gallery Prev/Next/Maximize, Floating Category Chips) */
+.ts-glass-float-btn,
+.ts-glass-badge {
   background-color: var(--ts-glass-control-bg);
   background-image: var(--ts-glass-nav-sheen);
   border: 1px solid var(--ts-glass-control-border);
   box-shadow: var(--ts-glass-control-shadow);
-  -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(140%);
-  backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(155%);
+  backdrop-filter: blur(var(--ts-glass-blur-accent)) saturate(155%);
 }
 
 .ts-glass-float-btn:hover {
@@ -500,8 +773,8 @@ html.dark {
   border-color: var(--ts-glass-control-border-hover);
 }
 
-/* 5. Embedded Glass Controls INSIDE an already-blurred glass layer (Theme Toggle, Hamburger, Lightbox Controls)
-   Provides optical specular reflection & hairline rim with ZERO nested backdrop-filter */
+/* 8. Embedded Glass Controls, Icons & Form Inputs INSIDE an already-blurred glass layer
+   Provides luminous specular reflection & hairline rim with ZERO nested backdrop-filter */
 .ts-glass-control {
   background-color: var(--ts-glass-control-bg);
   background-image: var(--ts-glass-nav-sheen);
@@ -514,27 +787,53 @@ html.dark {
   border-color: var(--ts-glass-control-border-hover);
 }
 
-/* 6. Mobile Navigation Drawer Frosted Sheet */
-.ts-glass-drawer {
-  background-color: var(--ts-glass-drawer-bg);
-  -webkit-backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(140%);
-  backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(140%);
+.ts-glass-icon {
+  background-image: var(--ts-glass-icon-bg);
+  border: 1px solid var(--ts-glass-icon-border);
+  box-shadow: var(--ts-glass-icon-shadow);
 }
 
-/* 7. Modal Scrim Backdrop */
+.ts-glass-input {
+  background-color: var(--ts-glass-input-bg);
+  border: 1px solid var(--ts-glass-input-border);
+  box-shadow: var(--ts-glass-input-shadow);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.ts-glass-input:focus {
+  background-color: var(--ts-glass-input-bg-focus);
+  border-color: var(--ts-glass-input-border-focus);
+  box-shadow: var(--ts-glass-input-shadow-focus);
+  outline: none;
+}
+
+.ts-glass-input[aria-invalid="true"] {
+  border-color: rgba(239, 68, 68, 0.72);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+}
+
+.ts-glass-drawer-item {
+  background-color: var(--ts-glass-control-bg);
+  border: 1px solid var(--ts-glass-control-border);
+  box-shadow: var(--ts-glass-card-rim);
+}
+
+/* 9. Mobile Navigation Drawer Frosted Sheet */
+.ts-glass-drawer {
+  background-color: var(--ts-glass-drawer-bg);
+  background-image: var(--ts-glass-reflection);
+  -webkit-backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(160%);
+  backdrop-filter: blur(var(--ts-glass-blur-popover)) saturate(160%);
+}
+
+/* 10. Modal Scrim Backdrop */
 .ts-glass-modal-backdrop {
   background-color: var(--ts-glass-backdrop-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-}
-
-/* 8. Subtle Top Specular Edge Rim for Solid Showcase Cards (keeps text on 100% solid readable surface) */
-.ts-showcase-card-rim {
-  box-shadow: var(--ts-glass-card-rim), 0 14px 34px rgba(16, 27, 53, 0.05);
-}
-
-html.dark .ts-showcase-card-rim {
-  box-shadow: var(--ts-glass-card-rim), 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
 /* Solid Background Fallbacks when backdrop-filter is unsupported */
@@ -545,23 +844,38 @@ html.dark .ts-showcase-card-rim {
     background-image: none;
   }
 
-  .ts-glass-popover {
+  .ts-glass-popover,
+  .ts-glass-dropdown {
     background-color: var(--ts-glass-popover-fallback);
     background-image: none;
   }
 
-  .ts-glass-accent {
+  .ts-glass-card {
+    background-color: var(--ts-glass-card-fallback);
+    background-image: none;
+  }
+
+  .ts-glass-panel,
+  .ts-glass-footer-card {
+    background-color: var(--ts-glass-panel-fallback);
+    background-image: none;
+  }
+
+  .ts-glass-accent,
+  .ts-glass-btn-secondary {
     background-color: var(--ts-glass-accent-fallback);
     background-image: none;
   }
 
-  .ts-glass-float-btn {
+  .ts-glass-float-btn,
+  .ts-glass-badge {
     background-color: var(--ts-glass-popover-fallback);
     background-image: none;
   }
 
   .ts-glass-drawer {
     background-color: var(--ts-glass-drawer-fallback);
+    background-image: none;
   }
 
   .ts-glass-modal-backdrop {
@@ -579,21 +893,44 @@ html.dark .ts-showcase-card-rim {
     backdrop-filter: none;
   }
 
-  .ts-glass-popover {
+  .ts-glass-popover,
+  .ts-glass-dropdown {
     background-color: var(--ts-glass-popover-fallback);
     background-image: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 
-  .ts-glass-accent {
+  .ts-glass-card {
+    background-color: var(--ts-glass-card-fallback);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .ts-glass-card::before,
+  .ts-glass-card::after {
+    opacity: 0;
+  }
+
+  .ts-glass-panel,
+  .ts-glass-footer-card {
+    background-color: var(--ts-glass-panel-fallback);
+    background-image: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .ts-glass-accent,
+  .ts-glass-btn-secondary {
     background-color: var(--ts-glass-accent-fallback);
     background-image: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 
-  .ts-glass-float-btn {
+  .ts-glass-float-btn,
+  .ts-glass-badge {
     background-color: var(--ts-glass-popover-fallback);
     background-image: none;
     -webkit-backdrop-filter: none;
@@ -602,6 +939,7 @@ html.dark .ts-showcase-card-rim {
 
   .ts-glass-drawer {
     background-color: var(--ts-glass-drawer-fallback);
+    background-image: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -610,5 +948,11 @@ html.dark .ts-showcase-card-rim {
     background-color: var(--ts-glass-backdrop-fallback);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-glass-card {
+    translate: 0 0 0 !important;
   }
 }

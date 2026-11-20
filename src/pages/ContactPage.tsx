@@ -8,6 +8,7 @@ import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { resolveConsultationService } from '../data/consultationServices.ts';
 import { ContactConsultationForm } from '../components/ContactConsultationForm.tsx';
+import { GlassCard } from '../components/glass/GlassPrimitives.tsx';
 import { Phone, Mail, Globe, MessageSquare, Clock } from 'lucide-react';
 import {
   RevealSection,
@@ -34,7 +35,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
   )}`;
 
   return (
-    <div className="space-y-16 sm:space-y-24 pt-8 sm:pt-14 pb-16">
+    <div className="ts-glass-canvas-primary min-h-screen space-y-16 sm:space-y-24 pt-8 sm:pt-14 pb-20">
       {/* Header */}
       <RevealSection className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <span
@@ -61,13 +62,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
         <ScrollSectionContainer className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column: Direct Details */}
           <ScrollCascadeBlock className="lg:col-span-5 space-y-6">
-            <div
-              className={`rounded-3xl p-7 sm:p-8 border space-y-6 ${
-                isDark
-                  ? 'bg-[#171717] border-[#303030]'
-                  : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
-              }`}
-            >
+            <GlassCard layerName="contact-channels-card" className="rounded-3xl p-7 sm:p-8 space-y-6">
               <h2 className={`text-xl font-bold ${isDark ? 'text-[#F5F5F5]' : 'text-slate-900'}`}>
                 Direct Channels
               </h2>
@@ -76,10 +71,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 {/* Phone Numbers */}
                 <div className="flex items-start gap-3.5">
                   <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isDark
-                        ? 'bg-[#1D1D1D] border border-[#303030] text-white'
-                        : 'bg-sky-500/10 text-sky-500'
+                    className={`ts-glass-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isDark ? 'text-white' : 'text-[#0284C7]'
                     }`}
                   >
                     <Phone className="w-4 h-4" />
@@ -112,10 +105,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 {/* Email Address */}
                 <div className="flex items-start gap-3.5">
                   <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isDark
-                        ? 'bg-[#1D1D1D] border border-[#303030] text-white'
-                        : 'bg-sky-500/10 text-sky-500'
+                    className={`ts-glass-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isDark ? 'text-white' : 'text-[#0284C7]'
                     }`}
                   >
                     <Mail className="w-4 h-4" />
@@ -138,10 +129,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 {/* WhatsApp */}
                 <div className="flex items-start gap-3.5">
                   <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isDark
-                        ? 'bg-[#1D1D1D] border border-[#303030] text-white'
-                        : 'bg-emerald-500/10 text-emerald-500'
+                    className={`ts-glass-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isDark ? 'text-white' : 'text-emerald-600'
                     }`}
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -166,10 +155,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                 {/* Location */}
                 <div className="flex items-start gap-3.5">
                   <div
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isDark
-                        ? 'bg-[#1D1D1D] border border-[#303030] text-white'
-                        : 'bg-blue-500/10 text-blue-500'
+                    className={`ts-glass-icon w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                      isDark ? 'text-white' : 'text-[#0284C7]'
                     }`}
                   >
                     <Globe className="w-4 h-4" />
@@ -189,7 +176,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
               </div>
 
               {/* Consultation Guarantee */}
-              <div className={`pt-4 border-t space-y-2 ${isDark ? 'border-[#303030]' : 'border-slate-200'}`}>
+              <div className={`pt-4 border-t space-y-2 ${isDark ? 'border-white/10' : 'border-[#101B35]/10'}`}>
                 <div className={`flex items-center gap-2 text-xs font-semibold ${isDark ? 'text-white' : 'text-[#0284C7]'}`}>
                   <Clock className="w-4 h-4" />
                   <span>24-Hour Business Response Guarantee</span>
@@ -198,7 +185,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({
                   Every submitted inquiry is routed directly to a senior systems consultant, not an automated sales chatbot.
                 </p>
               </div>
-            </div>
+            </GlassCard>
           </ScrollCascadeBlock>
 
           {/* Right Column: Interactive Consultation Form */}

@@ -47,13 +47,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
       }`}
       aria-label="TechSphere Hero"
     >
-      {/* Crossfading Light / Dark Atmospheric Gradient Layers (prevents 0ms background-image snap) */}
+      {/* Crossfading Light / Dark Atmospheric Gradient Layers (high-contrast backdrop so frosted glass blur & refraction are unmistakably visible) */}
       <div
         className={`absolute inset-0 pointer-events-none transition-opacity ${
           isDark ? 'opacity-0' : 'opacity-100'
         }`}
         style={{
-          backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #f5fafe 52%, #edf7fd 100%)',
+          backgroundImage:
+            'radial-gradient(56% 52% at 14% 16%, rgba(56, 189, 248, 0.28) 0%, rgba(186, 230, 253, 0.12) 48%, transparent 78%), radial-gradient(52% 48% at 84% 24%, rgba(14, 165, 233, 0.24) 0%, rgba(125, 211, 252, 0.10) 48%, transparent 76%), radial-gradient(48% 46% at 32% 86%, rgba(14, 165, 233, 0.22) 0%, rgba(186, 230, 253, 0.12) 52%, transparent 80%), linear-gradient(148deg, #e7f3fc 0%, #f5fafe 48%, #dceefa 100%)',
         }}
         aria-hidden="true"
       />
@@ -62,7 +63,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
           isDark ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
-          backgroundImage: 'linear-gradient(135deg, #090909 0%, #111111 52%, #090909 100%)',
+          backgroundImage:
+            'radial-gradient(54% 48% at 18% 18%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 48%, transparent 76%), radial-gradient(48% 44% at 84% 22%, rgba(255, 255, 255, 0.05) 0%, transparent 74%), linear-gradient(150deg, #080808 0%, #101010 52%, #080808 100%)',
         }}
         aria-hidden="true"
       />
@@ -82,23 +84,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
       <div
         className={`absolute inset-0 pointer-events-none transition-opacity ${
           prefersReducedMotion ? '' : 'animate-grid-drift'
-        } ${isDark ? 'opacity-0' : 'opacity-60'}`}
+        } ${isDark ? 'opacity-0' : 'opacity-65'}`}
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(16, 27, 53, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(16, 27, 53, 0.03) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(2, 132, 199, 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(2, 132, 199, 0.06) 1px, transparent 1px)',
           backgroundSize: '64px 64px',
         }}
         aria-hidden="true"
       />
 
-      {/* Ambient Radial Glow (GPU opacity crossfade) */}
+      {/* Ambient Radial Light Pools (desktop & mobile) */}
       <div
         className={`absolute -top-24 right-0 w-[680px] h-[680px] rounded-full pointer-events-none transition-opacity ${
           isDark ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
           background:
-            'radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 45%, transparent 70%)',
+            'radial-gradient(circle, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 45%, transparent 70%)',
         }}
         aria-hidden="true"
       />
@@ -108,7 +110,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
         }`}
         style={{
           background:
-            'radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.04) 45%, transparent 70%)',
+            'radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(125, 211, 252, 0.08) 45%, transparent 70%)',
         }}
         aria-hidden="true"
       />
@@ -169,10 +171,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
               <MagneticButton
                 type="button"
                 onClick={() => onNavigate('services')}
-                className={`group inline-flex items-center justify-center gap-2.5 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`ts-glass-btn-primary group inline-flex items-center justify-center gap-2.5 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
-                    ? 'bg-white hover:bg-[#D4D4D4] text-[#090909] shadow-[0_14px_30px_rgba(0,0,0,0.45)] focus-visible:ring-white'
-                    : 'bg-[#101B35] hover:bg-[#192A52] text-white shadow-[0_14px_30px_rgba(16,27,53,0.18)] focus-visible:ring-[#38BDF8]'
+                    ? 'text-[#090909] focus-visible:ring-white'
+                    : 'text-white focus-visible:ring-[#38BDF8]'
                 }`}
               >
                 <span>Explore Our Services</span>
@@ -189,7 +191,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                 data-glass-layer="hero-cta"
                 whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`ts-glass-accent ts-glass-accent-interactive inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`ts-glass-btn-secondary inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
                     ? 'text-[#F5F5F5] focus-visible:ring-white'
                     : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
@@ -211,7 +213,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                 animate={prefersReducedMotion ? undefined : { y: [0, -6, 0] }}
                 transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
-                className="ts-glass-accent ts-glass-accent-interactive relative rounded-2xl p-5 sm:p-6 transition-colors overflow-hidden"
+                className="ts-glass-card ts-glass-card-interactive relative rounded-2xl p-5 sm:p-6 overflow-hidden"
               >
                 {/* Subtle animated top border highlight */}
                 <motion.span
@@ -222,10 +224,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                       : { x: ['-100%', '200%'] }
                   }
                   transition={{ repeat: Infinity, duration: 5, ease: 'linear' }}
-                  className={`absolute top-0 left-0 w-1/2 h-px pointer-events-none ${
+                  className={`absolute top-0 left-0 w-1/2 h-[1.5px] pointer-events-none ${
                     isDark
-                      ? 'bg-gradient-to-r from-transparent via-white/50 to-transparent'
-                      : 'bg-gradient-to-r from-transparent via-[#38BDF8]/70 to-transparent'
+                      ? 'bg-gradient-to-r from-transparent via-white/60 to-transparent'
+                      : 'bg-gradient-to-r from-transparent via-white to-[#38BDF8]/70'
                   }`}
                 />
 
@@ -234,15 +236,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate, theme = 'l
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5">
                         <span
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                            isDark
-                              ? 'bg-[#252525] border border-[#303030]'
-                              : 'bg-[#101B35]'
-                          }`}
+                          className="ts-glass-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                           aria-hidden="true"
                         >
                           <Layers
-                            className={`w-3.5 h-3.5 ${isDark ? 'text-white' : 'text-[#38BDF8]'}`}
+                            className={`w-4 h-4 ${isDark ? 'text-white' : 'text-[#0284C7]'}`}
                           />
                         </span>
                         <h2

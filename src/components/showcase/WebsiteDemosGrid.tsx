@@ -117,6 +117,8 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                 <motion.article
                   key={demo.id}
                   data-testid={`website-demo-card-${demo.id}`}
+                  data-sound-hover="true"
+                  data-glass-layer="website-demo-card"
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 14, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
@@ -126,11 +128,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                   }}
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`ts-showcase-card-rim group relative h-full rounded-2xl border overflow-hidden transition-colors duration-300 flex flex-col justify-between ${
-                    isDark
-                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
-                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 hover:shadow-[0_22px_48px_rgba(16,27,53,0.09)]'
-                  }`}
+                  className="ts-glass-card ts-glass-card-interactive group relative h-full rounded-2xl overflow-hidden flex flex-col justify-between"
                 >
                   <CardGlareOverlay theme={theme} subtle />
 
@@ -142,8 +140,8 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                     aria-label={`Open ${demo.title} live demonstration in a new tab`}
                     className={`relative z-10 block aspect-[16/10] overflow-hidden border-b focus:outline-none focus-visible:ring-2 ${
                       isDark
-                        ? 'border-[#303030] focus-visible:ring-white'
-                        : 'border-[#101B35]/[0.06] focus-visible:ring-[#38BDF8]'
+                        ? 'border-white/10 focus-visible:ring-white'
+                        : 'border-white/70 focus-visible:ring-[#38BDF8]'
                     }`}
                   >
                     <div className="w-full h-full transition-transform duration-500 ease-out group-hover:scale-[1.04]">
@@ -155,6 +153,14 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                         theme={theme}
                       />
                     </div>
+                    <span
+                      data-glass-layer="showcase-category-label"
+                      className={`ts-glass-badge absolute top-2.5 left-2.5 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide ${
+                        isDark ? 'text-white' : 'text-[#101B35]'
+                      }`}
+                    >
+                      {demo.categoryLabel}
+                    </span>
                     <span
                       data-glass-layer="showcase-badge"
                       className={`ts-glass-float-btn absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold transition-opacity duration-200 opacity-0 group-hover:opacity-100 ${
@@ -180,8 +186,8 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                         <span
                           className={`text-[10px] font-medium px-2 py-0.5 rounded-md border ${
                             isDark
-                              ? 'bg-[#111111] border-[#303030] text-[#A3A3A3]'
-                              : 'bg-[#F5FAFE] border-[#101B35]/10 text-slate-600'
+                              ? 'bg-white/[0.06] border-white/12 text-[#D4D4D4]'
+                              : 'bg-white/75 border-white/90 text-slate-600 shadow-2xs'
                           }`}
                         >
                           Live Website Demonstration
@@ -225,7 +231,7 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
 
                     <div
                       className={`pt-4 border-t ${
-                        isDark ? 'border-[#303030]' : 'border-[#101B35]/[0.06]'
+                        isDark ? 'border-white/10' : 'border-[#101B35]/[0.08]'
                       }`}
                     >
                       <motion.a
@@ -234,10 +240,10 @@ export const WebsiteDemosGrid: React.FC<WebsiteDemosGridProps> = ({
                         rel="noopener noreferrer"
                         whileHover={prefersReducedMotion ? undefined : { scale: 1.015 }}
                         whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                        className={`group/btn w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                        className={`ts-glass-btn-primary group/btn w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
                           isDark
-                            ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] focus-visible:ring-white'
-                            : 'bg-[#101B35] text-white hover:bg-[#0284C7] focus-visible:ring-[#38BDF8]'
+                            ? 'text-[#090909] focus-visible:ring-white'
+                            : 'text-white focus-visible:ring-[#38BDF8]'
                         }`}
                       >
                         <span>Explore Live Demo</span>

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm, ValidationError } from '@formspree/react';
 import { motion, useReducedMotion, useScroll } from 'motion/react';
 import {
@@ -25,9 +25,13 @@ import {
 import {
   ContactValidationErrors,
   ContactValidationField,
+  resolveFormspreeFormId,
+  sanitizeContactPayload,
   validateContactField,
   validateContactForm,
 } from '../../utils/formValidation.ts';
+import { hasFormSubmissionErrors } from '../../utils/soundManager.ts';
+import { useFormSoundFeedback } from '../../hooks/useFormSoundFeedback.ts';
 import {
   ScrollCascadeBlock,
   ScrollCascadeGrid,
@@ -45,7 +49,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
   onNavigate,
   theme = 'light',
 }) => {
-  const [state, handleSubmit, reset] = useForm('xaqrejgl');
+  const [state, handleSubmit, reset] = useForm(resolveFormspreeFormId());
+  const submitLockRef = useRef(false);
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
@@ -87,7 +92,31 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
     });
   };
 
+  const {
+    notifyValidationError,
+    notifySubmitAttempt,
+    resetFormSoundState,
+  } = useFormSoundFeedback({
+    submitting: state.submitting,
+    succeeded: state.succeeded,
+    errors: state.errors,
+  });
+
+  useEffect(() => {
+    if (!state.submitting) {
+      submitLockRef.current = false;
+    }
+  }, [state.submitting]);
+
+  const hasSubmissionErrors = hasFormSubmissionErrors(state.errors);
+  const isSubmittedSuccessfully = state.succeeded && !hasSubmissionErrors;
+
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (state.submitting || submitLockRef.current) {
+      return;
+    }
+
     const validation = validateContactForm({
       fullName: name,
       email,
@@ -96,8 +125,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
     });
 
     if (!validation.valid) {
-      e.preventDefault();
       setFieldErrors(validation.errors);
+      notifyValidationError();
       const idByField: Record<ContactValidationField, string> = {
         fullName: 'home-name',
         email: 'home-email',
@@ -113,12 +142,30 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
       return;
     }
 
+    const sanitizedPayload = sanitizeContactPayload({
+      fullName: name,
+      companyName: company,
+      email,
+      phone,
+      interestedService: service,
+      message: requirements,
+    });
+
+    submitLockRef.current = true;
+    setName(sanitizedPayload.fullName);
+    setCompany(sanitizedPayload.companyName);
+    setEmail(sanitizedPayload.email);
+    setPhone(sanitizedPayload.phone);
+    setRequirements(sanitizedPayload.message);
     setFieldErrors({});
-    return handleSubmit(e);
+    notifySubmitAttempt();
+    return handleSubmit(sanitizedPayload);
   };
 
   const handleReset = () => {
+    submitLockRef.current = false;
     reset();
+    resetFormSoundState();
     setName('');
     setCompany('');
     setEmail('');
@@ -134,31 +181,27 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
 
   const getInputClass = (hasError?: boolean) =>
     isDark
-      ? `w-full min-h-[44px] px-4 py-3 rounded-xl bg-[#1D1D1D] border text-sm text-[#F5F5F5] placeholder-[#737373] outline-none transition-colors duration-200 ${
-          hasError
-            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400'
-            : 'border-[#303030] focus:border-white focus:ring-1 focus:ring-white'
+      ? `ts-glass-input w-full min-h-[44px] px-4 py-3 rounded-xl text-sm text-[#F5F5F5] placeholder-[#737373] ${
+          hasError ? 'border-red-400' : ''
         }`
-      : `w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.06] border text-sm text-white placeholder-slate-400 outline-none transition-colors duration-200 ${
+      : `w-full min-h-[44px] px-4 py-3 rounded-xl bg-white/[0.10] border text-sm text-white placeholder-slate-300/80 outline-none shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] transition-all duration-200 ${
           hasError
-            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400'
-            : 'border-white/15 focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8]'
+            ? 'border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/40'
+            : 'border-white/20 focus:bg-white/[0.15] focus:border-[#7DD3FC] focus:ring-2 focus:ring-[#38BDF8]/35'
         }`;
 
   return (
     <section
       ref={sectionRef}
-      className={`py-16 sm:py-24 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#090909]' : 'bg-[#F5FAFE]'
-      }`}
+      className="ts-glass-canvas-tinted py-16 sm:py-24 overflow-x-clip transition-colors duration-300"
       aria-labelledby="final-cta-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollCascadeBlock
           className={`rounded-3xl p-6 sm:p-10 lg:p-14 border relative overflow-hidden ${
             isDark
-              ? 'bg-[#111111] text-[#F5F5F5] border-[#303030] shadow-[0_30px_70px_rgba(0,0,0,0.65)]'
-              : 'bg-[#101B35] text-white border-sky-400/20 shadow-[0_30px_70px_rgba(16,27,53,0.22)]'
+              ? 'ts-glass-panel text-[#F5F5F5]'
+              : 'bg-gradient-to-br from-[#101B35] via-[#132346] to-[#0C162E] text-white border-sky-300/25 shadow-[0_32px_74px_rgba(15,55,96,0.28),inset_0_1.5px_0_rgba(255,255,255,0.20)]'
           }`}
         >
           {/* Subtle Parallax Corner Glow */}
@@ -241,8 +284,8 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
               <div
                 className={`rounded-2xl border p-6 space-y-4 ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030]'
-                    : 'bg-[#0B1429]/90 border-sky-400/20'
+                    ? 'bg-white/[0.04] border-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)]'
+                    : 'bg-white/[0.07] border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
                 }`}
               >
                 <div
@@ -308,11 +351,11 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
               <div
                 className={`rounded-2xl border p-6 sm:p-8 ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030]'
-                    : 'bg-[#0B1429]/90 border-white/10'
+                    ? 'bg-white/[0.04] border-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]'
+                    : 'bg-white/[0.08] border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_20px_46px_rgba(0,0,0,0.24)]'
                 }`}
               >
-                {state.succeeded ? (
+                {isSubmittedSuccessfully ? (
                   <motion.div
                     initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -346,7 +389,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
                   </motion.div>
                 ) : (
                   <form onSubmit={onFormSubmit} noValidate className="space-y-4">
-                    {state.errors && (
+                    {hasSubmissionErrors && (
                       <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
                         <span>Please verify your required details and try again.</span>
@@ -560,6 +603,7 @@ export const ContactCTASection: React.FC<ContactCTASectionProps> = ({
 
                     <motion.button
                       type="submit"
+                      data-sound="none"
                       disabled={state.submitting}
                       whileHover={prefersReducedMotion ? undefined : { scale: 1.01 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}

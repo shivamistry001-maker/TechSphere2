@@ -18,6 +18,12 @@ export const COMPANY_INFO = {
   ],
   email: 'techsphereconsultancy@gmail.com',
   whatsappNumber: '918320806363', // Structured so country code can easily be configured
+  /** Official social profile URLs — populate only with verified TechSphere handles. */
+  socialLinks: [] as ReadonlyArray<{
+    label: string;
+    platform: 'linkedin' | 'twitter' | 'github' | 'instagram';
+    href: string;
+  }>,
   about: {
     headline: 'Technology That Moves Business Forward.',
     content:

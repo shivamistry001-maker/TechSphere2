@@ -37,7 +37,14 @@ import {
   readStoredTheme,
   scheduleThemeTransitionCleanup,
 } from './utils/theme.ts';
-import { playThemeToggleClickSound } from './utils/themeSound.ts';
+import {
+  installUiSoundListeners,
+  playSound,
+} from './utils/soundManager.ts';
+import { installGlassRefractionListener } from './utils/glassRefraction.ts';
+import { installGlassScrollDepthListener } from './utils/glassScrollDepth.ts';
+import { RouteLoadingFallback } from './components/skeletons/RouteLoadingFallback.tsx';
+import { isRouteFallbackPreviewEnabled } from './utils/routeSkeleton.ts';
 
 // Eager HomePage for instant initial paint (LCP)
 import { HomePage } from './pages/HomePage.tsx';
@@ -86,29 +93,6 @@ const NotFoundPage = lazy(() =>
   import('./pages/NotFoundPage.tsx').then((m) => ({ default: m.NotFoundPage }))
 );
 
-function RouteLoadingFallback({ isDark }: { isDark: boolean }) {
-  return (
-    <div
-      role="status"
-      aria-busy="true"
-      aria-label="Loading page"
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-6"
-    >
-      <div
-        className={`h-8 w-64 mx-auto rounded-xl ts-skeleton-block ${
-          isDark ? 'bg-[#1D1D1D] ts-skeleton-dark' : 'bg-slate-200/80 ts-skeleton-light'
-        }`}
-      />
-      <div
-        className={`h-4 w-96 max-w-full mx-auto rounded-lg ts-skeleton-block ${
-          isDark ? 'bg-[#171717] ts-skeleton-dark' : 'bg-slate-100 ts-skeleton-light'
-        }`}
-      />
-      <span className="sr-only">Loading page content...</span>
-    </div>
-  );
-}
-
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>(() =>
     getPageFromPathname(window.location.pathname)
@@ -123,6 +107,10 @@ export default function App() {
   useEffect(() => {
     applyThemeToDocument(theme);
     persistTheme(theme);
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', theme === 'dark' ? '#090909' : '#101B35');
+    }
   }, [theme]);
 
   // Sync browser back/forward navigation with URL pathname
@@ -165,6 +153,24 @@ export default function App() {
     if (canonicalLink) {
       canonicalLink.setAttribute('href', canonicalUrl);
     }
+
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', seo.title);
+    }
+
+    const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDesc) {
+      twitterDesc.setAttribute('content', seo.description);
+    }
+
+    const robotsMeta = document.querySelector('meta[name="robots"]');
+    if (robotsMeta) {
+      robotsMeta.setAttribute(
+        'content',
+        currentPage === 'not-found' ? 'noindex, nofollow' : 'index, follow'
+      );
+    }
   }, [currentPage]);
 
   const [themeTransition, setThemeTransition] = useState<ThemeTransitionRunState>(() => ({
@@ -182,6 +188,15 @@ export default function App() {
   useEffect(() => {
     themeRef.current = theme;
   }, [theme]);
+
+  // Install centralized delegated UI click & opt-in hover sound listeners
+  useEffect(() => installUiSoundListeners(), []);
+
+  // Install delegated pointer-move refraction-sheen listener for all .ts-glass-card elements
+  useEffect(() => installGlassRefractionListener(), []);
+
+  // Install batched scroll depth-of-field vertical offset listener for all .ts-glass-card elements
+  useEffect(() => installGlassScrollDepthListener(), []);
 
   useEffect(() => {
     return () => {
@@ -210,7 +225,7 @@ export default function App() {
     // frame as React's state update (eliminates post-paint useEffect desync & rAF).
     applyThemeToDocument(nextTheme, undefined, { animate });
     persistTheme(nextTheme);
-    playThemeToggleClickSound(nextTheme);
+    playSound('theme-switch', { theme: nextTheme });
     setTheme(nextTheme);
 
     if (animate) {
@@ -247,6 +262,9 @@ export default function App() {
         window.history.pushState({ page }, '', targetPath);
       }
       setCurrentPage((prevPage) => {
+        if (prevPage !== page) {
+          playSound('navigation-transition');
+        }
         window.scrollTo({
           top: 0,
           behavior: prefersReducedMotion || prevPage !== page ? 'auto' : 'smooth',
@@ -314,14 +332,17 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: EASE_PREMIUM }}
         >
-          <Suspense fallback={<RouteLoadingFallback isDark={isDark} />}>
-            {currentPage === 'home' && (
-              <HomePage
-                onNavigate={handleNavigate}
-                theme={theme}
-                onSelectServiceForConsultation={handleServiceConsultation}
-              />
-            )}
+          {isRouteFallbackPreviewEnabled() ? (
+            <RouteLoadingFallback isDark={isDark} page={currentPage} />
+          ) : (
+            <Suspense fallback={<RouteLoadingFallback isDark={isDark} page={currentPage} />}>
+              {currentPage === 'home' && (
+                <HomePage
+                  onNavigate={handleNavigate}
+                  theme={theme}
+                  onSelectServiceForConsultation={handleServiceConsultation}
+                />
+              )}
 
             {currentPage === 'about' && (
               <AboutPage onNavigate={handleNavigate} theme={theme} />
@@ -416,14 +437,15 @@ export default function App() {
               />
             )}
 
-            {currentPage === 'not-found' && (
-              <NotFoundPage
-                onNavigate={handleNavigate}
-                theme={theme}
-                requestedPath={window.location.pathname}
-              />
-            )}
-          </Suspense>
+              {currentPage === 'not-found' && (
+                <NotFoundPage
+                  onNavigate={handleNavigate}
+                  theme={theme}
+                  requestedPath={window.location.pathname}
+                />
+              )}
+            </Suspense>
+          )}
         </motion.div>
       </main>
 

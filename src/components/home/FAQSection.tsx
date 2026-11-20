@@ -11,6 +11,7 @@ import {
   ScrollCascadeBlock,
   ScrollSectionContainer,
 } from '../motion/MotionPrimitives.tsx';
+import { playSound } from '../../utils/soundManager.ts';
 
 interface FAQSectionProps {
   onNavigate: (page: PageId) => void;
@@ -98,9 +99,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
 
   return (
     <section
-      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#090909]' : 'bg-white'
-      }`}
+      className="ts-glass-canvas-primary py-20 sm:py-28 overflow-x-clip transition-colors duration-300"
       aria-labelledby="faq-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -147,14 +146,14 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                           : HOME_FAQS.find((f) => f.category === category);
                       if (first) setOpenId(first.id);
                     }}
-                    className={`inline-flex items-center text-left min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
+                    className={`inline-flex items-center text-left min-h-[44px] min-w-[44px] px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
                       isActive
                         ? isDark
-                          ? 'bg-[#171717] text-white font-semibold border border-[#303030]'
-                          : 'bg-[#F5FAFE] text-[#0284C7] font-semibold'
+                          ? 'ts-glass-accent text-white font-semibold'
+                          : 'ts-glass-accent text-[#0284C7] font-semibold'
                         : isDark
-                        ? 'text-[#A3A3A3] hover:text-white hover:bg-[#171717]/60'
-                        : 'text-slate-500 hover:text-[#172033]'
+                        ? 'text-[#A3A3A3] hover:text-white hover:bg-white/[0.06]'
+                        : 'text-slate-600 hover:text-[#172033] hover:bg-white/55'
                     }`}
                   >
                     {category}
@@ -164,11 +163,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
             </div>
 
             <div
-              className={`rounded-2xl p-5 border space-y-3 ${
-                isDark
-                  ? 'bg-[#171717] border-[#303030]'
-                  : 'bg-[#F5FAFE] border-[#101B35]/[0.07]'
-              }`}
+              data-glass-layer="faq-sidebar-card"
+              className="ts-glass-card rounded-2xl p-5 space-y-3"
             >
               <p
                 className={`text-xs font-medium ${
@@ -182,10 +178,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => onNavigate('contact')}
-                className={`group inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                  isDark
-                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
-                    : 'bg-[#101B35] text-white hover:bg-[#192A52]'
+                className={`ts-glass-btn-primary group inline-flex items-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-xs font-semibold cursor-pointer ${
+                  isDark ? 'text-[#090909]' : 'text-white'
                 }`}
               >
                 <span>Contact TechSphere</span>
@@ -196,10 +190,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
 
           {/* Right Accordion List */}
           <ScrollCascadeBlock
-            className={`lg:col-span-8 divide-y border-t border-b ${
-              isDark
-                ? 'divide-[#303030] border-[#303030]'
-                : 'divide-[#101B35]/10 border-[#101B35]/10'
+            className={`ts-glass-panel lg:col-span-8 rounded-3xl px-5 sm:px-7 divide-y ${
+              isDark ? 'divide-white/10' : 'divide-[#101B35]/10'
             }`}
           >
             {filteredFaqs.map((faq) => {
@@ -208,7 +200,11 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                 <div key={faq.id}>
                   <button
                     type="button"
-                    onClick={() => setOpenId(isOpen ? '' : faq.id)}
+                    data-sound="none"
+                    onClick={() => {
+                      playSound(isOpen ? 'ui-close' : 'ui-open');
+                      setOpenId(isOpen ? '' : faq.id);
+                    }}
                     className={`w-full py-5 sm:py-6 flex items-center justify-between gap-4 text-left cursor-pointer group focus:outline-none focus-visible:ring-2 rounded-lg ${
                       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
                     }`}
@@ -236,8 +232,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onNavigate, theme = 'lig
                             ? 'bg-white text-[#090909]'
                             : 'bg-[#101B35] text-[#38BDF8]'
                           : isDark
-                          ? 'bg-[#171717] border border-[#303030] text-[#A3A3A3] group-hover:text-white'
-                          : 'bg-[#F5FAFE] text-[#172033] group-hover:bg-sky-50'
+                          ? 'ts-glass-control text-[#A3A3A3] group-hover:text-white'
+                          : 'ts-glass-control text-[#172033]'
                       }`}
                     >
                       {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

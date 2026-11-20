@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useForm, ValidationError } from '@formspree/react';
 import {
@@ -23,9 +23,14 @@ import {
 import {
   ContactValidationErrors,
   ContactValidationField,
+  resolveFormspreeFormId,
+  sanitizeContactPayload,
   validateContactField,
   validateContactForm,
 } from '../utils/formValidation.ts';
+import { hasFormSubmissionErrors } from '../utils/soundManager.ts';
+import { useFormSoundFeedback } from '../hooks/useFormSoundFeedback.ts';
+import { GlassPanel, getGlassInputClass } from './glass/GlassPrimitives.tsx';
 
 interface ContactConsultationFormProps {
   initialService?: string;
@@ -38,7 +43,8 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
   initialMessage = '',
   theme = 'light',
 }) => {
-  const [state, handleSubmit, reset] = useForm('xaqrejgl');
+  const [state, handleSubmit, reset] = useForm(resolveFormspreeFormId());
+  const submitLockRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
 
   const [formData, setFormData] = useState<ConsultationFormData>({
@@ -62,6 +68,16 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       message: initialMessage,
     }));
   }, [initialService, initialMessage]);
+
+  const {
+    notifyValidationError,
+    notifySubmitAttempt,
+    resetFormSoundState,
+  } = useFormSoundFeedback({
+    submitting: state.submitting,
+    succeeded: state.succeeded,
+    errors: state.errors,
+  });
 
   const isDark = theme === 'dark';
 
@@ -90,7 +106,21 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
     }
   };
 
+  useEffect(() => {
+    if (!state.submitting) {
+      submitLockRef.current = false;
+    }
+  }, [state.submitting]);
+
+  const hasSubmissionErrors = hasFormSubmissionErrors(state.errors);
+  const isSubmittedSuccessfully = state.succeeded && !hasSubmissionErrors;
+
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (state.submitting || submitLockRef.current) {
+      return;
+    }
+
     const validation = validateContactForm({
       fullName: formData.fullName,
       email: formData.email,
@@ -99,8 +129,8 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
     });
 
     if (!validation.valid) {
-      e.preventDefault();
       setFieldErrors(validation.errors);
+      notifyValidationError();
       const fieldOrder: ContactValidationField[] = ['fullName', 'email', 'phone', 'message'];
       const firstInvalid = fieldOrder.find((field) => Boolean(validation.errors[field]));
       if (firstInvalid) {
@@ -109,12 +139,29 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       return;
     }
 
+    const sanitizedPayload = sanitizeContactPayload({
+      fullName: formData.fullName,
+      companyName: formData.companyName,
+      email: formData.email,
+      phone: formData.phone,
+      industry: formData.industry,
+      companySize: formData.companySize,
+      interestedService: formData.interestedService,
+      currentERP: formData.currentERP,
+      message: formData.message,
+    });
+
+    submitLockRef.current = true;
+    setFormData(sanitizedPayload);
     setFieldErrors({});
-    return handleSubmit(e);
+    notifySubmitAttempt();
+    return handleSubmit(sanitizedPayload);
   };
 
   const handleReset = () => {
+    submitLockRef.current = false;
     reset();
+    resetFormSoundState();
     setFieldErrors({});
     setFormData({
       fullName: '',
@@ -130,30 +177,12 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
   };
 
   const getInputClass = (hasError?: boolean) =>
-    isDark
-      ? `w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] text-[#F5F5F5] placeholder-[#737373] ${
-          hasError
-            ? 'border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400/50'
-            : 'border-[#303030] focus:border-white focus:ring-1 focus:ring-white/40'
-        }`
-      : `w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white text-slate-900 placeholder-slate-400 ${
-          hasError
-            ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500/30'
-            : 'border-slate-300 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30'
-        }`;
+    getGlassInputClass(theme, Boolean(hasError), 'min-h-[44px] py-2.5');
 
-  const selectClass = isDark
-    ? 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-[#111111] border-[#303030] text-[#F5F5F5] focus:border-white focus:ring-1 focus:ring-white/40'
-    : 'w-full min-h-[44px] px-4 py-2.5 rounded-xl text-sm border transition-colors duration-200 outline-none bg-white border-slate-300 text-slate-900 focus:border-sky-500';
+  const selectClass = getGlassInputClass(theme, false, 'min-h-[44px] py-2.5');
 
   return (
-    <div
-      className={`rounded-3xl border p-6 sm:p-10 transition-colors ${
-        isDark
-          ? 'bg-[#171717] border-[#303030] shadow-2xl shadow-black/60'
-          : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
-      }`}
-    >
+    <GlassPanel layerName="contact-form-panel" className="rounded-3xl p-6 sm:p-10">
       <div className="mb-8">
         <span
           className={`text-xs font-semibold uppercase tracking-wider ${
@@ -171,7 +200,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
       </div>
 
       <AnimatePresence mode="wait">
-        {state.succeeded ? (
+        {isSubmittedSuccessfully ? (
           <motion.div
             key="success-view"
             initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
@@ -205,7 +234,9 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
 
             <div
               className={`p-4 rounded-xl text-xs max-w-md mx-auto text-left space-y-1.5 border ${
-                isDark ? 'bg-[#111111] border-[#303030] text-[#A3A3A3]' : 'bg-slate-50 border-slate-200 text-slate-600'
+                isDark
+                  ? 'bg-white/[0.05] border-white/12 text-[#A3A3A3]'
+                  : 'bg-white/75 border-white/90 text-slate-700 shadow-2xs'
               }`}
             >
               <div>
@@ -225,10 +256,8 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               <button
                 type="button"
                 onClick={handleReset}
-                className={`inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
-                  isDark
-                    ? 'border-[#303030] hover:bg-[#252525] text-[#D4D4D4]'
-                    : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                className={`ts-glass-control inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                  isDark ? 'text-[#D4D4D4]' : 'text-slate-700'
                 }`}
               >
                 Submit Another Request
@@ -252,7 +281,7 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
         ) : (
           <form onSubmit={onFormSubmit} noValidate className="space-y-5">
             {/* Formspree Error Banner */}
-            {state.errors && (
+            {hasSubmissionErrors && (
               <div
                 className={`p-4 rounded-xl border text-xs flex items-center gap-2 ${
                   isDark ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-red-50 border-red-200 text-red-700'
@@ -494,13 +523,12 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
               <motion.button
                 type="submit"
+                data-sound="none"
                 disabled={state.submitting}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                className={`w-full sm:w-auto min-h-[44px] px-8 py-3.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
-                  isDark
-                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] shadow-lg shadow-black/40'
-                    : 'text-white bg-gradient-to-r from-sky-500 via-sky-600 to-blue-600 hover:from-sky-400 hover:via-sky-500 hover:to-blue-500 shadow-lg shadow-sky-600/30'
+                className={`ts-glass-btn-primary w-full sm:w-auto min-h-[44px] px-8 py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer ${
+                  isDark ? 'text-[#090909]' : 'text-white'
                 }`}
               >
                 {state.submitting ? (
@@ -517,13 +545,13 @@ export const ContactConsultationForm: React.FC<ContactConsultationFormProps> = (
               </motion.button>
 
               <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-[#A3A3A3]' : 'text-slate-600'}`}>
-                <ShieldCheck className={`w-4 h-4 ${isDark ? 'text-white' : 'text-sky-500'}`} />
+                <ShieldCheck className={`w-4 h-4 ${isDark ? 'text-white' : 'text-[#0284C7]'}`} />
                 <span>NDA &amp; Strict Confidentiality Protected</span>
               </div>
             </div>
           </form>
         )}
       </AnimatePresence>
-    </div>
+    </GlassPanel>
   );
 };

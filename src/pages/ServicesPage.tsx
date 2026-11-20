@@ -8,7 +8,20 @@ import { motion, useReducedMotion } from 'motion/react';
 import { PageId, ThemeMode } from '../types.ts';
 import { SERVICES_DATA } from '../data/servicesData.ts';
 import { resolveConsultationService } from '../data/consultationServices.ts';
-import { CheckCircle2, ArrowRight, Database, Code, Globe, Zap, Cloud, Network } from 'lucide-react';
+import {
+  CheckCircle2,
+  ArrowRight,
+  Compass,
+  Settings2,
+  Wrench,
+  Database,
+  Network,
+  Zap,
+  Layout,
+  Code2,
+  Layers,
+  Cpu,
+} from 'lucide-react';
 import {
   CardGlareOverlay,
   RevealSection,
@@ -44,18 +57,23 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
     }
   );
 
-  const iconMap: { [key: string]: React.ElementType } = {
-    'erp-consulting': Database,
-    'custom-software': Code,
-    'web-development': Globe,
+  const iconMap: Record<string, React.ElementType> = {
+    'erp-consultancy': Compass,
+    'erp-implementation': Settings2,
+    'erp-customization': Wrench,
+    'erp-migration': Database,
+    'erp-integration': Network,
     'business-automation': Zap,
-    'cloud-infrastructure': Cloud,
-    'system-integration': Network,
+    'website-web-applications': Layout,
+    'custom-it-solutions': Code2,
+    'digital-transformation': Layers,
+    'it-consulting': Cpu,
   };
 
   const handleConsultService = (srvTitle: string) => {
     if (onSelectServiceForConsultation) {
       onSelectServiceForConsultation(resolveConsultationService(srvTitle));
+      return;
     }
     onNavigate('request-consultation');
   };

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { PageId, ThemeMode, QuizState } from '../types.ts';
 import { getERPRecommendation } from '../utils/erpWizardLogic.ts';
+import { playSound } from '../utils/soundManager.ts';
 
 interface FindYourERPWizardProps {
   onNavigate: (page: PageId) => void;
@@ -130,6 +131,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
     if (currentStep < questions.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
+      playSound('ui-success');
       setCurrentStep(questions.length);
     }
   };
@@ -147,6 +149,7 @@ export const FindYourERPWizard: React.FC<FindYourERPWizardProps> = ({
         recommendation.consultationService,
         `Find Your ERP Quiz Result (${recommendation.primary}): Business: ${quizState.businessType}, Team: ${quizState.employees}, Mfg: ${quizState.needsManufacturing}, CRM: ${quizState.needsCRM}, POS/Ecom: ${quizState.needsEcommerce}, Customization: ${quizState.customizationExpectation}`
       );
+      return;
     }
     onNavigate('request-consultation');
   };

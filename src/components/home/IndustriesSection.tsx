@@ -99,9 +99,7 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
   return (
     <section
       ref={sectionRef}
-      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#111111]' : 'bg-[#F5FAFE]'
-      }`}
+      className="ts-glass-canvas-tinted py-20 sm:py-28 overflow-x-clip transition-colors duration-300"
       aria-labelledby="industries-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -152,24 +150,20 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
               >
                 <motion.div
                   variants={scrollCardItemVariants}
+                  data-sound-hover="true"
+                  data-glass-layer="industry-card"
                   whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.01 }}
                   whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
                   onClick={() => onNavigate('industries')}
-                  className={`group relative overflow-hidden h-full rounded-2xl p-6 sm:p-7 border transition-colors duration-300 cursor-pointer flex flex-col justify-between ${
-                    isDark
-                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45 shadow-[0_14px_34px_rgba(0,0,0,0.45)]'
-                      : 'bg-white border-[#101B35]/[0.07] hover:border-[#38BDF8]/60 shadow-[0_10px_28px_rgba(16,27,53,0.04)] hover:shadow-[0_20px_44px_rgba(16,27,53,0.08)]'
-                  }`}
+                  className="ts-glass-card ts-glass-card-interactive group relative overflow-hidden h-full rounded-2xl p-6 sm:p-7 cursor-pointer flex flex-col justify-between"
                 >
                   <CardGlareOverlay theme={theme} subtle />
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-5">
                       <div
-                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3 ${
-                          isDark
-                            ? 'bg-[#1D1D1D] border border-[#303030] text-white group-hover:bg-white group-hover:text-[#090909]'
-                            : 'bg-[#F5FAFE] border border-[#38BDF8]/25 text-[#0284C7]'
+                        className={`ts-glass-icon w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3 ${
+                          isDark ? 'text-white' : 'text-[#0284C7]'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -203,8 +197,8 @@ export const IndustriesSection: React.FC<IndustriesSectionProps> = ({
                   <div
                     className={`relative z-10 mt-5 pt-3 border-t flex items-center justify-between text-xs font-semibold ${
                       isDark
-                        ? 'border-[#303030] text-white'
-                        : 'border-[#101B35]/[0.06] text-[#0284C7]'
+                        ? 'border-white/10 text-white'
+                        : 'border-[#101B35]/[0.08] text-[#0284C7]'
                     }`}
                   >
                     <span>View Industry Solutions</span>

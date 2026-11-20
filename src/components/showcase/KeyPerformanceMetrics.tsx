@@ -92,16 +92,13 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
       className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}
     >
       <div
-        className={`rounded-3xl border p-6 sm:p-10 ${
-          isDark
-            ? 'bg-[#111111] border-[#303030]'
-            : 'bg-[#F5FAFE] border-[#101B35]/[0.08]'
-        }`}
+        data-glass-layer="kpi-panel"
+        className="ts-glass-panel rounded-3xl p-6 sm:p-10"
       >
         {/* Header Row + Optional Segmented Platform Filter */}
         <div
           className={`flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b ${
-            isDark ? 'border-[#303030]' : 'border-[#101B35]/[0.08]'
+            isDark ? 'border-white/10' : 'border-[#101B35]/10'
           }`}
         >
           <div className="max-w-2xl space-y-2">
@@ -134,11 +131,7 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
               role="group"
               aria-label="Filter KPI benchmarks by ERP platform"
               data-testid="kpi-scope-selector"
-              className={`inline-flex flex-wrap items-center gap-1 p-1 rounded-xl border self-start lg:self-auto ${
-                isDark
-                  ? 'bg-[#171717] border-[#303030]'
-                  : 'bg-white border-[#101B35]/10'
-              }`}
+              className="ts-glass-control inline-flex flex-wrap items-center gap-1 p-1 rounded-xl self-start lg:self-auto"
             >
               {ERP_SCOPE_OPTIONS.map((option) => {
                 const isSelected = selectedScope === option.id;
@@ -156,8 +149,8 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
                           ? 'bg-white text-[#090909]'
                           : 'bg-[#101B35] text-white'
                         : isDark
-                        ? 'text-[#A3A3A3] hover:text-white hover:bg-[#252525]'
-                        : 'text-slate-600 hover:text-[#101B35] hover:bg-slate-50'
+                        ? 'text-[#A3A3A3] hover:text-white hover:bg-white/[0.08]'
+                        : 'text-slate-600 hover:text-[#101B35] hover:bg-white/75'
                     }`}
                   >
                     {option.label}
@@ -185,10 +178,10 @@ export const KeyPerformanceMetrics: React.FC<KeyPerformanceMetricsProps> = ({
                 whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                 transition={{ duration: 0.18, ease: EASE_PREMIUM }}
                 onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                className={`group relative overflow-hidden rounded-2xl border p-6 flex flex-col justify-between ${
+                className={`group relative overflow-hidden rounded-2xl border p-6 flex flex-col justify-between transition-all ${
                   isDark
-                    ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/40'
-                    : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 shadow-[0_8px_24px_rgba(16,27,53,0.04)]'
+                    ? 'bg-white/[0.04] border-white/12 hover:bg-white/[0.07] hover:border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]'
+                    : 'bg-white/65 border-white/90 hover:bg-white/85 hover:border-[#38BDF8]/55 shadow-[inset_0_1.5px_0_rgba(255,255,255,0.96),0_12px_28px_-6px_rgba(15,55,96,0.10)]'
                 }`}
               >
                 <CardGlareOverlay theme={theme} subtle />

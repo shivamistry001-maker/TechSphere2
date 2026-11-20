@@ -126,9 +126,7 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
   return (
     <section
       ref={sectionRef}
-      className={`relative py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#111111]' : 'bg-[#F5FAFE]'
-      }`}
+      className="ts-glass-canvas-tinted relative py-20 sm:py-28 overflow-x-clip transition-colors duration-300"
       aria-labelledby="services-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,17 +178,15 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
               >
                 <motion.article
                   variants={scrollCardItemVariants}
+                  data-sound-hover="true"
+                  data-glass-layer="service-card"
                   whileHover={
                     prefersReducedMotion
                       ? undefined
                       : { y: -6, scale: 1.012, transition: { duration: 0.22, ease: EASE_PREMIUM } }
                   }
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`group relative h-full rounded-2xl p-7 border overflow-hidden transition-colors duration-300 flex flex-col justify-between ${
-                    isDark
-                      ? 'bg-[#171717] border-[#303030] hover:border-white/45 hover:bg-[#1D1D1D] shadow-[0_16px_40px_rgba(0,0,0,0.45)]'
-                      : 'bg-white border-[#101B35]/[0.07] hover:border-[#38BDF8]/70 shadow-[0_12px_32px_rgba(16,27,53,0.04)] hover:shadow-[0_24px_52px_rgba(16,27,53,0.1)]'
-                  }`}
+                  className="ts-glass-card ts-glass-card-interactive group relative h-full rounded-2xl p-7 overflow-hidden flex flex-col justify-between"
                 >
                   {/* Futuristic Hover Shine & Interactive Glare Gradient Overlay */}
                   <CardGlareOverlay theme={theme} />
@@ -200,8 +196,8 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
                     className="absolute -right-12 -top-12 w-36 h-36 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"
                     style={{
                       background: isDark
-                        ? 'radial-gradient(circle, rgba(255, 255, 255, 0.09) 0%, transparent 70%)'
-                        : 'radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%)',
+                        ? 'radial-gradient(circle, rgba(255, 255, 255, 0.11) 0%, transparent 70%)'
+                        : 'radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%)',
                     }}
                     aria-hidden="true"
                   />
@@ -209,10 +205,8 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                       <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${
-                          isDark
-                            ? 'bg-[#252525] border border-[#303030] text-white'
-                            : 'bg-[#F5FAFE] border border-[#38BDF8]/25 text-[#0284C7]'
+                        className={`ts-glass-icon w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${
+                          isDark ? 'text-white' : 'text-[#0284C7]'
                         }`}
                       >
                         <Icon className="w-5 h-5" />
@@ -245,7 +239,7 @@ export const ServicesShowcaseSection: React.FC<ServicesShowcaseSectionProps> = (
 
                   <div
                     className={`relative z-10 pt-2 border-t flex items-center justify-between gap-2 ${
-                      isDark ? 'border-[#303030]' : 'border-[#101B35]/[0.06]'
+                      isDark ? 'border-white/10' : 'border-[#101B35]/[0.08]'
                     }`}
                   >
                     <button

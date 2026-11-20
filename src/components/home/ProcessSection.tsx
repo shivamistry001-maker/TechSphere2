@@ -95,9 +95,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
   return (
     <section
       ref={sectionRef}
-      className={`py-20 sm:py-28 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#090909]' : 'bg-white'
-      }`}
+      className="ts-glass-canvas-primary py-20 sm:py-28 overflow-x-clip transition-colors duration-300"
       aria-labelledby="process-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,18 +192,18 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
               >
                 <motion.div
                   variants={scrollCardItemVariants}
+                  data-sound-hover="true"
+                  data-glass-layer="process-card"
                   whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
                   onClick={() => setActiveStep(idx)}
                   onMouseEnter={() => setActiveStep(idx)}
-                  className={`group relative overflow-hidden h-full rounded-2xl p-6 border transition-colors duration-300 cursor-pointer flex flex-col justify-between ${
+                  className={`ts-glass-card ts-glass-card-interactive group relative overflow-hidden h-full rounded-2xl p-6 cursor-pointer flex flex-col justify-between ${
                     isSelected
                       ? isDark
-                        ? 'bg-[#1D1D1D] border-white shadow-[0_18px_40px_rgba(0,0,0,0.55)]'
-                        : 'bg-white border-[#38BDF8] shadow-[0_18px_42px_rgba(16,27,53,0.08)]'
-                      : isDark
-                      ? 'bg-[#171717] border-[#303030] hover:border-white/40'
-                      : 'bg-[#F5FAFE] border-[#101B35]/[0.07] hover:border-[#38BDF8]/50'
+                        ? 'ring-1 ring-white/55'
+                        : 'ring-1 ring-[#0EA5E9]/65'
+                      : ''
                   }`}
                 >
                   <CardGlareOverlay theme={theme} subtle />
@@ -226,14 +224,14 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                       </span>
 
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-300 ${
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-300 ${
                           isSelected
                             ? isDark
-                              ? 'bg-white border-white text-[#090909] scale-105'
-                              : 'bg-[#101B35] border-[#101B35] text-[#38BDF8] scale-105'
+                              ? 'bg-white text-[#090909] scale-105 shadow-md'
+                              : 'bg-[#101B35] text-[#38BDF8] scale-105 shadow-md'
                             : isDark
-                            ? 'bg-[#1D1D1D] border-[#303030] text-[#D4D4D4]'
-                            : 'bg-white border-[#101B35]/[0.08] text-[#0284C7]'
+                            ? 'ts-glass-icon text-[#D4D4D4]'
+                            : 'ts-glass-icon text-[#0284C7]'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -260,8 +258,8 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ theme = 'light' 
                   <div
                     className={`relative z-10 mt-5 pt-3 border-t text-[11px] font-medium ${
                       isDark
-                        ? 'border-[#303030] text-[#A3A3A3]'
-                        : 'border-[#101B35]/[0.07] text-slate-500'
+                        ? 'border-white/10 text-[#A3A3A3]'
+                        : 'border-[#101B35]/[0.08] text-slate-500'
                     }`}
                   >
                     Output:{' '}

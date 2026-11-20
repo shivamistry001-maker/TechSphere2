@@ -9,6 +9,7 @@ import { Phone, Mail, MessageSquare, X } from 'lucide-react';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { ThemeMode } from '../types.ts';
 import { EASE_PREMIUM } from '../utils/motion.ts';
+import { playSound } from '../utils/soundManager.ts';
 
 interface FloatingContactProps {
   theme?: ThemeMode;
@@ -148,7 +149,12 @@ export const FloatingContact: React.FC<FloatingContactProps> = React.memo(({ the
       {/* Main Floating Trigger Button */}
       <motion.button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        data-sound="none"
+        onClick={() => {
+          const next = !isOpen;
+          playSound(next ? 'ui-open' : 'ui-close');
+          setIsOpen(next);
+        }}
         whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
         whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
         className={`group relative flex items-center justify-center w-14 h-14 rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-4 ${

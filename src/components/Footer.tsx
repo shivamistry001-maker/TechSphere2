@@ -39,13 +39,22 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
 
   return (
     <footer
-      className={`border-t transition-colors duration-300 ${
+      className={`relative overflow-hidden border-t transition-colors duration-300 ${
         isDark
-          ? 'bg-[#090909] text-[#A3A3A3] border-[#303030]'
-          : 'bg-[#101B35] text-slate-300 border-sky-400/15'
+          ? 'bg-[#090909] text-[#A3A3A3] border-white/10'
+          : 'bg-[#101B35] text-slate-300 border-sky-400/20'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+      {/* Subtle Top Reflective Specular Hairline */}
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-x-0 top-0 h-px ${
+          isDark
+            ? 'bg-gradient-to-r from-transparent via-white/25 to-transparent'
+            : 'bg-gradient-to-r from-transparent via-[#38BDF8]/55 to-transparent'
+        }`}
+      />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         {/* Top Footer Grid */}
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b ${
@@ -105,35 +114,38 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
               </div>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-2.5 pt-2">
-              {[
-                { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com' },
-                { label: 'X (Twitter)', icon: Twitter, href: 'https://x.com' },
-                { label: 'GitHub', icon: Github, href: 'https://github.com' },
-                { label: 'Instagram', icon: Instagram, href: 'https://www.instagram.com' },
-              ].map((social) => {
-                const Icon = social.icon;
-                return (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.05 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                    aria-label={`TechSphere on ${social.label}`}
-                    className={`w-11 h-11 rounded-full border flex items-center justify-center transition-colors ${
-                      isDark
-                        ? 'bg-[#171717] border-[#303030] hover:border-white/50 hover:bg-[#252525] text-[#D4D4D4] hover:text-white'
-                        : 'bg-white/[0.06] border-white/10 hover:border-[#38BDF8]/50 hover:bg-[#38BDF8]/15 text-slate-300 hover:text-[#38BDF8]'
-                    }`}
-                  >
-                    <Icon className="w-[18px] h-[18px]" />
-                  </motion.a>
-                );
-              })}
-            </div>
+            {/* Social Links (rendered only when official TechSphere profile URLs are configured) */}
+            {COMPANY_INFO.socialLinks.length > 0 && (
+              <div className="flex items-center gap-2.5 pt-2">
+                {COMPANY_INFO.socialLinks.map((social) => {
+                  const iconByPlatform = {
+                    linkedin: Linkedin,
+                    twitter: Twitter,
+                    github: Github,
+                    instagram: Instagram,
+                  } as const;
+                  const Icon = iconByPlatform[social.platform];
+                  return (
+                    <motion.a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.05 }}
+                      whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                      aria-label={`TechSphere on ${social.label}`}
+                      className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all ${
+                        isDark
+                          ? 'ts-glass-control text-[#D4D4D4] hover:text-white'
+                          : 'bg-white/[0.08] border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)] hover:border-[#38BDF8]/60 hover:bg-[#38BDF8]/20 text-slate-200 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-[18px] h-[18px]" />
+                    </motion.a>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Column 2: Navigation */}
@@ -204,13 +216,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
               Ready to Modernize?
             </h4>
             <div
+              data-glass-layer="footer-card"
               className={`rounded-2xl border p-5 space-y-4 ${
                 isDark
-                  ? 'bg-[#171717] border-[#303030]'
-                  : 'bg-[#0B1429] border-sky-400/20'
+                  ? 'ts-glass-footer-card'
+                  : 'bg-white/[0.07] border-white/18 shadow-[inset_0_1px_0_rgba(255,255,255,0.24),0_20px_40px_rgba(0,0,0,0.26)] backdrop-blur-md'
               }`}
             >
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-[#A3A3A3]' : 'text-slate-300'}`}>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-[#A3A3A3]' : 'text-slate-200'}`}>
                 Schedule an advisory discovery call to evaluate ERP platforms, automation opportunities, or custom web solutions.
               </p>
               <motion.button
@@ -218,10 +231,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, theme, onOpenLegal }
                 onClick={() => handleNav('request-consultation')}
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                className={`group w-full min-h-[44px] py-3 px-4 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer ${
+                className={`group w-full min-h-[44px] py-3 px-4 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   isDark
-                    ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
-                    : 'text-[#101B35] bg-[#38BDF8] hover:bg-[#7DD3FC]'
+                    ? 'ts-glass-btn-primary text-[#090909]'
+                    : 'text-[#101B35] bg-gradient-to-b from-[#7DD3FC] to-[#38BDF8] hover:from-[#BAE6FD] hover:to-[#38BDF8] shadow-[inset_0_1px_0_rgba(255,255,255,0.65),0_10px_24px_rgba(56,189,248,0.28)]'
                 }`}
               >
                 <span>Book a Consultation</span>

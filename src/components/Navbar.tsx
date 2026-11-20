@@ -16,13 +16,17 @@ import {
   Mail,
   Globe,
   Layers,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { TechSphereLogo } from './TechSphereLogo.tsx';
+import { GlassNavbar, GlassDropdown } from './glass/GlassPrimitives.tsx';
 import { MagneticButton } from './motion/MotionPrimitives.tsx';
 import { dropdownVariants, EASE_PREMIUM } from '../utils/motion.ts';
 import { PageId, ThemeMode } from '../types.ts';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { SHOWCASE_NAV_TARGETS, isShowcaseNavActive } from '../utils/showcaseLogic.ts';
+import { playSound, soundManager } from '../utils/soundManager.ts';
 
 interface NavbarProps {
   currentPage: PageId;
@@ -81,8 +85,16 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => soundManager.isEnabled());
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  // Keep UI audio toggle synchronized with centralized soundManager preferences
+  useEffect(() => soundManager.subscribe((prefs) => setSoundEnabled(prefs.enabled)), []);
+
+  const handleToggleSound = () => {
+    soundManager.toggleEnabled();
+  };
 
   // Monitor scroll for smooth transparent-to-glass navbar transition
   useEffect(() => {
@@ -102,17 +114,35 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
     };
   }, [mobileMenuOpen]);
 
+  const setDropdownWithSound = (nextOpen: boolean) => {
+    setSolutionsDropdownOpen((prev) => {
+      if (prev !== nextOpen) {
+        playSound(nextOpen ? 'ui-open' : 'ui-close');
+      }
+      return nextOpen;
+    });
+  };
+
+  const setMobileMenuWithSound = (nextOpen: boolean) => {
+    setMobileMenuOpen((prev) => {
+      if (prev !== nextOpen) {
+        playSound(nextOpen ? 'ui-open' : 'ui-close');
+      }
+      return nextOpen;
+    });
+  };
+
   // Handle ESC key and outside click to close mobile menu or dropdown
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (mobileMenuOpen) setMobileMenuOpen(false);
-        if (solutionsDropdownOpen) setSolutionsDropdownOpen(false);
+        if (mobileMenuOpen) setMobileMenuWithSound(false);
+        if (solutionsDropdownOpen) setDropdownWithSound(false);
       }
     };
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setSolutionsDropdownOpen(false);
+        setDropdownWithSound(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -132,31 +162,36 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
   const isDark = theme === 'dark';
 
   const navLinkClass = (active: boolean) =>
-    `relative px-2 2xl:px-3 py-2 text-[12.5px] 2xl:text-[13px] font-medium whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-lg ${
+    `relative px-2.5 2xl:px-3 py-2 text-[12.5px] 2xl:text-[13px] font-medium whitespace-nowrap shrink-0 transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 rounded-xl ${
       isDark ? 'focus-visible:ring-white' : 'focus-visible:ring-[#38BDF8]'
     } ${
       active
         ? isDark
-          ? 'text-white font-semibold'
-          : 'text-[#0284C7] font-semibold'
+          ? 'ts-glass-nav-active text-white font-semibold'
+          : 'ts-glass-nav-active text-[#0284C7] font-semibold'
         : isDark
-        ? 'text-[#A3A3A3] hover:text-[#F5F5F5]'
-        : 'text-[#172033]/80 hover:text-[#101B35]'
+        ? 'text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-white/[0.06]'
+        : 'text-[#172033]/85 hover:text-[#101B35] hover:bg-white/60'
     }`;
 
   const ActiveIndicator = () => (
     <motion.span
       layoutId="nav-active-indicator"
       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-      className={`absolute left-2.5 right-2.5 bottom-0.5 h-[2px] rounded-full ${
-        isDark ? 'bg-white' : 'bg-[#38BDF8]'
+      className={`absolute left-3 right-3 bottom-0.5 h-[2px] rounded-full ${
+        isDark ? 'bg-white' : 'bg-[#0284C7]'
       }`}
     />
   );
 
-  const isSolutionsActive = ['erp-solutions', 'erpnext', 'odoo', 'zoho', 'it-solutions'].includes(
-    currentPage
-  );
+  const isSolutionsActive = [
+    'erp-solutions',
+    'erpnext',
+    'odoo',
+    'zoho',
+    'it-solutions',
+    'case-studies',
+  ].includes(currentPage);
 
   return (
     <>
@@ -166,20 +201,15 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
         }`}
       >
         {/* Sibling Liquid Glass Backdrop Plate (prevents nested backdrop-filter on child dropdowns) */}
-        <div
+        <GlassNavbar scrolled={isScrolled} className="z-0" />
+        <span
           aria-hidden="true"
-          data-glass-layer="navbar"
-          data-scrolled={isScrolled ? 'true' : 'false'}
-          className="ts-glass-nav-plate absolute inset-0 pointer-events-none"
-        >
-          <span
-            className={`absolute inset-x-0 bottom-0 h-px pointer-events-none ${
-              isDark
-                ? 'bg-gradient-to-r from-transparent via-white/18 to-transparent'
-                : 'bg-gradient-to-r from-transparent via-[#38BDF8]/35 to-transparent'
-            }`}
-          />
-        </div>
+          className={`pointer-events-none absolute inset-x-0 bottom-0 h-px ${
+            isDark
+              ? 'bg-gradient-to-r from-transparent via-white/22 to-transparent'
+              : 'bg-gradient-to-r from-transparent via-[#38BDF8]/45 to-transparent'
+          }`}
+        />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
@@ -230,16 +260,17 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
               <div
                 ref={dropdownRef}
                 className="relative"
-                onMouseEnter={() => setSolutionsDropdownOpen(true)}
-                onMouseLeave={() => setSolutionsDropdownOpen(false)}
+                onMouseEnter={() => setDropdownWithSound(true)}
+                onMouseLeave={() => setDropdownWithSound(false)}
               >
                 <button
                   type="button"
+                  data-sound-hover="false"
                   onClick={() => handleNavClick('erp-solutions')}
                   onKeyDown={(e) => {
                     if (e.key === 'ArrowDown') {
                       e.preventDefault();
-                      setSolutionsDropdownOpen(true);
+                      setDropdownWithSound(true);
                     }
                   }}
                   className={`inline-flex items-center gap-1 ${navLinkClass(isSolutionsActive)}`}
@@ -265,18 +296,15 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                       className="absolute left-0 top-full pt-2 w-64 z-50 origin-top-left"
                       role="menu"
                     >
-                      <div
-                        data-glass-layer="dropdown"
-                        className="ts-glass-popover rounded-2xl p-2"
-                      >
+                      <GlassDropdown layerName="dropdown" className="rounded-2xl p-2">
                         <button
                           type="button"
                           role="menuitem"
                           onClick={() => handleNavClick('erp-solutions')}
                           className={`group/item w-full text-left px-3 py-2 rounded-xl text-sm transition-colors flex items-center justify-between cursor-pointer ${
                             isDark
-                              ? 'hover:bg-[#252525] text-[#F5F5F5]'
-                              : 'hover:bg-[#F5FAFE] text-[#172033]'
+                              ? 'hover:bg-white/[0.08] text-[#F5F5F5]'
+                              : 'hover:bg-white/80 text-[#172033]'
                           }`}
                         >
                           <div className="flex flex-col">
@@ -291,13 +319,13 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                           </div>
                           <ArrowRight
                             className={`w-3.5 h-3.5 transition-transform duration-200 group-hover/item:translate-x-0.5 ${
-                              isDark ? 'text-white' : 'text-[#38BDF8]'
+                              isDark ? 'text-white' : 'text-[#0284C7]'
                             }`}
                           />
                         </button>
                         <div
                           className={`my-1 border-t ${
-                            isDark ? 'border-[#303030]' : 'border-slate-100'
+                            isDark ? 'border-white/10' : 'border-[#101B35]/10'
                           }`}
                         />
                         {[
@@ -305,6 +333,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                           { page: 'odoo' as PageId, title: 'Odoo', sub: 'Modular & retail POS' },
                           { page: 'zoho' as PageId, title: 'Zoho Ecosystem', sub: 'Books, CRM & cloud suite' },
                           { page: 'it-solutions' as PageId, title: 'IT & Web Solutions', sub: 'Custom apps & automation' },
+                          { page: 'case-studies' as PageId, title: 'Case Studies', sub: 'Real client transformations' },
                         ].map((item) => (
                           <button
                             key={item.page}
@@ -314,11 +343,11 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                             className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-colors block cursor-pointer ${
                               currentPage === item.page
                                 ? isDark
-                                  ? 'bg-[#252525] text-white'
-                                  : 'bg-[#F5FAFE] text-[#0284C7]'
+                                  ? 'bg-white/[0.11] text-white'
+                                  : 'bg-white/85 text-[#0284C7] shadow-xs'
                                 : isDark
-                                ? 'hover:bg-[#252525] text-[#F5F5F5]'
-                                : 'hover:bg-[#F5FAFE] text-[#172033]'
+                                ? 'hover:bg-white/[0.08] text-[#F5F5F5]'
+                                : 'hover:bg-white/75 text-[#172033]'
                             }`}
                           >
                             <span className="font-semibold block">{item.title}</span>
@@ -331,7 +360,7 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                             </span>
                           </button>
                         ))}
-                      </div>
+                      </GlassDropdown>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -397,12 +426,37 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
               </button>
             </nav>
 
-            {/* Right: Theme Toggle & Book a Consultation CTA */}
-            <div className="flex items-center gap-2.5 shrink-0">
+            {/* Right: Sound Toggle, Theme Toggle & Book a Consultation CTA */}
+            <div className="flex items-center gap-2 shrink-0">
+              <motion.button
+                type="button"
+                onClick={handleToggleSound}
+                data-testid="sound-toggle-button"
+                data-sound="none"
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
+                className={`ts-glass-control relative hidden sm:flex w-11 h-11 items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 overflow-hidden ${
+                  isDark
+                    ? 'text-[#F5F5F5] focus-visible:ring-white'
+                    : 'text-[#101B35] focus-visible:ring-[#38BDF8]'
+                }`}
+                aria-label={soundEnabled ? 'Mute interface sound effects' : 'Enable interface sound effects'}
+                aria-pressed={soundEnabled}
+                title={soundEnabled ? 'UI Sound: On (Click to mute)' : 'UI Sound: Off (Click to enable)'}
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-[18px] h-[18px]" aria-hidden="true" />
+                ) : (
+                  <VolumeX className="w-[18px] h-[18px] opacity-70" aria-hidden="true" />
+                )}
+              </motion.button>
+
               <motion.button
                 type="button"
                 onClick={onToggleTheme}
                 data-testid="theme-toggle-button"
+                data-sound="none"
                 whileHover={prefersReducedMotion ? undefined : { scale: 1.07 }}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.91 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
@@ -426,10 +480,10 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
               <MagneticButton
                 type="button"
                 onClick={() => handleNavClick('request-consultation')}
-                className={`group hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-full whitespace-nowrap shrink-0 transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                className={`ts-glass-btn-primary group hidden sm:inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-full whitespace-nowrap shrink-0 cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
-                    ? 'bg-white hover:bg-[#D4D4D4] text-[#090909] shadow-md shadow-black/40 focus-visible:ring-white'
-                    : 'bg-[#101B35] hover:bg-[#192A52] text-white shadow-[0_8px_20px_rgba(16,27,53,0.16)] focus-visible:ring-[#38BDF8]'
+                    ? 'text-[#090909] focus-visible:ring-white'
+                    : 'text-white focus-visible:ring-[#38BDF8]'
                 }`}
               >
                 <span>Book a Consultation</span>
@@ -443,7 +497,8 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
               {/* Mobile & Tablet Hamburger Toggle */}
               <motion.button
                 type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                data-sound="none"
+                onClick={() => setMobileMenuWithSound(!mobileMenuOpen)}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.92 }}
                 className={`ts-glass-control xl:hidden w-11 h-11 flex items-center justify-center rounded-full transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 ${
                   isDark
@@ -486,25 +541,47 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                 >
                   Navigation
                 </span>
-                <motion.button
-                  type="button"
-                  onClick={onToggleTheme}
-                  data-testid="mobile-drawer-theme-toggle"
-                  whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
-                  aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                  aria-pressed={isDark}
-                  className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                    isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
-                  }`}
-                >
-                  <ThemeToggleIcons
-                    isDark={isDark}
-                    prefersReducedMotion={Boolean(prefersReducedMotion)}
-                    sizeClass="w-4 h-4"
-                  />
-                  <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-                </motion.button>
+                <div className="flex items-center gap-2">
+                  <motion.button
+                    type="button"
+                    onClick={handleToggleSound}
+                    data-testid="mobile-drawer-sound-toggle"
+                    data-sound="none"
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                    aria-label={soundEnabled ? 'Mute interface sound effects' : 'Enable interface sound effects'}
+                    aria-pressed={soundEnabled}
+                    className={`ts-glass-control inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                      isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
+                    }`}
+                  >
+                    {soundEnabled ? (
+                      <Volume2 className="w-4 h-4" aria-hidden="true" />
+                    ) : (
+                      <VolumeX className="w-4 h-4 opacity-70" aria-hidden="true" />
+                    )}
+                    <span>{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={onToggleTheme}
+                    data-testid="mobile-drawer-theme-toggle"
+                    data-sound="none"
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 24, mass: 0.7 }}
+                    aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                    aria-pressed={isDark}
+                    className={`ts-glass-control inline-flex items-center justify-center gap-2 min-h-[44px] px-3.5 py-2 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                      isDark ? 'text-[#F5F5F5]' : 'text-[#101B35]'
+                    }`}
+                  >
+                    <ThemeToggleIcons
+                      isDark={isDark}
+                      prefersReducedMotion={Boolean(prefersReducedMotion)}
+                      sizeClass="w-4 h-4"
+                    />
+                    <span>{isDark ? 'Light' : 'Dark'}</span>
+                  </motion.button>
+                </div>
               </div>
 
               {[
@@ -546,11 +623,11 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
                     className={`flex items-center gap-2.5 text-left min-h-[44px] py-2.5 px-3.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
                       isItemActive
                         ? isDark
-                          ? 'text-white bg-[#1D1D1D] border border-[#303030] font-semibold'
-                          : 'text-[#0284C7] bg-[#F5FAFE] font-semibold'
+                          ? 'ts-glass-drawer-item text-white font-semibold'
+                          : 'ts-glass-drawer-item text-[#0284C7] font-semibold'
                         : isDark
-                        ? 'text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-[#171717]'
-                        : 'text-[#172033]/80 hover:text-[#101B35] hover:bg-[#F5FAFE]'
+                        ? 'text-[#A3A3A3] hover:text-[#F5F5F5] hover:bg-white/[0.06]'
+                        : 'text-[#172033]/85 hover:text-[#101B35] hover:bg-white/65'
                     }`}
                   >
                     {item.icon === 'globe' && (
@@ -566,16 +643,15 @@ export const Navbar: React.FC<NavbarProps> = React.memo(({
 
               <div
                 className={`pt-4 mt-4 border-t flex flex-col space-y-3 ${
-                  isDark ? 'border-[#303030]' : 'border-[#101B35]/10'
+                  isDark ? 'border-white/10' : 'border-[#101B35]/10'
                 }`}
               >
                 <button
                   type="button"
+                  data-sound="cta"
                   onClick={() => handleNavClick('request-consultation')}
-                  className={`w-full py-3.5 px-4 rounded-full text-center font-semibold text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer transition-colors ${
-                    isDark
-                      ? 'bg-white text-[#090909] hover:bg-[#D4D4D4]'
-                      : 'bg-[#101B35] hover:bg-[#192A52] text-white'
+                  className={`ts-glass-btn-primary w-full py-3.5 px-4 rounded-full text-center font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer ${
+                    isDark ? 'text-[#090909]' : 'text-white'
                   }`}
                 >
                   <span>Book a Consultation</span>

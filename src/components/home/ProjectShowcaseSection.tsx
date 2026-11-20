@@ -30,9 +30,7 @@ export const ProjectShowcaseSection: React.FC<ProjectShowcaseSectionProps> = ({
     <section
       ref={sectionRef}
       id="website-demo-projects"
-      className={`py-20 sm:py-28 scroll-mt-20 overflow-x-clip transition-colors duration-300 ${
-        isDark ? 'bg-[#111111]' : 'bg-[#F5FAFE]'
-      }`}
+      className="ts-glass-canvas-tinted py-20 sm:py-28 scroll-mt-20 overflow-x-clip transition-colors duration-300"
       aria-labelledby="showcase-heading"
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

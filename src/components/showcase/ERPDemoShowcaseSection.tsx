@@ -134,9 +134,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
       ref={sectionRef}
       id="explore-erp-solutions"
       aria-labelledby="erp-demo-showcase-heading"
-      className={`py-20 sm:py-28 scroll-mt-20 overflow-x-clip ${
-        isDark ? 'bg-[#090909]' : 'bg-white'
-      } ${className}`}
+      className={`ts-glass-canvas-primary py-20 sm:py-28 scroll-mt-20 overflow-x-clip ${className}`}
     >
       <ScrollSectionContainer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
@@ -186,13 +184,11 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                 <motion.article
                   variants={scrollCardItemVariants}
                   data-testid={`erp-showcase-card-${platform.id}`}
+                  data-sound-hover="true"
+                  data-glass-layer="erp-showcase-card"
                   whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                   onMouseMove={prefersReducedMotion ? undefined : updateCardGlareCoordinates}
-                  className={`ts-showcase-card-rim group relative h-full rounded-3xl border overflow-hidden flex flex-col justify-between ${
-                    isDark
-                      ? 'bg-[#171717] border-[#303030] hover:bg-[#1D1D1D] hover:border-white/45'
-                      : 'bg-white border-[#101B35]/[0.08] hover:border-[#38BDF8]/60 hover:shadow-[0_24px_50px_rgba(16,27,53,0.09)]'
-                  }`}
+                  className="ts-glass-card ts-glass-card-interactive group relative h-full rounded-3xl overflow-hidden flex flex-col justify-between"
                 >
                   <CardGlareOverlay theme={theme} subtle />
 
@@ -389,7 +385,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
 
                     <div
                       className={`pt-4 border-t ${
-                        isDark ? 'border-[#303030]' : 'border-[#101B35]/[0.06]'
+                        isDark ? 'border-white/10' : 'border-[#101B35]/[0.08]'
                       }`}
                     >
                       <motion.button
@@ -397,10 +393,10 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
                         whileHover={prefersReducedMotion ? undefined : { scale: 1.015 }}
                         whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                         onClick={() => openLightbox(platform.id, currentIdx)}
-                        className={`w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
+                        className={`ts-glass-btn-primary w-full min-h-[44px] py-3 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer focus:outline-none focus-visible:ring-2 ${
                           isDark
-                            ? 'bg-white text-[#090909] hover:bg-[#D4D4D4] focus-visible:ring-white'
-                            : 'bg-[#101B35] text-white hover:bg-[#0284C7] focus-visible:ring-[#38BDF8]'
+                            ? 'text-[#090909] focus-visible:ring-white'
+                            : 'text-white focus-visible:ring-[#38BDF8]'
                         }`}
                       >
                         <Images className="w-3.5 h-3.5" />
@@ -436,16 +432,15 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
               animate="visible"
               exit="exit"
               onClick={(e) => e.stopPropagation()}
-              className={`w-full max-w-5xl rounded-3xl border overflow-hidden shadow-2xl flex flex-col max-h-[92vh] ${
-                isDark
-                  ? 'bg-[#171717] border-[#303030] text-[#F5F5F5]'
-                  : 'bg-white border-[#101B35]/15 text-[#172033]'
+              data-glass-layer="erp-lightbox-frame"
+              className={`ts-glass-panel w-full max-w-5xl rounded-3xl overflow-hidden flex flex-col max-h-[92vh] ${
+                isDark ? 'text-[#F5F5F5]' : 'text-[#172033]'
               }`}
             >
               {/* Modal Top Bar */}
               <div
                 className={`px-5 sm:px-6 py-4 border-b flex items-center justify-between gap-4 ${
-                  isDark ? 'border-[#303030] bg-[#111111]' : 'border-slate-200 bg-[#F5FAFE]'
+                  isDark ? 'border-white/10 bg-white/[0.03]' : 'border-white/70 bg-white/45'
                 }`}
               >
                 <div className="min-w-0">
@@ -569,7 +564,7 @@ export const ERPDemoShowcaseSection: React.FC<ERPDemoShowcaseSectionProps> = ({
               {/* Caption + Navigation Indicators + Thumbnail Bar */}
               <div
                 className={`px-5 sm:px-6 py-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                  isDark ? 'border-[#303030] bg-[#171717]' : 'border-slate-200 bg-white'
+                  isDark ? 'border-white/10 bg-white/[0.03]' : 'border-white/70 bg-white/55'
                 }`}
               >
                 <div className="space-y-1 max-w-2xl">

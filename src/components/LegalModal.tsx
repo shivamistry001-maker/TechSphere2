@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, ShieldCheck, FileText, Cookie } from 'lucide-react';
 import { COMPANY_INFO } from '../data/companyData.ts';
 import { ThemeMode } from '../types.ts';
 import { modalBackdropVariants, modalContentVariants } from '../utils/motion.ts';
+import { playSound } from '../utils/soundManager.ts';
 
 interface LegalModalProps {
   type: 'privacy' | 'terms' | 'cookies' | null;
@@ -19,6 +20,16 @@ interface LegalModalProps {
 export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, theme = 'dark' }) => {
   const isDark = theme === 'dark';
   const prefersReducedMotion = useReducedMotion();
+  const prevTypeRef = useRef<typeof type>(null);
+
+  useEffect(() => {
+    if (type && !prevTypeRef.current) {
+      playSound('ui-open');
+    } else if (!type && prevTypeRef.current) {
+      playSound('ui-close');
+    }
+    prevTypeRef.current = type;
+  }, [type]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
